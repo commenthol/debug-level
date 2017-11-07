@@ -1,0 +1,89 @@
+{
+  "name": "debug-level",
+  "version": "0.0.1",
+  "description": "debug with levels",
+  "keywords": [
+    "debug",
+    "level"
+  ],
+  "license": "MIT",
+  "author": "commenthol <commenthol@gmail.com>",
+  "main": "lib",
+  "module": "src",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/commenthol/debug-level.git"
+  },
+  "scripts": {
+    "build": "npm run clean && babel -d lib src",
+    "clean": "rimraf lib",
+    "doc": "cat src/index.js | dox | doxme --readme > README.md",
+    "karma": "karma start",
+    "lint": "eslint '**/*.js'",
+    "prepublish": "npm run build && npm test",
+    "example": "node examples/server.js",
+    "test": "mocha"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+      "no-empty": 0,
+      "indent": [
+        "error",
+        2
+      ],
+      "linebreak-style": [
+        "error",
+        "unix"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "semi": [
+        "error",
+        "never"
+      ]
+    }
+  },
+  "dependencies": {
+    "asyncc": "^2.0.1",
+    "chalk": "^2.2.0",
+    "json-stringify-safe": "^5.0.1",
+    "ms": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
+    "eslint": "^4.8.0",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-mocha": "^1.3.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "^0.0.31",
+    "karma-webpack": "^2.0.5",
+    "mocha": "^4.0.1",
+    "rimraf": "^2.4.0",
+    "sinon": "^4.0.1",
+    "webpack": "^3.8.1"
+  },
+  "eslintIgnore": [
+    "lib",
+    "tmp"
+  ]
+}

@@ -1,0 +1,8 @@
+node_modules/
+lib/
+tmp/
+*.tgz
+*.log
+yarn.lock
+package-lock.json
+

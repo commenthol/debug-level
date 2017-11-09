@@ -17,6 +17,59 @@ describe('#Log', function () {
     assert(log instanceof Log)
   })
 
+  describe('options', function () {
+    after(() => {
+      Log.reset()
+    })
+
+    it('should get default options', function () {
+      const res = Log.options()
+      assert.deepEqual(res, {
+        json: false,
+        serverinfo: false,
+        hideDate: true,
+        colors: true,
+        spaces: null,
+        stream: process.stderr
+      })
+    })
+
+    it('should set options', function () {
+      Log.options({level: 'error', json: true, colors: false, namespaces: 'foo*,bar'})
+      const res = Log.options()
+      assert.deepEqual(res, {
+        level: 'error',
+        namespaces: 'foo*,bar',
+        json: true,
+        serverinfo: false,
+        hideDate: true,
+        colors: false,
+        spaces: null,
+        stream: process.stderr
+      })
+    })
+
+    it('should save options', function () {
+      Log.options({level: 'ERROR', json: true, colors: false, namespaces: 'foo*,bar'})
+      Log.save()
+      const res = Object.keys(process.env)
+        .filter((env) => /^DEBUG/.test(env))
+        .reduce((obj, key) => {
+          obj[key] = process.env[key]
+          return obj
+        }, {})
+      assert.deepEqual(res, {
+        DEBUG: 'foo*,bar',
+        DEBUG_LEVEL: 'ERROR',
+        DEBUG_JSON: 'true',
+        DEBUG_SERVERINFO: 'false',
+        DEBUG_HIDE_DATE: 'true',
+        DEBUG_COLORS: 'false',
+        DEBUG_SPACES: 'null'
+      })
+    })
+  })
+
   describe('levels', function () {
     const tests = [
       ['DEBUG', {error: 1, warn: 1, info: 1, debug: 1}],
@@ -40,6 +93,30 @@ describe('#Log', function () {
           info:  expects.info,
           warn:  expects.warn,
           error: expects.error
+        }
+        assert.deepEqual(res, exp)
+      })
+    })
+  })
+
+  describe('enabled', function () {
+    const tests = [
+      ['DEBUG', {any: true,  error: true,  warn: true,  info: true,  debug: true}],
+      ['INFO',  {any: true,  error: true,  warn: true,  info: true,  debug: false}],
+      ['WARN',  {any: true,  error: true,  warn: true,  info: false, debug: false}],
+      ['ERROR', {any: true,  error: true,  warn: false, info: false, debug: false}],
+      ['OFF',   {any: false, error: false, warn: false, info: false, debug: false}],
+    ]
+    tests.forEach(([level, exp]) => {
+      it('shall check if enabled for level ' + level, function () {
+        Log.options({level, json: false, colors: true, namespaces: 'test*'})
+        const log = new Log('test::' + level)
+        const res = {
+          debug: log.enabled('debug'),
+          info:  log.enabled('info'),
+          warn:  log.enabled('warn'),
+          error: log.enabled('error'),
+          any:   log.enabled(),
         }
         assert.deepEqual(res, exp)
       })

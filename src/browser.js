@@ -196,18 +196,31 @@ Object.assign(Log.prototype, {
 })
 
 /**
-* Apply global options
+* Apply (and get) global options
+* @param {object} [opts] - changed options
+* @return {object} global options
 */
 Log.options = function (opts) {
+  if (!opts) return options
   Object.assign(options, opts, {
     colors: opts.colors === false ? false : supportsColors()
   })
+  return options
 }
 
 /**
-* safe keys in `localStorage`
+* save options in `localStorage`
 */
 Log.save = function () {
+  const _storage = storage()
+  Log.reset()
+  saveOpts(_storage, options)
+}
+
+/**
+* reset saved options
+*/
+Log.reset = function () {
   const _storage = storage()
 
   Object.keys(_storage).forEach((key) => {
@@ -215,8 +228,6 @@ Log.save = function () {
       _storage.removeItem(key)
     }
   })
-
-  saveOpts(_storage, options)
 }
 
 module.exports = Log

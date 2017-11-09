@@ -53,7 +53,7 @@ const inspectOpts = (obj) => Object.keys(obj)
 const saveOpts = (obj, options) => {
   Object.keys(options).forEach((prop) => {
     if (prop === 'stream' || prop === 'formatters') return // do not safe stream option
-    let key = 'DEBUG_' + prop.replace(/([A-Z])/g, (_, prop) => '_' + prop.toLowerCase)
+    let key = 'DEBUG_' + prop.replace(/([A-Z])/g, (_, prop) => '_' + prop.toLowerCase())
     if (prop === 'namespaces') key = 'DEBUG'
     key = key.toUpperCase()
     obj[key] = options[prop]

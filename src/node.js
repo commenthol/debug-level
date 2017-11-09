@@ -129,23 +129,32 @@ Object.assign(Log.prototype, {
 })
 
 /**
-* Apply global options
+* Apply (and get) global options
+* @param {object} [opts] - changed options
+* @return {object} global options
 */
 Log.options = function (opts) {
   Object.assign(options, opts)
+  return options
 }
 
 /**
-* safe keys in `process.env`
+* save options in `process.env`
 */
 Log.save = function () {
+  Log.reset()
+  saveOpts(process.env, options)
+}
+
+/**
+* reset saved options
+*/
+Log.reset = function () {
   Object.keys(process.env).forEach((key) => {
     if (/^(DEBUG|DEBUG_.*)$/.test(key)) {
       delete process.env[key]
     }
   })
-
-  saveOpts(process.env, options)
 }
 
 module.exports = Log

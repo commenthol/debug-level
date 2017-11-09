@@ -1,5 +1,5 @@
 /* eslint no-console:0 */
-/* global describe, it, before, after, localStorage */
+/* global describe, it, before, after, window */
 
 const assert = require('assert')
 const sinon = require('sinon')
@@ -32,11 +32,53 @@ Log.prototype.render = function (args) {
   return args
 }
 Log.options = _Log.options
+Log.save = _Log.save
+Log.reset = _Log.reset
 
 bdescribe('#Log', function () {
   it('should instantiate without new', function () {
     const log = _Log('test')
     assert(log instanceof _Log)
+  })
+
+  describe('options', function () {
+    after(() => {
+      Log.reset()
+    })
+
+    it('should get default options', function () {
+      const res = Log.options()
+      assert.deepEqual(res, { colors: true, url: undefined })
+    })
+
+    it('should set options', function () {
+      Log.options({level: 'error', colors: false, url: 'http://localhost:3000/log', namespaces: 'foo*,bar'})
+      const res = Log.options()
+      assert.deepEqual(res, {
+        level: 'error',
+        namespaces: 'foo*,bar',
+        url: 'http://localhost:3000/log',
+        colors: false
+      })
+    })
+
+    it('should save options', function () {
+      Log.options({level: 'ERROR', url: undefined, colors: true, namespaces: 'foo*,bar'})
+      Log.save()
+      const store = window.localStorage
+      const res = Object.keys(store)
+        .filter((env) => /^DEBUG/.test(env))
+        .reduce((obj, key) => {
+          obj[key] = store[key]
+          return obj
+        }, {})
+      assert.deepEqual(res, {
+        DEBUG: 'foo*,bar',
+        DEBUG_COLORS: 'true',
+        DEBUG_LEVEL: 'ERROR',
+        DEBUG_URL: 'undefined'
+      })
+    })
   })
 
   describe('levels', function () {
@@ -68,6 +110,30 @@ bdescribe('#Log', function () {
     })
   })
 
+  describe('enabled', function () {
+    const tests = [
+      ['DEBUG', {any: true,  error: true,  warn: true,  info: true,  debug: true}],
+      ['INFO',  {any: true,  error: true,  warn: true,  info: true,  debug: false}],
+      ['WARN',  {any: true,  error: true,  warn: true,  info: false, debug: false}],
+      ['ERROR', {any: true,  error: true,  warn: false, info: false, debug: false}],
+      ['OFF',   {any: false, error: false, warn: false, info: false, debug: false}],
+    ]
+    tests.forEach(([level, exp]) => {
+      it('shall check if enabled for level ' + level, function () {
+        Log.options({level, json: false, colors: true, namespaces: 'test*'})
+        const log = new Log('test::' + level)
+        const res = {
+          debug: log.enabled('debug'),
+          info:  log.enabled('info'),
+          warn:  log.enabled('warn'),
+          error: log.enabled('error'),
+          any:   log.enabled(),
+        }
+        assert.deepEqual(res, exp)
+      })
+    })
+  })
+
   describe('formats', function () {
     describe('debug like', function () {
       const f = fixtures.browser
@@ -81,9 +147,9 @@ bdescribe('#Log', function () {
         // localStorage.DEBUG_LEVEL = 'error'
         // localStorage.DEBUG_COLORS = 'false'
         // localStorage.DEBUG = 'test*'
-        localStorage.debug_level = 'error'
-        localStorage.debug_colors = 'false'
-        localStorage.debug = 'test*'
+        window.localStorage.debug_level = 'error'
+        window.localStorage.debug_colors = 'false'
+        window.localStorage.debug = 'test*'
         log = new Log('test')
       })
 

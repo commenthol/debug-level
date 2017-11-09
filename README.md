@@ -2,7 +2,8 @@
 
 > debug with levels
 
-A JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.
+A JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.  
+Prints colored and human readable output for development and JSON for production environments.
 
 ## TOC
 
@@ -12,10 +13,12 @@ A JavaScript logging/ debugging utility which works in node and browsers. It beh
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
-- [Environment Variables / Settings](#environment-variables-settings)
-- [Options](#options)
-- [Conventions](#conventions)
-- [Wildcards](#wildcards)
+- [Settings](#settings)
+	- [Environment Variables](#environment-variables)
+	- [Options](#options)
+- [Namespaces](#namespaces)
+	- [Conventions](#conventions)
+	- [Wildcards](#wildcards)
 - [Custom Formatters](#custom-formatters)
 - [License](#license)
 - [References](#references)
@@ -32,7 +35,8 @@ $ npm install --save debug-level
 
 `debug-level` provides 4 debug levels which are `DEBUG`, `INFO`, `WARN` and `ERROR`.
 
-[levels.js](./examples/levels.js)
+[examples/levels.js](./examples/levels.js)
+
 ```js
 const Log = require('debug-level')
 // creates a logger for <namespace> `test`
@@ -46,14 +50,15 @@ log.error(new Error('boom'))         // logs an Error at level ERROR
 
 Running `levels.js` without environment variables will show no output.
 Setting only `DEBUG_LEVEL` shows all lines with their respective level.
-Combined with `DEBUG` given comma separated namespaces only those log lines with
-matching namespace and level get logged.
+Combined with `DEBUG`, using comma separated namespaces, only those log lines with matching namespace and level get logged.
 
 e.g. try
 
-    $ DEBUG_LEVEL=WARN DEBUG=test node examples/levels.js
+```sh
+$ DEBUG_LEVEL=WARN DEBUG=test node examples/levels.js
+```
 
-The following table gives an of the combinations:
+The following table gives an overview of possible combinations:
 
 DEBUG_LEVEL | DEBUG         | writing to output
 :----------:| :-----------: | :--------
@@ -73,31 +78,38 @@ DEBUG       | `<namespace>` | log.error, log.warn, log.info and log.debug with `
 Run the example with different settings:
 
 No output
-```
-$ npm run example
+
+```sh
+$ node examples/server.js
 ```
 
 Logging .info and .error
-```
-$ DEBUG_LEVEL=INFO npm run example
+
+```sh
+$ DEBUG_LEVEL=INFO node examples/server.js
 ```
 
 Logging .error for server only
-```
-$ DEBUG_LEVEL=ERROR DEBUG=server npm run example
+
+```sh
+$ DEBUG_LEVEL=ERROR DEBUG=server node examples/server.js
 ```
 
 Logging .error in production mode (JSON without colors)
-```
-$ NODE_ENV=production DEBUG_LEVEL=ERROR npm run example
+
+```sh
+$ NODE_ENV=production DEBUG_LEVEL=ERROR node examples/server.js
 ```
 
 Behaviour is as with [debug][]
-```
-$ DEBUG=server,client:A npm run example
+
+```sh
+$ DEBUG=server,client:A node examples/server.js
 ```
 
-## Environment Variables / Settings
+## Settings
+
+### Environment Variables
 
 **Common**
 
@@ -131,9 +143,11 @@ localStorage.DEBUG_LEVEL='ERROR'
 localStorage.DEBUG='*'
 ```
 
-## Options
+### Options
 
 You may set the global log options with:
+
+[examples/options.js](./examples/options.js)
 
 ```js
 const fs = require('fs')
@@ -143,8 +157,15 @@ const Log = require('debug-level')
 const stream = fs.createWriteStream('./my.log')
 
 // The options will be set for all Loggers...
-Log.options({level: 'ERROR', json: true, serverinfo: true, hideDate: false, colors: false, stream})
-const log = new Log('test')
+Log.options({
+  level: 'DEBUG',
+  json: true,
+  serverinfo: true,
+  hideDate: false,
+  colors: false,
+  stream
+})
+const log = new Log('*')
 
 log.debug({object: 1}) // ...
 ```
@@ -161,13 +182,15 @@ stream      | --              | node    | Stream  | output stream (defaults to `
 url         | DEBUG_URL       | browser | String  |                  
 formatters  | --              |         | Object  | custom formatters
 
-## Conventions
+## Namespaces
+
+### Conventions
 
 (from [debug][])
 
 If you're using this in one or more of your libraries, you should use the name of your library so that developers may toggle debugging as desired without guessing names. If you have more than one debuggers you should prefix them with your library name and use ":" to separate features. For example `bodyParser` from Connect would then be `connect:bodyParser`. If you append a `*` to the end of your name, it will always be enabled regardless of the setting of the DEBUG environment variable. You can then use it for normal output as well as debug output.
 
-## Wildcards
+### Wildcards
 
 (from [debug][])
 
@@ -179,14 +202,21 @@ You can also exclude specific debuggers by prefixing them with a `-` character. 
 
 You may use custom formatters e.g. to display numbers converted into hex-format.
 
-```js
-const Log = require('debug-level')
-const log = new Log('test', {formatters: {h: (n) => n.toString(16)}})
+[examples/customFormatters.js](./examples/customFormatters.js)
 
-log.debug('%h', 255) // logs 255 as hex 'FF'
+```js
+const Log = require('..')
+Log.options({level: 'debug'})
+const log = new Log('test', {formatters: {
+  h: (n) => `x${n.toString(16).toUpperCase()}`
+}})
+
+log.debug('%h', 255) // logs 255 as hex 'xFF'
 ```
 
 If logging an object you may define a `toJSON()` function on that object to change proper logging of the object itself:
+
+[examples/toJSON.js](./examples/toJSON.js)
 
 ```js
 const Log = require('debug-level')

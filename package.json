@@ -19,12 +19,11 @@
   },
   "scripts": {
     "build": "npm run clean && babel -d lib src",
-    "clean": "rimraf lib",
-    "doc": "cat src/index.js | dox | doxme --readme > README.md",
+    "clean": "rimraf lib coverage",
+    "cover": "nyc -r lcov -r text npm test",
     "karma": "karma start",
     "lint": "eslint '**/*.js'",
-    "prepublish": "npm run build && npm test",
-    "example": "node examples/server.js",
+    "prepublish": "npm run build && npm run lint && npm test",
     "test": "mocha"
   },
   "babel": {
@@ -35,28 +34,10 @@
   "eslintConfig": {
     "env": {
       "es6": true,
-      "node": true
+      "node": true,
+      "mocha": true
     },
-    "extends": "eslint:recommended",
-    "rules": {
-      "no-empty": 0,
-      "indent": [
-        "error",
-        2
-      ],
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ],
-      "semi": [
-        "error",
-        "never"
-      ]
-    }
+    "extends": "standard"
   },
   "dependencies": {
     "asyncc": "^2.0.1",
@@ -70,6 +51,11 @@
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "eslint": "^4.8.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.0.1",
@@ -78,6 +64,7 @@
     "karma-spec-reporter": "^0.0.31",
     "karma-webpack": "^2.0.5",
     "mocha": "^4.0.1",
+    "nyc": "^11.3.0",
     "rimraf": "^2.4.0",
     "sinon": "^4.0.1",
     "webpack": "^3.8.1"

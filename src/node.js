@@ -2,7 +2,7 @@ const os = require('os')
 const ms = require('ms')
 const chalk = require('chalk')
 
-const {inspectOpts, saveOpts, inspectNamespaces, selectColors} = require('./utils')
+const {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors} = require('./utils')
 const LogBase = require('./LogBase')
 
 const env = process.env.NODE_ENV || 'development'
@@ -12,10 +12,10 @@ const isDevEnv = env === 'development'
 * global log options
 */
 const options = {
-  json: isDevEnv ? false : true, // log in json format
-  serverinfo: isDevEnv ? false : true, // append server information
-  hideDate: isDevEnv ? true : false, // do not hide date from output
-  colors: isDevEnv ? true : false, // apply colors
+  json: !isDevEnv, // log in json format
+  serverinfo: !isDevEnv, // append server information
+  hideDate: !!isDevEnv, // do not hide date from output
+  colors: !!isDevEnv, // apply colors
   stream: process.stderr, // output stream
   spaces: null // pretty print JSON
 }
@@ -25,14 +25,16 @@ const options = {
 * @constructor
 * @param {String} name - namespace of Logger
 */
-function Log(name, opts) {
-  if (!(this instanceof Log)) return new Log(name)
+function Log (name, opts) {
+  if (!(this instanceof Log)) return new Log(name, opts)
   Object.assign(options,
     inspectOpts(process.env),
     inspectNamespaces(process.env)
   )
   LogBase.call(this, name, Object.assign({}, options, opts))
-  this.colors = selectColors(name, (n) => chalk.hex(n))
+  const colorFn = (n) => chalk.hex(n)
+  this.color = selectColor(name, colorFn)
+  this.levColors = levelColors(colorFn)
   if (!this.opts.json) {
     this._log = this._logOneLine
   }
@@ -41,14 +43,31 @@ Object.setPrototypeOf(Log.prototype, LogBase.prototype)
 
 Object.assign(Log.prototype, {
   /**
+    * render string to output stream
+    * @public
+    * @param {String} str - string to render
+    * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
+    * @return {String}
+    */
+  render (str) {
+    str += '\n'
+    this.opts.stream.write(str)
+    return str
+  },
+
+  /**
   * format object to json
   * @private
   */
-  _log(level, args) {
+  _log (level, args) {
     this._diff()
-    let str = this.formatter.format(this._formatJson(level, args))[0]
-    if (this.opts.colors) {
-      str = str.replace(/("level":"[^"]+")/, (_, m) => this._color(m, level, true))
+    const o = this._formatJson(level, args)
+    let str = this.formatter.format(o)[0]
+    /* istanbul ignore next */ // can't cover with test as underlying tty is unknown
+    if (this.opts.colors) { // this is slow...
+      str = str
+        .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
+        .replace(/"name":\s?"[^"]+"/, (m) => this._color(m, this.color, true))
     }
     return this.render(str, level)
   },
@@ -80,13 +99,15 @@ Object.assign(Log.prototype, {
     }
     this.formatter.noQuotes = false
 
-    const prefix = this._color(level + ' ' + this.name, level, true)
+    const prefix = '  ' + this._color(level, this.levColors[level], true) + ' ' +
+      this._color(this.name, this.color, true)
 
     let str = [
       prefix,
       this.opts.hideDate ? '' : new Date().toISOString(),
       !isDevEnv ? msg : msg.split('\\n').join('\n' + prefix + ' '),
-      this._color('+' + ms(this.diff), level)
+      this._color('+' + ms(this.diff), this.color),
+      this.opts.serverinfo ? os.hostname() + ' ' + process.pid : void (0)
     ].filter(f => f).join(' ')
 
     return str
@@ -96,12 +117,12 @@ Object.assign(Log.prototype, {
   * Add colors, style to string
   * @private
   */
-  _color (str, level, isBold) {
+  _color (str, color, isBold) {
     return !this.opts.colors
       ? str
       : isBold
-        ? this.colors[level].bold(str)
-        : this.colors[level](str)
+        ? color.bold(str)
+        : color(str)
   },
 
   /**
@@ -112,19 +133,6 @@ Object.assign(Log.prototype, {
     if (this.opts.serverinfo) {
       Object.assign(o, {hostname: os.hostname(), pid: process.pid})
     }
-  },
-
-  /**
-  * render string to output stream
-  * @public
-  * @param {String} str - string to render
-  * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
-  * @return {String}
-  */
-  render (str) {
-    str += '\n'
-    this.opts.stream.write(str)
-    return str
   }
 })
 

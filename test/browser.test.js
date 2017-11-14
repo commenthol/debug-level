@@ -1,16 +1,15 @@
-/* eslint no-console:0 */
-/* global describe, it, before, after, window */
+/* eslint no-console: 0 no-multi-spaces: 0 */
 
 const assert = require('assert')
 const sinon = require('sinon')
 const {inspect} = require('util')
 
-const _Log = require('../src/browser.js')
+const Log = require('../src/browser.js')
 const fixtures = require('./fixtures/browser.js')
 const {testcases: testcases_} = require('./fixtures/testcases.js')
 
 const testcases = testcases_.concat([
-  { name: 'custom color %c%o', args: [ 'custom color %c%o', 'color: red', {}] }
+  { name: 'custom color %c%o', args: [ 'custom color %c%o', 'color: red', {} ] }
 ])
 
 const isBrowser = typeof window !== 'undefined'
@@ -23,22 +22,12 @@ if (!isBrowser) {
 
 const WRITE = false
 
-function Log (name) {
-  _Log.call(this, name)
-}
-Object.setPrototypeOf(Log.prototype, _Log.prototype)
-Log.prototype.render = function (args) {
-  console.log(...args)
-  return args
-}
-Log.options = _Log.options
-Log.save = _Log.save
-Log.reset = _Log.reset
-
 bdescribe('#Log', function () {
+  // this.timeout(1000000)
+
   it('should instantiate without new', function () {
-    const log = _Log('test')
-    assert(log instanceof _Log)
+    const log = Log('test')
+    assert(log instanceof Log)
   })
 
   describe('options', function () {
@@ -74,8 +63,8 @@ bdescribe('#Log', function () {
         }, {})
       assert.deepEqual(res, {
         DEBUG: 'foo*,bar',
-        DEBUG_COLORS: 'true',
         DEBUG_LEVEL: 'ERROR',
+        DEBUG_COLORS: 'true',
         DEBUG_URL: 'undefined'
       })
     })
@@ -83,27 +72,108 @@ bdescribe('#Log', function () {
 
   describe('levels', function () {
     const tests = [
-      ['DEBUG', {error: 1, warn: 1, info: 1, debug: 1}],
-      ['INFO',  {error: 1, warn: 1, info: 1}],
-      ['WARN',  {error: 1, warn: 1}],
-      ['ERROR', {error: 1}],
-      ['OFF',   {}],
+      [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      ['WARN',    {fatal: 1, error: 1, warn: 1}],
+      ['ERROR',   {fatal: 1, error: 1}],
+      ['FATAL',   {fatal: 1}],
+      ['OFF',     {}]
     ]
     tests.forEach(([level, expects]) => {
       it('shall display logs for level ' + level, function () {
-        Log.options({level, namespaces: 'test*'})
-        const log = new Log('test::' + level)
+        Log.options({level, namespaces: 'test:*'})
+        const log = new Log('test:' + (level || 'undefined').toLowerCase())
         const res = {
           debug: log.debug('test') ? 1 : undefined,
-          info:  log.info('test')  ? 1 : undefined,
-          warn:  log.warn('test')  ? 1 : undefined,
-          error: log.error('test') ? 1 : undefined
+          info: log.info('test') ? 1 : undefined,
+          warn: log.warn('test') ? 1 : undefined,
+          error: log.error('test') ? 1 : undefined,
+          fatal: log.fatal('test') ? 1 : undefined
         }
         const exp = {
           debug: expects.debug,
-          info:  expects.info,
-          warn:  expects.warn,
-          error: expects.error
+          info: expects.info,
+          warn: expects.warn,
+          error: expects.error,
+          fatal: expects.fatal
+        }
+        assert.deepEqual(res, exp)
+      })
+    })
+
+    describe('levels wo namespace', function () {
+      const tests = [
+        [undefined, {}],
+        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+        ['WARN',    {fatal: 1, error: 1, warn: 1}],
+        ['ERROR',   {fatal: 1, error: 1}],
+        ['FATAL',   {fatal: 1}],
+        ['OFF',     {}]
+      ]
+      tests.forEach(([level, expects]) => {
+        it('shall display logs for level ' + level, function () {
+          Log.options({level, namespaces: undefined})
+          const log = new Log('test:' + (level || 'undefined').toLowerCase())
+          const res = {
+            debug: log.debug('test') ? 1 : undefined,
+            info: log.info('test') ? 1 : undefined,
+            warn: log.warn('test') ? 1 : undefined,
+            error: log.error('test') ? 1 : undefined,
+            fatal: log.fatal('test') ? 1 : undefined
+          }
+          const exp = {
+            debug: expects.debug,
+            info: expects.info,
+            warn: expects.warn,
+            error: expects.error,
+            fatal: expects.fatal
+          }
+          assert.deepEqual(res, exp)
+        })
+      })
+    })
+  })
+
+  describe('namespaced levels', function () {
+    const tests = [
+      // level,   nsLevel,   expects
+      [undefined, undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      [undefined, 'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      [undefined, 'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      [undefined, 'WARN',    {fatal: 1, error: 1, warn: 1}],
+      [undefined, 'ERROR',   {fatal: 1, error: 1}],
+      [undefined, 'FATAL',   {fatal: 1}],
+      [undefined, 'OFF',     {}],
+      ['ERROR',   undefined, {fatal: 1, error: 1}],
+      ['ERROR',   'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['ERROR',   'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      ['ERROR',   'WARN',    {fatal: 1, error: 1, warn: 1}],
+      ['ERROR',   'ERROR',   {fatal: 1, error: 1}],
+      ['FATAL',   'FATAL',   {fatal: 1}],
+      ['ERROR',   'OFF',     {}]
+    ]
+    tests.forEach(([level, nsLevel, expects]) => {
+      it(`shall display logs for level ${level} using namespaced-level ${nsLevel}`, function () {
+        Log.options({
+          level,
+          namespaces: `other,${nsLevel ? nsLevel + ':' : ''}test,log*`
+        })
+        const log = new Log('test')
+        const res = {
+          debug: log.debug('test') ? 1 : undefined,
+          info: log.info('test') ? 1 : undefined,
+          warn: log.warn('test') ? 1 : undefined,
+          error: log.error('test') ? 1 : undefined,
+          fatal: log.fatal('test') ? 1 : undefined
+        }
+        const exp = {
+          debug: expects.debug,
+          info: expects.info,
+          warn: expects.warn,
+          error: expects.error,
+          fatal: expects.fatal
         }
         assert.deepEqual(res, exp)
       })
@@ -112,22 +182,23 @@ bdescribe('#Log', function () {
 
   describe('enabled', function () {
     const tests = [
-      ['DEBUG', {any: true,  error: true,  warn: true,  info: true,  debug: true}],
-      ['INFO',  {any: true,  error: true,  warn: true,  info: true,  debug: false}],
-      ['WARN',  {any: true,  error: true,  warn: true,  info: false, debug: false}],
-      ['ERROR', {any: true,  error: true,  warn: false, info: false, debug: false}],
-      ['OFF',   {any: false, error: false, warn: false, info: false, debug: false}],
+      ['DEBUG', {fatal: true,  error: true,  warn: true,  info: true,  debug: true}],
+      ['INFO',  {fatal: true,  error: true,  warn: true,  info: true,  debug: false}],
+      ['WARN',  {fatal: true,  error: true,  warn: true,  info: false, debug: false}],
+      ['ERROR', {fatal: true,  error: true,  warn: false, info: false, debug: false}],
+      ['FATAL', {fatal: true,  error: false, warn: false, info: false, debug: false}],
+      ['OFF',   {fatal: false, error: false, warn: false, info: false, debug: false}]
     ]
     tests.forEach(([level, exp]) => {
       it('shall check if enabled for level ' + level, function () {
         Log.options({level, json: false, colors: true, namespaces: 'test*'})
-        const log = new Log('test::' + level)
+        const log = new Log('test:' + level.toLowerCase())
         const res = {
-          debug: log.enabled('debug'),
-          info:  log.enabled('info'),
-          warn:  log.enabled('warn'),
-          error: log.enabled('error'),
-          any:   log.enabled(),
+          debug: log.enabled.debug,
+          info: log.enabled.info,
+          warn: log.enabled.warn,
+          error: log.enabled.error,
+          fatal: log.enabled.fatal
         }
         assert.deepEqual(res, exp)
       })
@@ -147,6 +218,7 @@ bdescribe('#Log', function () {
         // localStorage.DEBUG_LEVEL = 'error'
         // localStorage.DEBUG_COLORS = 'false'
         // localStorage.DEBUG = 'test*'
+        /// read options from storage
         window.localStorage.debug_level = 'error'
         window.localStorage.debug_colors = 'false'
         window.localStorage.debug = 'test*'
@@ -156,7 +228,7 @@ bdescribe('#Log', function () {
       after(() => {
         clock.restore()
         if (WRITE) console.log(inspect(exp))
-        Object.keys(localStorage).forEach((i) => localStorage.removeItem(i))
+        Object.keys(window.localStorage).forEach((i) => window.localStorage.removeItem(i))
       })
 
       testcases.forEach(({name, args}, idx) => {
@@ -164,7 +236,7 @@ bdescribe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepEqual(res, f[idx])
+          else assert.deepEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -179,12 +251,11 @@ bdescribe('#Log', function () {
         clock = sinon.useFakeTimers()
         Log.options({level: 'error', namespaces: 'test*'})
         log = new Log('test')
-        // log.opts.colors = true // fake colors options
       })
 
       after(() => {
         clock.restore()
-        if (WRITE) console.log(inspect(exp))
+        if (WRITE) console.log(inspect(exp, {depth: Infinity}))
       })
 
       testcases.forEach(({name, args}, idx) => {
@@ -192,7 +263,7 @@ bdescribe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepEqual(res, f[idx], idx)
+          else assert.deepEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -223,6 +294,65 @@ bdescribe('#Log', function () {
           done()
         })
       })
+    })
+  })
+
+  describe('namespaces', function () {
+    describe('namespace *', function () {
+      const tests = [
+        [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+        ['WARN',    {fatal: 1, error: 1, warn: 1}],
+        ['ERROR',   {fatal: 1, error: 1}],
+        ['FATAL',   {fatal: 1}],
+        ['OFF',     {}]
+      ]
+      tests.forEach(([level, expects]) => {
+        it(`shall ${level === 'OFF' ? 'never' : 'always'} log for level ${level}`, function () {
+          Log.options({level, namespaces: 'aaa', json: false, colors: true})
+          const log = new Log('*')
+          const res = {
+            debug: log.debug('test') ? 1 : undefined,
+            info: log.info('test') ? 1 : undefined,
+            warn: log.warn('test') ? 1 : undefined,
+            error: log.error('test') ? 1 : undefined,
+            fatal: log.fatal('test') ? 1 : undefined
+          }
+          const exp = {
+            debug: expects.debug,
+            info: expects.info,
+            warn: expects.warn,
+            error: expects.error,
+            fatal: expects.fatal
+          }
+          assert.deepEqual(res, exp)
+        })
+      })
+    })
+
+    describe('skip', function () {
+      it('should skip "one"', function () {
+        Log.options({level: undefined, namespaces: '-one,two'})
+        const log1 = new Log('one')
+        const log2 = new Log('two')
+        assert(!/one/.test(log1.error('one')))
+        assert(/two/.test(log2.error('two')))
+      })
+    })
+  })
+
+  describe('custom formatter', function () {
+    let log
+
+    before(() => {
+      Log.options({level: 'ERROR', namespaces: undefined})
+      log = new Log('custom:format', {colors: false, formatters: {h: (n) => n.toString(16)}})
+    })
+
+    it('should display result hex formatted', function () {
+      const res = log.error('hex(%h)', 3333)
+      assert.equal(res[0], 'ERROR custom:format hex(d05) +0ms')
     })
   })
 })

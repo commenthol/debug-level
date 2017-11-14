@@ -27,5 +27,25 @@ describe('#Format', function () {
         else assert.deepEqual(res, fixture[idx])
       })
     })
+
+    it('should use error name and message if stack is missing', function () {
+      const err = new TypeError('untyped')
+      delete err.stack
+      const res = format.format(err)
+      assert.deepEqual(res, [ '"TypeError untyped"' ])
+    })
+
+    it('should get noQuotes option', function () {
+      assert.equal(format.noQuotes, undefined)
+    })
+
+    it('should set spaces option', function () {
+      format.spaces = 2
+      assert.deepEqual(format.format('%j', {a: {b: {c: 'd'}}}), [ '{\n  "a": {\n    "b": {\n      "c": "d"\n    }\n  }\n}' ])
+    })
+
+    it('should get spaces option', function () {
+      assert.equal(format.spaces, 2)
+    })
   })
 })

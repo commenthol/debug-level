@@ -8,10 +8,13 @@ function reqToJSON () {
 
 // assume a request obj
 const req = {
-  method: 'GET', url: '/path', ip: '10.10.10.10',
-  headers: {'User-Agent': 'Custom/2.0'}, other: {}
+  method: 'GET',
+  url: '/path',
+  ip: '10.10.10.10',
+  headers: {'User-Agent': 'Custom/2.0'},
+  other: {}
 }
-req.toJSON = reqToJSON.bind(req)
+req.toJSON = reqToJSON
 
-log.debug(req)
-//> DEBUG * {"ip":"10.10.10.10","method":"GET","url":"/path"} +0ms
+log.debug({req: req})
+// > DEBUG * {"req":{"ip":"10.10.10.10","method":"GET","url":"/path"}} +0ms

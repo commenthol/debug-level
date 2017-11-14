@@ -1,7 +1,7 @@
-/* eslint no-console:0 */
-/* global describe, it, before, after */
+/* eslint no-console: 0 no-multi-spaces: 0 */
 
 const assert = require('assert')
+const os = require('os')
 const sinon = require('sinon')
 const {inspect} = require('util')
 
@@ -61,10 +61,10 @@ describe('#Log', function () {
       assert.deepEqual(res, {
         DEBUG: 'foo*,bar',
         DEBUG_LEVEL: 'ERROR',
+        DEBUG_COLORS: 'false',
         DEBUG_JSON: 'true',
         DEBUG_SERVERINFO: 'false',
         DEBUG_HIDE_DATE: 'true',
-        DEBUG_COLORS: 'false',
         DEBUG_SPACES: 'null'
       })
     })
@@ -72,27 +72,110 @@ describe('#Log', function () {
 
   describe('levels', function () {
     const tests = [
-      ['DEBUG', {error: 1, warn: 1, info: 1, debug: 1}],
-      ['INFO',  {error: 1, warn: 1, info: 1}],
-      ['WARN',  {error: 1, warn: 1}],
-      ['ERROR', {error: 1}],
-      ['OFF',   {}],
+      [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      ['WARN',    {fatal: 1, error: 1, warn: 1}],
+      ['ERROR',   {fatal: 1, error: 1}],
+      ['FATAL',   {fatal: 1}],
+      ['OFF',     {}]
     ]
     tests.forEach(([level, expects]) => {
       it('shall display logs for level ' + level, function () {
-        Log.options({level, json: false, colors: true, namespaces: 'test*'})
-        const log = new Log('test::' + level)
+        Log.options({level, namespaces: 'test:*', json: false, colors: true})
+        const log = new Log('test:' + (level || 'undefined').toLowerCase())
         const res = {
           debug: log.debug('test') ? 1 : undefined,
-          info:  log.info('test')  ? 1 : undefined,
-          warn:  log.warn('test')  ? 1 : undefined,
-          error: log.error('test') ? 1 : undefined
+          info: log.info('test') ? 1 : undefined,
+          warn: log.warn('test') ? 1 : undefined,
+          error: log.error('test') ? 1 : undefined,
+          fatal: log.fatal('test') ? 1 : undefined
         }
         const exp = {
           debug: expects.debug,
-          info:  expects.info,
-          warn:  expects.warn,
-          error: expects.error
+          info: expects.info,
+          warn: expects.warn,
+          error: expects.error,
+          fatal: expects.fatal
+        }
+        assert.deepEqual(res, exp)
+      })
+    })
+
+    describe('levels wo namespace', function () {
+      const tests = [
+        [undefined, {}],
+        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+        ['WARN',    {fatal: 1, error: 1, warn: 1}],
+        ['ERROR',   {fatal: 1, error: 1}],
+        ['FATAL',   {fatal: 1}],
+        ['OFF',     {}]
+      ]
+      tests.forEach(([level, expects]) => {
+        it('shall display logs for level ' + level, function () {
+          Log.options({level, namespaces: undefined, json: false, colors: true})
+          const log = new Log('test:' + (level || 'undefined').toLowerCase())
+          const res = {
+            debug: log.debug('test') ? 1 : undefined,
+            info: log.info('test') ? 1 : undefined,
+            warn: log.warn('test') ? 1 : undefined,
+            error: log.error('test') ? 1 : undefined,
+            fatal: log.fatal('test') ? 1 : undefined
+          }
+          const exp = {
+            debug: expects.debug,
+            info: expects.info,
+            warn: expects.warn,
+            error: expects.error,
+            fatal: expects.fatal
+          }
+          assert.deepEqual(res, exp)
+        })
+      })
+    })
+  })
+
+  describe('namespaced levels', function () {
+    const tests = [
+      // level,   nsLevel,   expects
+      [undefined, undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      [undefined, 'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      [undefined, 'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      [undefined, 'WARN',    {fatal: 1, error: 1, warn: 1}],
+      [undefined, 'ERROR',   {fatal: 1, error: 1}],
+      [undefined, 'FATAL',   {fatal: 1}],
+      [undefined, 'OFF',     {}],
+      ['ERROR',   undefined, {fatal: 1, error: 1}],
+      ['ERROR',   'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+      ['ERROR',   'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+      ['ERROR',   'WARN',    {fatal: 1, error: 1, warn: 1}],
+      ['ERROR',   'ERROR',   {fatal: 1, error: 1}],
+      ['FATAL',   'FATAL',   {fatal: 1}],
+      ['ERROR',   'OFF',     {}]
+    ]
+    tests.forEach(([level, nsLevel, expects]) => {
+      it(`shall display logs for level ${level} using namespaced-level ${nsLevel}`, function () {
+        Log.options({
+          level,
+          namespaces: `other,${nsLevel ? nsLevel + ':' : ''}test,log*`,
+          json: false,
+          colors: true
+        })
+        const log = new Log('test')
+        const res = {
+          debug: log.debug('test') ? 1 : undefined,
+          info: log.info('test') ? 1 : undefined,
+          warn: log.warn('test') ? 1 : undefined,
+          error: log.error('test') ? 1 : undefined,
+          fatal: log.fatal('test') ? 1 : undefined
+        }
+        const exp = {
+          debug: expects.debug,
+          info: expects.info,
+          warn: expects.warn,
+          error: expects.error,
+          fatal: expects.fatal
         }
         assert.deepEqual(res, exp)
       })
@@ -101,22 +184,23 @@ describe('#Log', function () {
 
   describe('enabled', function () {
     const tests = [
-      ['DEBUG', {any: true,  error: true,  warn: true,  info: true,  debug: true}],
-      ['INFO',  {any: true,  error: true,  warn: true,  info: true,  debug: false}],
-      ['WARN',  {any: true,  error: true,  warn: true,  info: false, debug: false}],
-      ['ERROR', {any: true,  error: true,  warn: false, info: false, debug: false}],
-      ['OFF',   {any: false, error: false, warn: false, info: false, debug: false}],
+      ['DEBUG', {fatal: true,  error: true,  warn: true,  info: true,  debug: true}],
+      ['INFO',  {fatal: true,  error: true,  warn: true,  info: true,  debug: false}],
+      ['WARN',  {fatal: true,  error: true,  warn: true,  info: false, debug: false}],
+      ['ERROR', {fatal: true,  error: true,  warn: false, info: false, debug: false}],
+      ['FATAL', {fatal: true,  error: false, warn: false, info: false, debug: false}],
+      ['OFF',   {fatal: false, error: false, warn: false, info: false, debug: false}]
     ]
     tests.forEach(([level, exp]) => {
       it('shall check if enabled for level ' + level, function () {
         Log.options({level, json: false, colors: true, namespaces: 'test*'})
-        const log = new Log('test::' + level)
+        const log = new Log('test:' + level.toLowerCase())
         const res = {
-          debug: log.enabled('debug'),
-          info:  log.enabled('info'),
-          warn:  log.enabled('warn'),
-          error: log.enabled('error'),
-          any:   log.enabled(),
+          debug: log.enabled.debug,
+          info: log.enabled.info,
+          warn: log.enabled.warn,
+          error: log.enabled.error,
+          fatal: log.enabled.fatal
         }
         assert.deepEqual(res, exp)
       })
@@ -139,6 +223,7 @@ describe('#Log', function () {
       after(() => {
         clock.restore()
         if (WRITE) console.log(inspect(exp))
+        Log.reset()
       })
 
       testcases.forEach(({name, args}, idx) => {
@@ -146,8 +231,15 @@ describe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.equal(res, f[idx])
+          else assert.equal(res, f[idx], res + ' !== ' + f[idx])
         })
+      })
+
+      it('should log serverinfo and pid', function () {
+        const log = new Log('*', {level: undefined, serverinfo: true})
+        const res = log.error('test')
+        assert(res.indexOf(os.hostname()) !== -1)
+        assert(res.indexOf(process.pid) !== -1)
       })
     })
 
@@ -159,7 +251,7 @@ describe('#Log', function () {
 
       before(() => {
         clock = sinon.useFakeTimers()
-        Log.options({level: 'error', json: true, colors: false, serverinfo: false, namespaces: 'test*'})
+        Log.options({level: 'error', namespaces: 'test*', json: true, colors: false, serverinfo: false})
         log = new Log('test', {hideDate: false})
       })
 
@@ -173,8 +265,66 @@ describe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.equal(res, f[idx])
+          else assert.equal(res, f[idx], res + ' !== ' + f[idx])
         })
+      })
+
+      it('should remove object only formatters', function () {
+        const log = Log('*')
+        const res = log.error('%j ', {a: {b: 'c'}})
+        assert.equal(res, '{"level":"ERROR","name":"*","a":{"b":"c"},"diff":0}\n')
+      })
+
+      it('should log serverinfo and pid', function () {
+        const log = new Log('*', {level: undefined, serverinfo: true, json: true})
+        const res = log.error('test')
+        assert(res.indexOf('"hostname":"' + os.hostname()) !== -1, 'missing hostname')
+        assert(res.indexOf('"pid":' + process.pid) !== -1, 'missing pid')
+      })
+    })
+  })
+
+  describe('namespaces', function () {
+    describe('namespace *', function () {
+      const tests = [
+        [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
+        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
+        ['WARN',    {fatal: 1, error: 1, warn: 1}],
+        ['ERROR',   {fatal: 1, error: 1}],
+        ['FATAL',   {fatal: 1}],
+        ['OFF',     {}]
+      ]
+      tests.forEach(([level, expects]) => {
+        it('shall always log for level ' + level, function () {
+          Log.options({level, namespaces: 'aaa', json: false, colors: true})
+          const log = new Log('*')
+          const res = {
+            debug: log.debug('test') ? 1 : undefined,
+            info: log.info('test') ? 1 : undefined,
+            warn: log.warn('test') ? 1 : undefined,
+            error: log.error('test') ? 1 : undefined,
+            fatal: log.fatal('test') ? 1 : undefined
+          }
+          const exp = {
+            debug: expects.debug,
+            info: expects.info,
+            warn: expects.warn,
+            error: expects.error,
+            fatal: expects.fatal
+          }
+          assert.deepEqual(res, exp)
+        })
+      })
+    })
+
+    describe('skip', function () {
+      it('should skip "one"', function () {
+        Log.options({level: undefined, namespaces: '-one,two'})
+        const log1 = new Log('one')
+        const log2 = new Log('two')
+        assert(!/one/.test(log1.error('one')))
+        assert(/two/.test(log2.error('two')))
       })
     })
   })
@@ -183,13 +333,13 @@ describe('#Log', function () {
     let log
 
     before(() => {
-      Log.options({namespaces: '*', json: false, colors: false, hideDate: true})
+      Log.options({level: 'ERROR', namespaces: undefined, json: false, colors: false, hideDate: true})
       log = new Log('custom:format', {formatters: {h: (n) => n.toString(16)}})
     })
 
     it('should display result hex formatted', function () {
       const res = log.error('hex(%h)', 3333)
-      assert.equal(res, 'ERROR custom:format hex(d05) +0ms\n')
+      assert.equal(res, '  ERROR custom:format hex(d05) +0ms\n')
     })
   })
 })

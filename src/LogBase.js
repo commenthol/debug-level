@@ -1,5 +1,5 @@
 const Format = require('./Format')
-const {adjustLevel, LEVELS, ERROR, WARN, INFO, DEBUG} = require('./utils')
+const {adjustLevel, LEVELS, DEBUG, INFO, WARN, ERROR, FATAL} = require('./utils')
 const Namespaces = require('./Namespaces')
 
 function LogBase (name, opts) {
@@ -13,84 +13,25 @@ function LogBase (name, opts) {
 }
 
 LogBase.prototype = {
-  _serverinfo () {},
-
-  /**
-  * @return {object} json object
-  */
-  _formatJson (level, _args) {
-    let args = _args.slice() // work on copy
-    const {opts} = this
-    const o = {
-      level,
-      name: this.name
-    }
-
-    // remove object only formats
-    if (/^\s*%[oOj]\s*$/.test(args[0])) {
-      args.shift()
-    }
-    // format a string based message
-    if (['undefined', 'number', 'boolean'].indexOf(typeof args[0]) !== -1) {
-      o.msg = args.shift()
-    } else if (typeof args[0] === 'string') {
-      args = this.formatter.format(...args)
-      o.msg = args.shift()
-    }
-    // check for error
-    if (args[0] instanceof Error) {
-      const err = args.shift()
-      o.err = {
-        name: err.name,
-        message: err.message,
-        stack: err.stack
-      }
-      // append other keys
-      Object.keys(err).forEach((key) => {
-        o[key] = err[key]
-      })
-    }
-    if (typeof args[0] === 'object') {
-      o.body = args.shift()
-    }
-    // any other arguments are added to `.args`
-    if (args.length) {
-      o.args = args
-    }
-    // we put serverinfo and date at the end of the object
-    // for not viewing the same info e.g. if in tty
-    if (opts.serverinfo) this._serverinfo(o)
-    if (!opts.hideDate) o.time = new Date().toISOString()
-    // diff info is not in humanized form
-    o.diff = this.diff
-
-    return o
-  },
-
-  _diff () {
-    const curr = Date.now()
-    const prev = this.prev || curr
-    this.diff = curr - prev
-    this.prev = curr
-  },
-
-  _log (/* level, args */) {
-    throw new Error('needs implementation')
-  },
-
   enable (namespaces) {
     namespaces = namespaces || this.opts.namespaces
     const namespace = new Namespaces(namespaces)
     this._enabled = {} // reset
-    if ((!namespaces && this.opts.level) || namespace.isEnabled(this.name)) {
-      LEVELS[adjustLevel(this.opts.level, DEBUG)]
-        .forEach((level) => this._enabled[level] = true)
+    const level = namespace.isEnabled(this.name, this.opts.level)
+    if (level) {
+      LEVELS[adjustLevel(level, DEBUG)].forEach((level) => {
+        this._enabled[level] = true
+      })
     }
   },
 
-  enabled (level) {
-    level = adjustLevel(level, ERROR)
-    return !!this._enabled[level]
+  get enabled () {
+    return this._enabled._cache || (
+      this._enabled._cache = LEVELS[DEBUG].reduce((o, level) => {
+        o[level] = o[level.toLowerCase()] = !!this._enabled[level]
+        return o
+      }, {})
+    )
   },
 
   debug (...args) {
@@ -111,6 +52,96 @@ LogBase.prototype = {
   error (...args) {
     if (!this._enabled.ERROR) return
     return this._log(ERROR, args)
+  },
+
+  fatal (...args) {
+    if (!this._enabled.FATAL) return
+    return this._log(FATAL, args)
+  },
+
+  _serverinfo () {},
+
+  /**
+  * @return {object} json object
+  */
+  _formatJson (level, _args) {
+    let args = _args.slice() // work on copy
+    const {opts} = this
+    const o = {
+      level,
+      name: this.name,
+      msg: undefined
+    }
+
+    let loop = true
+
+    while (loop && args.length) {
+      // remove object only formats
+      if (/^\s*%[oOj]\s*$/.test(args[0])) {
+        args.shift()
+      }
+
+      switch (typeof args[0]) {
+        case 'string':
+          loop = false
+          args = this.formatter.format(...args)
+          o.msg = args.shift()
+          break
+        case 'object':
+          if (args[0] instanceof Error) {
+            const err = args.shift()
+            o.err = {
+              name: err.name,
+              stack: err.stack
+            }
+            o.msg = err.message
+            // append other keys
+            Object.keys(err).forEach((key) => {
+              o.err[key] = err[key]
+            })
+          } else {
+            const obj = args.shift()
+            if (Array.isArray(obj)) {
+              o.arr = obj
+            } else {
+              Object.assign(o, obj)
+            }
+          }
+          break
+        default:
+          loop = false
+          o.msg = args.shift()
+          break
+      }
+    }
+
+    // any other arguments are added to `.args`
+    if (args.length) {
+      o.args = args
+    }
+    // we put serverinfo and date at the end of the object
+    // for not viewing the same info e.g. if in tty
+    if (opts.serverinfo) this._serverinfo(o)
+    if (!opts.hideDate) o.time = new Date().toISOString()
+    // diff info is not in humanized form
+    o.diff = this.diff
+    // ensure core fields
+    o.level = level
+    o.name = this.name
+
+    return o
+  },
+
+  _diff () {
+    const curr = Date.now()
+    const prev = this.prev || curr
+    this.diff = curr - prev
+    this.prev = curr
+  },
+
+  _log (/* level, args */) {
+    /* istanbul ignore next */
+    throw new Error('needs implementation')
   }
 }
 

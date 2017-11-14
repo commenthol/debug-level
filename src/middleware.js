@@ -4,7 +4,7 @@ const {parse: urlParse} = require('url')
 const {parse: qsParse} = require('querystring')
 
 // https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
-const gif = new Buffer('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
+const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
 
 // custom logger to use formatter and stream
 function CustomLog () {

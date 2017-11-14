@@ -7,7 +7,7 @@ const replacer = (key, value) => {
   return value
 }
 
-const oFormatter = (obj, spaces) => {
+const jFormatter = (obj, spaces) => {
   return stringify(obj, replacer, spaces)
 }
 
@@ -16,9 +16,9 @@ const formatters = {
   d: (arg) => Number(arg),
   i: (arg) => parseInt(arg, 10),
   f: (arg) => parseFloat(arg),
-  j: oFormatter,
-  o: oFormatter,
-  O: oFormatter
+  j: jFormatter,
+  o: jFormatter,
+  O: jFormatter
 }
 
 module.exports = Format
@@ -37,10 +37,16 @@ function Format (opts = {}) {
 }
 
 Format.prototype = {
+  get noQuotes () {
+    return this.opts.noQuotes
+  },
   set noQuotes (val) {
     this.opts.noQuotes = !!val
   },
 
+  get spaces () {
+    return this.opts.spaces
+  },
   set spaces (spaces) {
     this.opts.spaces = spaces
   },
@@ -52,16 +58,16 @@ Format.prototype = {
   */
   format (...args) {
     switch (typeof args[0]) {
-    case 'string':
-      break
-    case 'number':
-      args.unshift('%d')
-      break
-    case 'boolean':
-      args.unshift('%s')
-      break
-    default:
-      args.unshift('%O')
+      case 'string':
+        break
+      case 'number':
+        args.unshift('%d')
+        break
+      case 'boolean':
+        args.unshift('%s')
+        break
+      default:
+        args.unshift('%O')
     }
 
     // apply all `formatters`
@@ -73,12 +79,11 @@ Format.prototype = {
       const formatter = this.formatters[format]
       if (typeof formatter === 'function') {
         const val = args[idx]
-        match = formatter.call(this, val, this.opts.spaces)
+        match = formatter(val, this.opts.spaces)
         if (this.opts.noQuotes && typeof match === 'string') {
           match = match.replace(/^"/, '').replace(/"$/m, '')
         }
-        // remove `args[idx]` as being inlined
-        args.splice(idx, 1)
+        args.splice(idx, 1) // remove `args[idx]` as being inlined
         idx--
       }
       return match

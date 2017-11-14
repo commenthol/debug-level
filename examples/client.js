@@ -17,7 +17,7 @@ function client (log, path) {
       })
     setTimeout(request, Math.random() * 1000)
   }
-  request ()
+  request()
 }
 
 client(logA, '/kitty')

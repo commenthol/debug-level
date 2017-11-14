@@ -1,8 +1,10 @@
 /**
 * @license MIT
-* @copyright debug contributors
+* @copyright debug contributors, <commenthol@gmail.com>
 * @see https://github.com/visionmedia/debug
 */
+
+const LEVELS_REGEX = /^(DEBUG|INFO|WARN|ERROR|FATAL|OFF):/i
 
 module.exports = Namespaces
 
@@ -15,40 +17,55 @@ Namespaces.prototype = {
     this.skips = []
     this.names = []
 
-    const split = (typeof namespaces === 'string'
+    const splited = (typeof namespaces === 'string'
       ? namespaces
       : ''
     ).split(/[\s,]+/)
 
-    for (let _namespace of split) {
+    for (let _namespace of splited) {
       if (!_namespace) continue // ignore empty strings
-      const namespace = _namespace.replace(/\*/g, '.*?')
+      const {namespace, level} = this._namespaceNLevel(_namespace)
       if (namespace[0] === '-') {
-        this.skips.push(new RegExp('^' + namespace.substr(1) + '$'))
+        this.skips.push({re: new RegExp('^' + namespace.substr(1) + '$')})
       } else {
-        this.names.push(new RegExp('^' + namespace + '$'))
+        this.names.push({re: new RegExp('^' + namespace + '$'), level})
       }
     }
   },
 
   disable () {
+    /* istanbul ignore next */
     this.enable('')
   },
 
-  isEnabled (name) {
-    if (name[name.length - 1] === '*') {
-      return true
+  isEnabled (name, level) {
+    if (name === '*') {
+      return level || 'DEBUG'
     }
+    if (!this.names.length) {
+      return level
+    }
+
     for (let _skip of this.skips) {
-      if (_skip.test(name)) {
-        return false
+      if (_skip.re.test(name)) {
+        return
       }
     }
     for (let _name of this.names) {
-      if (_name.test(name)) {
-        return true
+      if (_name.re.test(name)) {
+        return _name.level || level || 'DEBUG'
       }
     }
-    return false
+  },
+
+  /**
+  * @private
+  */
+  _namespaceNLevel (_namespace) {
+    const level = (LEVELS_REGEX.exec(_namespace) || [])[1]
+    const namespace = _namespace
+      .replace(LEVELS_REGEX, '')
+      .replace(/\*/g, '.*?')
+    return {namespace, level}
   }
 }

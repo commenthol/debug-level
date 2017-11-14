@@ -1,9 +1,11 @@
 /* global navigator window document Image chrome */
 
 const {Queue} = require('asyncc')
-const {inspectOpts, saveOpts, inspectNamespaces, selectColors, random} = require('./utils')
+const {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random} = require('./utils')
 const ms = require('ms')
 const LogBase = require('./LogBase')
+
+const COLOR_RESET = 'color:inherit'
 
 /**
 * global log options
@@ -19,7 +21,7 @@ const options = {
 */
 const storage = () => {
   try {
-    return 'undefined' != typeof chrome && 'undefined' != typeof chrome.storage
+    return typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined'
       ? chrome.storage.local
       : window.localStorage
   } catch (err) {
@@ -72,8 +74,8 @@ const supportsColors = () => {
 * @constructor
 * @param {String} name - namespace of Logger
 */
-function Log(name, opts) {
-  if (!(this instanceof Log)) return new Log(name)
+function Log (name, opts) {
+  if (!(this instanceof Log)) return new Log(name, opts)
   const _storage = storage()
   Object.assign(options,
     inspectOpts(_storage),
@@ -82,17 +84,43 @@ function Log(name, opts) {
   options.colors = options.colors === false ? false : supportsColors()
 
   LogBase.call(this, name, Object.assign({}, options, opts))
-  this.colors = selectColors(name)
+  const colorFn = (c) => `color:${c}`
+  this.color = selectColor(name, colorFn)
+  this.levColors = levelColors(colorFn)
   this.queue = new Queue(this._sendLog.bind(this), 3)
 }
 Object.setPrototypeOf(Log.prototype, LogBase.prototype)
 
 Object.assign(Log.prototype, {
   /**
+    * render arguments to console.log
+    * @public
+    * @param {Array} args - console.log arguments
+    * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
+    * @return {String}
+    */
+  render (args) {
+    console.log(...args) // eslint-disable-line no-console
+    return args
+  },
+
+  /**
+  * send log to server
+  * @param {Array} args - log arguments
+  * @param {String} level - log level
+  */
+  send (args, level) {
+    const o = this._formatJson(level, args)
+    o.userAgent = navigator.userAgent
+    const str = this.formatter.format(o)[0]
+    this.queue.push(str)
+  },
+
+  /**
   * format log arguments
   * @private
   */
-  _log(level, args) {
+  _log (level, args) {
     this._diff()
 
     const _args = this._formatArgs(level, args)
@@ -112,52 +140,58 @@ Object.assign(Log.prototype, {
   */
   _formatArgs (level, _args) {
     const args = _args.slice() // work on copy
-    const sc = `color: ${this.colors[level]}`
-    const rc = 'color: inherit'
+    const color = this.color
 
     if (typeof args[0] !== 'string') {
       args.unshift('%O')
     }
 
     args[0] = [
-      this._color(level + ' ' + this.name),
+      this._color(level),
+      this._color(this.name),
       args[0],
       this._color('+' + ms(this.diff))
     ].join(' ')
 
     if (this.opts.colors) {
-      args.splice(1, 0, sc, rc)
+      args.splice(1, 0, color + ';font-weight:bold', COLOR_RESET)
+      args.splice(1, 0, this.levColors[level], COLOR_RESET)
     }
-    let index = 0
+    let idx = 0
     let lastC
-    args[0] = args[0].replace(/%[a-zA-Z%]/g, function(match) {
-      if ('%%' === match) return match
-      index++
-      // the browser does not contain a %j formatter
-      if ('%j' === match) return '%O'
-      if ('%c' === match) {
-        lastC = index
+    // apply custom formatters
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
+      if (match === '%%') return match
+      idx++
+
+      switch (format) {
+        case 's':
+        case 'd':
+        case 'i':
+        case 'f':
+        case 'o':
+        case 'O':
+          break
+        case 'c':
+          lastC = idx
+          break
+        default:
+          const formatter = this.formatter.formatters[format]
+          if (typeof formatter === 'function') {
+            const val = args[idx]
+            match = formatter(val)
+            args.splice(idx, 1) // remove `args[idx]` as being inlined
+            idx--
+          }
       }
       return match
     })
 
     if (this.opts.colors) {
-      args.splice(lastC - 1, 0, sc, rc)
+      args.splice(lastC - 1, 0, color, COLOR_RESET)
     }
 
     return args
-  },
-
-  /**
-  * send log to server
-  * @param {Array} args - log arguments
-  * @param {String} level - log level
-  */
-  send (args, level) {
-    const o = this._formatJson(level, args)
-    o.userAgent = navigator.userAgent
-    const str = this.formatter.format(o)[0]
-    this.queue.push(str)
   },
 
   /**
@@ -180,18 +214,6 @@ Object.assign(Log.prototype, {
     return this.opts.colors
       ? `%c${str}%c`
       : str
-  },
-
-  /**
-  * render arguments to console.log
-  * @public
-  * @param {Array} args - console.log arguments
-  * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
-  * @return {String}
-  */
-  render (args) {
-    console.log(...args) // eslint-disable-line no-console
-    return args
   }
 })
 

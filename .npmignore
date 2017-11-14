@@ -1,10 +1,14 @@
 node_modules/
+coverage/
 scripts/
 tmp/
 test/
 examples/
 *.tgz
 *.log
+.*
 karma.conf.js
 webpack.config.js
 yarn.lock
+benchmark/
+docs/

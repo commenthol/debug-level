@@ -8,8 +8,9 @@
   ],
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
-  "main": "lib",
-  "module": "src",
+  "main": "./lib",
+  "browser": "./lib/browser.js",
+  "module": "./src",
   "directories": {
     "test": "test"
   },

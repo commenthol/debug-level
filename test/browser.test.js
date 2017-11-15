@@ -4,7 +4,7 @@ const assert = require('assert')
 const sinon = require('sinon')
 const {inspect} = require('util')
 
-const Log = require('../src/browser.js')
+const Log = require('..')
 const fixtures = require('./fixtures/browser.js')
 const {testcases: testcases_} = require('./fixtures/testcases.js')
 

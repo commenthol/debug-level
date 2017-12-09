@@ -7,6 +7,7 @@ log.info('%s world', 'hello') // logs a formatted string at level INFO
 log.warn('huh %o', {ghost: 'rider'}) // logs a formatted object at level WARN
 log.error(new Error('boom')) // logs an Error at level ERROR
 log.fatal('fatal test') // logs an Error at level FATAL
+log.log('always logs') // always logs regardless of set level
 
 const logA = new Log('log:A')
 

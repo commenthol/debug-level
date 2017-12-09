@@ -3,7 +3,7 @@
 * @copyright debug contributors, <commenthol@gmail.com>
 */
 
-const [DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
+const [LOG, DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['LOG', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
 
 const LEVELS = {
   DEBUG: [FATAL, ERROR, WARN, INFO, DEBUG],
@@ -30,6 +30,7 @@ const COLORS = [
 ]
 
 const LEVEL_COLORS = {
+  LOG: '#999999',
   DEBUG: '#0000CC',
   INFO: '#00CC00',
   WARN: '#CCCC00',
@@ -67,6 +68,8 @@ const inspectOpts = (obj) => Object.keys(obj)
     } else if (prop === 'level') {
       val = adjustLevel(obj[key])
       if (val) opts[prop] = val
+    } else if (prop === 'url') {
+      opts[prop] = obj[key]
     } else {
       opts[prop] = val
     }
@@ -114,6 +117,7 @@ const inspectNamespaces = (obj) => {
 const random = (len) => Math.random().toString(16).toLowerCase().substr(2, len)
 
 module.exports = {
+  LOG,
   DEBUG,
   INFO,
   WARN,

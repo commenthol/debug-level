@@ -85,6 +85,7 @@ bdescribe('#Log', function () {
         Log.options({level, namespaces: 'test:*'})
         const log = new Log('test:' + (level || 'undefined').toLowerCase())
         const res = {
+          log: log.log('test') ? 1 : undefined,
           debug: log.debug('test') ? 1 : undefined,
           info: log.info('test') ? 1 : undefined,
           warn: log.warn('test') ? 1 : undefined,
@@ -92,6 +93,7 @@ bdescribe('#Log', function () {
           fatal: log.fatal('test') ? 1 : undefined
         }
         const exp = {
+          log: 1,
           debug: expects.debug,
           info: expects.info,
           warn: expects.warn,

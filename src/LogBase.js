@@ -1,5 +1,5 @@
 const Format = require('./Format')
-const {adjustLevel, LEVELS, DEBUG, INFO, WARN, ERROR, FATAL} = require('./utils')
+const {adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL} = require('./utils')
 const Namespaces = require('./Namespaces')
 
 function LogBase (name, opts) {
@@ -32,6 +32,10 @@ LogBase.prototype = {
         return o
       }, {})
     )
+  },
+
+  log (...args) { // always log
+    return this._log(LOG, args)
   },
 
   debug (...args) {

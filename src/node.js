@@ -6,7 +6,7 @@ const {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors} = req
 const LogBase = require('./LogBase')
 
 const env = process.env.NODE_ENV || 'development'
-const isDevEnv = env === 'development'
+const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
 
 /**
 * global log options
@@ -164,5 +164,7 @@ Log.reset = function () {
     }
   })
 }
+
+Log.isDevEnv = isDevEnv
 
 module.exports = Log

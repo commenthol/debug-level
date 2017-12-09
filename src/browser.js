@@ -1,9 +1,9 @@
 /* global navigator window document Image chrome */
 
-const {Queue} = require('asyncc')
-const {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random} = require('./utils')
-const ms = require('ms')
-const LogBase = require('./LogBase')
+import {Queue} from 'asyncc'
+import {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random} from './utils'
+import ms from 'ms'
+import LogBase from './LogBase'
 
 const COLOR_RESET = 'color:inherit'
 

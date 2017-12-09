@@ -73,9 +73,10 @@ log.error(new Error('boom'))         // logs an Error at level ERROR
 log.warn('huh %o', {ghost: 'rider'}) // logs a formatted object at level WARN
 log.info('%s world', 'hello')        // logs a formatted string at level INFO
 log.debug({object: 1})               // logs an object at level DEBUG
+log.log('always logs')               // always logs regardless of set level
 ```
 
-Running `levels.js` without environment variables will show no output.
+Running `levels.js` without environment variables will show no output (apart from `log.log`).
 Setting only `DEBUG_LEVEL` shows all lines with their respective level.
 Combined with `DEBUG`, using comma separated [namespaces](#namespaces), only
 those log lines with matching namespace and level get logged.
@@ -409,7 +410,36 @@ log.debug({req: req})
 
 ## Logging Browser messages
 
-> TODO: need to spend some lines (check `src/middleware.js` together with option `url` for the moment)
+To log debug messages from the browser on your server you can enable a logger middleware in your express/ connect server.
+
+```js
+const app = require('express')()
+const {logger} = require('debug-level')
+
+app.use('./debug-level', logger({maxSize: 100}))
+...
+```
+
+In your single page application use:
+
+```js
+import Log from 'debug-level'
+
+localStorage.setItem('DEBUG_URL', '/debug-level')
+localStorage.setItem('DEBUG', 'myApp*')
+// ...
+const log = new Log('myApp')
+
+log.debug('my first %s', 'logline')
+```
+
+Check example at `examples/app`. To run it use:
+
+```bash
+DEBUG=* node examples/app/server.js
+```
+
+and open <http://localhost:3000>
 
 ## License
 
@@ -426,9 +456,3 @@ log.debug({req: req})
 [debug-level-dev.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-dev.png
 [debug-level-dev-json.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-dev-json.png
 [debug-level-prod.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-prod.png
-
-<!--
-[debug-level-dev.png]: ./docs/debug-level-dev.png
-[debug-level-dev-json.png]: ./docs/debug-level-dev-json.png
-[debug-level-prod.png]: ./docs/debug-level-prod.png
--->

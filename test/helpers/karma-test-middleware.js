@@ -1,10 +1,11 @@
-const middleware = require('../../src/middleware')()
+const Log = require('../..')
+const logger = Log.logger()
 
 function factory () {
   return function (req, res, next) {
     if (/^\/logger/.test(req.url)) {
       req.ip = req.ip || req.connection.remoteAddress
-      middleware(req, res)
+      logger(req, res)
     } else {
       next()
     }

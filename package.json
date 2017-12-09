@@ -9,7 +9,6 @@
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
   "main": "./lib",
-  "browser": "./lib/browser.js",
   "module": "./src",
   "directories": {
     "test": "test"
@@ -20,13 +19,16 @@
   },
   "scripts": {
     "build": "npm run clean && babel -d lib src",
+    "build:example": "cd examples/app && webpack",
     "clean": "rimraf lib coverage",
     "cover": "nyc -r lcov -r text npm test",
     "karma": "karma start",
     "lint": "eslint '**/*.js'",
     "prepublish": "npm run build && npm run lint && npm test",
+    "start:example": "node examples/app/server.js",
     "test": "mocha"
   },
+  "browser": "./lib/browser.js",
   "babel": {
     "presets": [
       "env"
@@ -44,12 +46,15 @@
     "asyncc": "^2.0.1",
     "chalk": "^2.2.0",
     "json-stringify-safe": "^5.0.1",
+    "map-lru": "^1.0.0",
     "ms": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-minify-webpack-plugin": "^0.2.0",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "eslint": "^4.8.0",
     "eslint-config-standard": "^10.2.1",
@@ -70,8 +75,12 @@
     "sinon": "^4.0.1",
     "webpack": "^3.8.1"
   },
+  "engines": {
+    "node": ">=4"
+  },
   "eslintIgnore": [
     "lib",
-    "tmp"
+    "tmp",
+    "examples/app/bundle.js"
   ]
 }

@@ -6,9 +6,9 @@ const {inspect} = require('util')
 
 const Log = require('..')
 const fixtures = require('./fixtures/browser.js')
-const {testcases: testcases_} = require('./fixtures/testcases.js')
+const {testcases: _testcases} = require('./fixtures/testcases.js')
 
-const testcases = testcases_.concat([
+const testcases = _testcases.concat([
   { name: 'custom color %c%o', args: [ 'custom color %c%o', 'color: red', {} ] }
 ])
 

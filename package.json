@@ -8,8 +8,8 @@
   ],
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
-  "main": "./lib",
-  "module": "./src",
+  "main": "lib",
+  "module": "src",
   "directories": {
     "test": "test"
   },
@@ -24,7 +24,7 @@
     "cover": "nyc -r lcov -r text npm test",
     "karma": "karma start",
     "lint": "eslint '**/*.js'",
-    "prepublish": "npm run build && npm run lint && npm test",
+    "prepublishOnly": "npm run build && npm run lint && npm test",
     "start:example": "node examples/app/server.js",
     "test": "mocha"
   },

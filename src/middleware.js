@@ -55,15 +55,15 @@ function middleware (opts) {
     res.write(gif)
     res.end()
 
-    const str = String(query.log)
+    const str = query.log
     if (!str) return
 
-    if (/^{/.test(str)) { // check if `str` looks like JSON
+    if (/^{.*?}\s*$/.test(str)) { // check if `str` looks like JSON
       try {
         const obj = JSON.parse(str)
         const level = adjustLevel(String(obj.level), DEBUG)
         const name = String(obj.name).substr(0, 50)
-        if (name) {
+        if (obj.name && name) {
           const l = loggers.get(name)
           if (l.enabled[level]) {
             if (req.ip) obj.ip = req.ip

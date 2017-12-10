@@ -4,6 +4,7 @@
 
 [![NPM version](https://badge.fury.io/js/debug-level.svg)](https://www.npmjs.com/package/debug-level/)
 [![Build Status](https://secure.travis-ci.org/commenthol/debug-level.svg?branch=master)](https://travis-ci.org/commenthol/debug-level)
+[![Coverage Status](https://coveralls.io/repos/github/commenthol/debug-level/badge.svg?branch=master)](https://coveralls.io/github/commenthol/debug-level?branch=master)
 
 A universal JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.  
 Prints colored and human readable output for development and [bunyan][] like JSON for production environments.

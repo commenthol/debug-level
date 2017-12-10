@@ -35,8 +35,18 @@ describe('#Format', function () {
       assert.deepEqual(res, [ '"TypeError untyped"' ])
     })
 
+    it('should set noQuotes option', function () {
+      format.noQuotes = false
+      assert.deepEqual(format.format('quotes %o', 'test'), ['quotes "test"'])
+      format.noQuotes = true
+      assert.deepEqual(format.format('noQuotes %o', 'test'), ['noQuotes test'])
+    })
+
     it('should get noQuotes option', function () {
-      assert.equal(format.noQuotes, undefined)
+      format.noQuotes = true
+      assert.equal(format.noQuotes, true)
+      format.noQuotes = false
+      assert.equal(format.noQuotes, false)
     })
 
     it('should set spaces option', function () {
@@ -46,6 +56,11 @@ describe('#Format', function () {
 
     it('should get spaces option', function () {
       assert.equal(format.spaces, 2)
+    })
+
+    it('should ignore formatter which is not a function', function () {
+      const format = new Format({formatters: {x: 'no-function'}})
+      assert.deepEqual(format.format('%x', 'cant format'), [ '%x', 'cant format' ])
     })
   })
 })

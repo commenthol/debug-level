@@ -9,7 +9,7 @@ module.exports = function karmaConfig (config) {
       // 'ChromeHeadless'
     ],
 
-    // singleRun: true,
+    singleRun: true,
 
     autoWatch: true,
 
@@ -22,33 +22,32 @@ module.exports = function karmaConfig (config) {
     reporters: [
       // Reference: https://github.com/mlex/karma-spec-reporter
       // Set reporter to print detailed results to console
-      'spec'
-
+      'spec',
       // Reference: https://github.com/karma-runner/karma-coverage
       // Output code coverage files
-      // 'coverage'
+      'coverage'
     ],
 
     files: [
-      // Reference: https://www.npmjs.com/package/phantomjs-polyfill
-      // Needed because React.js requires bind and phantomjs does not support it
-      // 'node_modules/phantomjs-polyfill/bind-polyfill.js',
       // Grab all files in the tests directory that contain _test.
-      'test/browser.test.js'
+      'test/browser.test.js',
+      'test/Format.test.js',
+      'test/utils.test.js'
     ],
 
     preprocessors: {
       // Reference: http://webpack.github.io/docs/testing.html
       // Reference: https://github.com/webpack/karma-webpack
       // Convert files with webpack and load sourcemaps
-      'test/*.js': ['webpack', 'sourcemap'],
-      'src/*.js': ['webpack', 'sourcemap']
+      'test/*.test.js': ['webpack', 'sourcemap']
     },
 
     // Configure code coverage reporter
     coverageReporter: {
-      dir: 'coverage/',
-      type: 'html'
+      reporters: [
+        {type: 'html', dir: 'coverage/'},
+        {type: 'text'}
+      ]
     },
 
     client: {
@@ -67,6 +66,7 @@ module.exports = function karmaConfig (config) {
       'karma-chrome-launcher',
       'karma-firefox-launcher',
       'karma-sourcemap-loader',
+      'karma-coverage',
       {'middleware:test': ['factory', karmaTestMiddleware]}
     ],
 

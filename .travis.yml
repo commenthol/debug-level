@@ -11,5 +11,4 @@ node_js:
   - node
 
 script:
-  - npm run build
-  - npm test
+  - npm run coveralls

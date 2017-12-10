@@ -12,12 +12,15 @@ const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as d
 * global log options
 */
 const options = {
+  level: void (0),
+  namespaces: void (0),
   json: !isDevEnv, // log in json format
   serverinfo: !isDevEnv, // append server information
-  hideDate: !!isDevEnv, // do not hide date from output
-  colors: !!isDevEnv, // apply colors
+  hideDate: isDevEnv, // do not hide date from output
+  colors: isDevEnv, // apply colors
   stream: process.stderr, // output stream
-  spaces: null // pretty print JSON
+  spaces: null, // pretty print JSON
+  splitLine: isDevEnv
 }
 
 /**
@@ -105,7 +108,7 @@ Object.assign(Log.prototype, {
     let str = [
       prefix,
       this.opts.hideDate ? '' : new Date().toISOString(),
-      !isDevEnv ? msg : msg.split('\\n').join('\n' + prefix + ' '),
+      !this.opts.splitLine ? msg.replace(/[\r\n]/g, '\\n') : msg.split(/\\n|\n/).join('\n' + prefix + ' '),
       this._color('+' + ms(this.diff), this.color),
       this.opts.serverinfo ? os.hostname() + ' ' + process.pid : void (0)
     ].filter(f => f).join(' ')
@@ -130,6 +133,7 @@ Object.assign(Log.prototype, {
   * @private
   */
   _serverinfo (o) {
+    // istanbul ignore else
     if (this.opts.serverinfo) {
       Object.assign(o, {hostname: os.hostname(), pid: process.pid})
     }
@@ -142,6 +146,7 @@ Object.assign(Log.prototype, {
 * @return {object} global options
 */
 Log.options = function (opts) {
+  if (!opts) return Object.assign({}, options)
   Object.assign(options, opts)
   return options
 }

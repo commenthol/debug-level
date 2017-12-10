@@ -3,7 +3,7 @@ var path = require('path')
 module.exports = {
   entry: '', // karma will set this
   output: '', // karma will set this
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
   resolve: {
     alias: {
       'src': path.resolve(__dirname, 'src'),
@@ -18,6 +18,13 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'test')
+        ]
+      }, {
+        test: /\.js$/,
+        loaders: ['isparta-loader'],
+        include: [
+          path.resolve(__dirname, 'lib'),
+          path.resolve(__dirname, 'src')
         ]
       }
     ]

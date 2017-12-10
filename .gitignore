@@ -1,10 +1,11 @@
 node_modules/
+.nyc_output/
+benchmark/
 coverage/
 lib/
 tmp/
-.nyc_output/
 *.tgz
 *.log
 yarn.lock
 package-lock.json
-benchmark/
+.coveralls.yml

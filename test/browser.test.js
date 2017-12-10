@@ -4,10 +4,8 @@ const assert = require('assert')
 const sinon = require('sinon')
 const {inspect} = require('util')
 
-const Log = require('..')
 const fixtures = require('./fixtures/browser.js')
 const {testcases: _testcases} = require('./fixtures/testcases.js')
-
 const testcases = _testcases.concat([
   { name: 'custom color %c%o', args: [ 'custom color %c%o', 'color: red', {} ] }
 ])
@@ -24,6 +22,15 @@ const WRITE = false
 
 bdescribe('#Log', function () {
   // this.timeout(1000000)
+  // const Log = require('..')
+  const Log = require('../src/browser')
+
+  const defaultOpts = Log.options()
+
+  const reset = () => {
+    Log.options(defaultOpts)
+    Log.reset()
+  }
 
   it('should instantiate without new', function () {
     const log = Log('test')
@@ -31,13 +38,16 @@ bdescribe('#Log', function () {
   })
 
   describe('options', function () {
-    after(() => {
-      Log.reset()
-    })
+    after(reset)
 
     it('should get default options', function () {
       const res = Log.options()
-      assert.deepEqual(res, { colors: true, url: undefined })
+      assert.deepEqual(res, {
+        level: undefined,
+        namespaces: undefined,
+        colors: true,
+        url: undefined
+      })
     })
 
     it('should set options', function () {
@@ -71,6 +81,8 @@ bdescribe('#Log', function () {
   })
 
   describe('levels', function () {
+    after(reset)
+
     const tests = [
       [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
       ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
@@ -105,6 +117,8 @@ bdescribe('#Log', function () {
     })
 
     describe('levels wo namespace', function () {
+      after(reset)
+
       const tests = [
         [undefined, {}],
         ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
@@ -139,6 +153,8 @@ bdescribe('#Log', function () {
   })
 
   describe('namespaced levels', function () {
+    after(reset)
+
     const tests = [
       // level,   nsLevel,   expects
       [undefined, undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
@@ -183,6 +199,8 @@ bdescribe('#Log', function () {
   })
 
   describe('enabled', function () {
+    after(reset)
+
     const tests = [
       ['DEBUG', {fatal: true,  error: true,  warn: true,  info: true,  debug: true}],
       ['INFO',  {fatal: true,  error: true,  warn: true,  info: true,  debug: false}],
@@ -208,6 +226,8 @@ bdescribe('#Log', function () {
   })
 
   describe('formats', function () {
+    after(reset)
+
     describe('debug like', function () {
       const f = fixtures.browser
       let log
@@ -300,6 +320,8 @@ bdescribe('#Log', function () {
   })
 
   describe('namespaces', function () {
+    after(reset)
+
     describe('namespace *', function () {
       const tests = [
         [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
@@ -346,6 +368,8 @@ bdescribe('#Log', function () {
 
   describe('custom formatter', function () {
     let log
+
+    after(reset)
 
     before(() => {
       Log.options({level: 'ERROR', namespaces: undefined})

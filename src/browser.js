@@ -11,6 +11,8 @@ const COLOR_RESET = 'color:inherit'
 * global log options
 */
 const options = {
+  level: void (0),
+  namespaces: void (0),
   colors: true, // apply coloring to browser console
   url: undefined // [optional] url to report errors
 }
@@ -25,6 +27,7 @@ const storage = () => {
       ? chrome.storage.local
       : window.localStorage
   } catch (err) {
+    // istanbul ignore next
     return {}
   }
 }
@@ -52,11 +55,13 @@ const supportsColors = () => {
     (tmp = window.console) && (tmp.firebug || (tmp.exception && tmp.table))
 
   if (isElectron) {
+    // istanbul ignore next
     return true
   }
 
   // Internet Explorer and Edge do not support colors.
   if (/(edge|trident)\/(\d+)/i.exec(userAgent)) {
+    // istanbul ignore next
     return false
   }
 
@@ -223,7 +228,7 @@ Object.assign(Log.prototype, {
 * @return {object} global options
 */
 Log.options = function (opts) {
-  if (!opts) return options
+  if (!opts) return Object.assign({}, options)
   Object.assign(options, opts, {
     colors: opts.colors === false ? false : supportsColors()
   })

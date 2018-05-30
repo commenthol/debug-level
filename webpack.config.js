@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loaders: ['babel-loader'],
@@ -21,11 +21,14 @@ module.exports = {
         ]
       }, {
         test: /\.js$/,
-        loaders: ['isparta-loader'],
-        include: [
-          path.resolve(__dirname, 'lib'),
-          path.resolve(__dirname, 'src')
-        ]
+        use: {
+          loader: 'istanbul-instrumenter-loader',
+          options: {
+            esModules: true
+          }
+        },
+        enforce: 'post',
+        exclude: /node_modules|\.spec\.js$/
       }
     ]
   }

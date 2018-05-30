@@ -19,14 +19,12 @@ module.exports = function karmaConfig (config) {
       'mocha'
     ],
 
-    reporters: [
-      // Reference: https://github.com/mlex/karma-spec-reporter
-      // Set reporter to print detailed results to console
-      'spec',
-      // Reference: https://github.com/karma-runner/karma-coverage
-      // Output code coverage files
-      'coverage'
-    ],
+    reporters: ['progress', 'coverage-istanbul'],
+
+    coverageIstanbulReporter: {
+      reports: ['text', 'html'],
+      fixWebpackSourcePaths: true
+    },
 
     files: [
       // Grab all files in the tests directory that contain _test.
@@ -67,6 +65,7 @@ module.exports = function karmaConfig (config) {
       'karma-firefox-launcher',
       'karma-sourcemap-loader',
       'karma-coverage',
+      'karma-coverage-istanbul-reporter',
       {'middleware:test': ['factory', karmaTestMiddleware]}
     ],
 

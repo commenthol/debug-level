@@ -6,7 +6,7 @@
 [![Build Status](https://secure.travis-ci.org/commenthol/debug-level.svg?branch=master)](https://travis-ci.org/commenthol/debug-level)
 [![Coverage Status](https://coveralls.io/repos/github/commenthol/debug-level/badge.svg?branch=master)](https://coveralls.io/github/commenthol/debug-level?branch=master)
 
-A universal JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.  
+A universal JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.
 Prints colored and human readable output for development and [bunyan][] like JSON for production environments.
 
 *human readable format for development*
@@ -68,6 +68,9 @@ given in the first argument.
 const Log = require('debug-level')
 // creates a logger for <namespace> `test`
 const log = new Log('test')
+
+// or using a global Log instance
+const log = require('debug-level').log('test')
 
 log.fatal(new Error('fatal'))        // logs an Error at level FATAL
 log.error(new Error('boom'))         // logs an Error at level ERROR
@@ -204,25 +207,25 @@ const log = new Log('*')
 log.debug({object: 1}) // ...
 ```
 
-Option name | Setting         | env     | Type    | Description      
------       | ----            | ----    | ----    | ----             
-level       | DEBUG_LEVEL     | _both_  | String  |                  
-namespaces  | DEBUG           | _both_  | String  |                  
-json        | DEBUG_JSON      | node    | Boolean |                  
-spaces      | DEBUG_SPACES    | node    | Number  | JSON spaces      
-hideDate    | DEBUG_HIDE_DATE | _both_  | Boolean |                  
-colors      | DEBUG_COLORS    | _both_  | Boolean |                  
-stream      | --              | node    | Stream  | output stream (defaults to `process.stderr`)                 
-url         | DEBUG_URL       | browser | String  |                  
+Option name | Setting         | env     | Type    | Description
+-----       | ----            | ----    | ----    | ----
+level       | DEBUG_LEVEL     | _both_  | String  |
+namespaces  | DEBUG           | _both_  | String  |
+json        | DEBUG_JSON      | node    | Boolean |
+spaces      | DEBUG_SPACES    | node    | Number  | JSON spaces
+hideDate    | DEBUG_HIDE_DATE | _both_  | Boolean |
+colors      | DEBUG_COLORS    | _both_  | Boolean |
+stream      | --              | node    | Stream  | output stream (defaults to `process.stderr`)
+url         | DEBUG_URL       | browser | String  |
 formatters  | --              | _both_  | Object  | custom formatters
 
 ## Levels
 
 (From [bunyan][])
 
-- `FATAL`: The service/app is going to stop or becomes unusable.  
+- `FATAL`: The service/app is going to stop or becomes unusable.
    An operator should definitely look into this soon.
-- `ERROR`: Fatal for a particular request, but the service/app continues servicing.  
+- `ERROR`: Fatal for a particular request, but the service/app continues servicing.
   An operator should look at this soon(ish)
 - `WARN`: A note on something that should probably be looked at by an operator eventually.
 - `INFO`: Detail on regular operation.
@@ -290,9 +293,9 @@ For example, `DEBUG=*,-connect:*` would include all debuggers except those start
 
 `debug-level` supports two types of outputs
 
-1. human readable - this pretty much follows the output of [debug][]  
+1. human readable - this pretty much follows the output of [debug][]
    This is the default for `NODE_ENV=development`. Can be forced using `DEBUG_JSON=0`
-2. machine readable - JSON output (similar to [bunyan][])  
+2. machine readable - JSON output (similar to [bunyan][])
    This is the default for test/production envs. Can be forced using `DEBUG_JSON=1`
 
 ### JSON output

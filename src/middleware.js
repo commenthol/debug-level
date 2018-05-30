@@ -8,7 +8,7 @@ const {adjustLevel, DEBUG} = require('./utils')
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
 
 class Loggers {
-  constructor (maxSize) {
+  constructor (maxSize = 100) {
     this.cache = new MapLRU(maxSize)
   }
   get (name) {

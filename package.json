@@ -6,16 +6,23 @@
     "debug",
     "level"
   ],
+  "homepage": "https://github.com/commenthol/debug-level#readme",
+  "bugs": {
+    "url": "https://github.com/commenthol/debug-level/issues"
+  },
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
   "main": "lib",
   "module": "src",
   "directories": {
+    "lib": "lib",
+    "doc": "docs",
+    "example": "examples",
     "test": "test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/commenthol/debug-level.git"
+    "url": "git+https://github.com/commenthol/debug-level.git"
   },
   "scripts": {
     "all": "npm run clean && npm run lint && npm run build && npm test",

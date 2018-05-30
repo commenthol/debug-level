@@ -1,6 +1,6 @@
 {
   "name": "debug-level",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "debug with levels",
   "keywords": [
     "debug",
@@ -32,7 +32,7 @@
     "coverage": "nyc -r lcov -r text npm test",
     "coveralls": "npm run build && nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint '**/*.js'",
-    "prepublishOnly": "npm run build && npm run lint && npm test",
+    "prepublishOnly": "npm run all",
     "start:example": "node examples/app/server.js",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start"

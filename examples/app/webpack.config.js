@@ -16,6 +16,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new MinifyPlugin({mangle: false})
+    new MinifyPlugin({ mangle: false })
   ]
 }

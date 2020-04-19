@@ -22,13 +22,13 @@ Namespaces.prototype = {
       : ''
     ).split(/[\s,]+/)
 
-    for (let _namespace of splited) {
+    for (const _namespace of splited) {
       if (!_namespace) continue // ignore empty strings
-      const {namespace, level} = this._namespaceNLevel(_namespace)
+      const { namespace, level } = this._namespaceNLevel(_namespace)
       if (namespace[0] === '-') {
-        this.skips.push({re: new RegExp('^' + namespace.substr(1) + '$')})
+        this.skips.push({ re: new RegExp('^' + namespace.substr(1) + '$') })
       } else {
-        this.names.push({re: new RegExp('^' + namespace + '$'), level})
+        this.names.push({ re: new RegExp('^' + namespace + '$'), level })
       }
     }
   },
@@ -46,12 +46,12 @@ Namespaces.prototype = {
       return level
     }
 
-    for (let _skip of this.skips) {
+    for (const _skip of this.skips) {
       if (_skip.re.test(name)) {
         return
       }
     }
-    for (let _name of this.names) {
+    for (const _name of this.names) {
       if (_name.re.test(name)) {
         return _name.level || level || 'DEBUG'
       }
@@ -66,6 +66,6 @@ Namespaces.prototype = {
     const namespace = _namespace
       .replace(LEVELS_REGEX, '')
       .replace(/\*/g, '.*?')
-    return {namespace, level}
+    return { namespace, level }
   }
 }

@@ -2,12 +2,12 @@
 
 const assert = require('assert')
 const sinon = require('sinon')
-const {inspect} = require('util')
+const { inspect } = require('util')
 
 const fixtures = require('./fixtures/browser.js')
-const {testcases: _testcases} = require('./fixtures/testcases.js')
+const { testcases: _testcases } = require('./fixtures/testcases.js')
 const testcases = _testcases.concat([
-  { name: 'custom color %c%o', args: [ 'custom color %c%o', 'color: red', {} ] }
+  { name: 'custom color %c%o', args: ['custom color %c%o', 'color: red', {}] }
 ])
 
 const isBrowser = typeof window !== 'undefined'
@@ -51,7 +51,7 @@ bdescribe('#Log', function () {
     })
 
     it('should set options', function () {
-      Log.options({level: 'error', colors: false, url: 'http://localhost:3000/log', namespaces: 'foo*,bar'})
+      Log.options({ level: 'error', colors: false, url: 'http://localhost:3000/log', namespaces: 'foo*,bar' })
       const res = Log.options()
       assert.deepEqual(res, {
         level: 'error',
@@ -62,7 +62,7 @@ bdescribe('#Log', function () {
     })
 
     it('should save options', function () {
-      Log.options({level: 'ERROR', url: undefined, colors: true, namespaces: 'foo*,bar'})
+      Log.options({ level: 'ERROR', url: undefined, colors: true, namespaces: 'foo*,bar' })
       Log.save()
       const store = window.localStorage
       const res = Object.keys(store)
@@ -84,17 +84,17 @@ bdescribe('#Log', function () {
     after(reset)
 
     const tests = [
-      [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-      ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-      ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
-      ['WARN',    {fatal: 1, error: 1, warn: 1}],
-      ['ERROR',   {fatal: 1, error: 1}],
-      ['FATAL',   {fatal: 1}],
+      [undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
+      ['WARN',    { fatal: 1, error: 1, warn: 1 }],
+      ['ERROR',   { fatal: 1, error: 1 }],
+      ['FATAL',   { fatal: 1 }],
       ['OFF',     {}]
     ]
     tests.forEach(([level, expects]) => {
       it('shall display logs for level ' + level, function () {
-        Log.options({level, namespaces: 'test:*'})
+        Log.options({ level, namespaces: 'test:*' })
         const log = new Log('test:' + (level || 'undefined').toLowerCase())
         const res = {
           log: log.log('test') ? 1 : undefined,
@@ -121,16 +121,16 @@ bdescribe('#Log', function () {
 
       const tests = [
         [undefined, {}],
-        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
-        ['WARN',    {fatal: 1, error: 1, warn: 1}],
-        ['ERROR',   {fatal: 1, error: 1}],
-        ['FATAL',   {fatal: 1}],
+        ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+        ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
+        ['WARN',    { fatal: 1, error: 1, warn: 1 }],
+        ['ERROR',   { fatal: 1, error: 1 }],
+        ['FATAL',   { fatal: 1 }],
         ['OFF',     {}]
       ]
       tests.forEach(([level, expects]) => {
         it('shall display logs for level ' + level, function () {
-          Log.options({level, namespaces: undefined})
+          Log.options({ level, namespaces: undefined })
           const log = new Log('test:' + (level || 'undefined').toLowerCase())
           const res = {
             debug: log.debug('test') ? 1 : undefined,
@@ -157,19 +157,19 @@ bdescribe('#Log', function () {
 
     const tests = [
       // level,   nsLevel,   expects
-      [undefined, undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-      [undefined, 'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-      [undefined, 'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
-      [undefined, 'WARN',    {fatal: 1, error: 1, warn: 1}],
-      [undefined, 'ERROR',   {fatal: 1, error: 1}],
-      [undefined, 'FATAL',   {fatal: 1}],
+      [undefined, undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      [undefined, 'DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      [undefined, 'INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
+      [undefined, 'WARN',    { fatal: 1, error: 1, warn: 1 }],
+      [undefined, 'ERROR',   { fatal: 1, error: 1 }],
+      [undefined, 'FATAL',   { fatal: 1 }],
       [undefined, 'OFF',     {}],
-      ['ERROR',   undefined, {fatal: 1, error: 1}],
-      ['ERROR',   'DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-      ['ERROR',   'INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
-      ['ERROR',   'WARN',    {fatal: 1, error: 1, warn: 1}],
-      ['ERROR',   'ERROR',   {fatal: 1, error: 1}],
-      ['FATAL',   'FATAL',   {fatal: 1}],
+      ['ERROR',   undefined, { fatal: 1, error: 1 }],
+      ['ERROR',   'DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      ['ERROR',   'INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
+      ['ERROR',   'WARN',    { fatal: 1, error: 1, warn: 1 }],
+      ['ERROR',   'ERROR',   { fatal: 1, error: 1 }],
+      ['FATAL',   'FATAL',   { fatal: 1 }],
       ['ERROR',   'OFF',     {}]
     ]
     tests.forEach(([level, nsLevel, expects]) => {
@@ -202,16 +202,16 @@ bdescribe('#Log', function () {
     after(reset)
 
     const tests = [
-      ['DEBUG', {fatal: true,  error: true,  warn: true,  info: true,  debug: true}],
-      ['INFO',  {fatal: true,  error: true,  warn: true,  info: true,  debug: false}],
-      ['WARN',  {fatal: true,  error: true,  warn: true,  info: false, debug: false}],
-      ['ERROR', {fatal: true,  error: true,  warn: false, info: false, debug: false}],
-      ['FATAL', {fatal: true,  error: false, warn: false, info: false, debug: false}],
-      ['OFF',   {fatal: false, error: false, warn: false, info: false, debug: false}]
+      ['DEBUG', { fatal: true,  error: true,  warn: true,  info: true,  debug: true }],
+      ['INFO',  { fatal: true,  error: true,  warn: true,  info: true,  debug: false }],
+      ['WARN',  { fatal: true,  error: true,  warn: true,  info: false, debug: false }],
+      ['ERROR', { fatal: true,  error: true,  warn: false, info: false, debug: false }],
+      ['FATAL', { fatal: true,  error: false, warn: false, info: false, debug: false }],
+      ['OFF',   { fatal: false, error: false, warn: false, info: false, debug: false }]
     ]
     tests.forEach(([level, exp]) => {
       it('shall check if enabled for level ' + level, function () {
-        Log.options({level, json: false, colors: true, namespaces: 'test*'})
+        Log.options({ level, json: false, colors: true, namespaces: 'test*' })
         const log = new Log('test:' + level.toLowerCase())
         const res = {
           debug: log.enabled.debug,
@@ -232,7 +232,7 @@ bdescribe('#Log', function () {
       const f = fixtures.browser
       let log
       let clock
-      let exp = []
+      const exp = []
 
       before(() => {
         clock = sinon.useFakeTimers()
@@ -253,7 +253,7 @@ bdescribe('#Log', function () {
         Object.keys(window.localStorage).forEach((i) => window.localStorage.removeItem(i))
       })
 
-      testcases.forEach(({name, args}, idx) => {
+      testcases.forEach(({ name, args }, idx) => {
         it(name, function () {
           const res = log.error(...args)
           clock.tick(1)
@@ -267,20 +267,20 @@ bdescribe('#Log', function () {
       const f = fixtures.colors
       let log
       let clock
-      let exp = []
+      const exp = []
 
       before(() => {
         clock = sinon.useFakeTimers()
-        Log.options({level: 'error', namespaces: 'test*'})
+        Log.options({ level: 'error', namespaces: 'test*' })
         log = new Log('test')
       })
 
       after(() => {
         clock.restore()
-        if (WRITE) console.log(inspect(exp, {depth: Infinity}))
+        if (WRITE) console.log(inspect(exp, { depth: Infinity }))
       })
 
-      testcases.forEach(({name, args}, idx) => {
+      testcases.forEach(({ name, args }, idx) => {
         it(name, function () {
           const res = log.error(...args)
           clock.tick(1)
@@ -293,11 +293,11 @@ bdescribe('#Log', function () {
     describe('send log', function () {
       let log
       let clock
-      let exp = []
+      const exp = []
 
       before(() => {
         clock = sinon.useFakeTimers()
-        Log.options({level: 'error', namespaces: 'test*', url: '/logger'})
+        Log.options({ level: 'error', namespaces: 'test*', url: '/logger' })
         log = new Log('test')
       })
 
@@ -309,7 +309,7 @@ bdescribe('#Log', function () {
         }, 1000) // need timeout such that chrome finished loading the imgs
       })
 
-      testcases.forEach(({name, args}) => {
+      testcases.forEach(({ name, args }) => {
         it(name, function (done) {
           log.error(...args)
           clock.tick(1)
@@ -324,17 +324,17 @@ bdescribe('#Log', function () {
 
     describe('namespace *', function () {
       const tests = [
-        [undefined, {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-        ['DEBUG',   {fatal: 1, error: 1, warn: 1, info: 1, debug: 1}],
-        ['INFO',    {fatal: 1, error: 1, warn: 1, info: 1}],
-        ['WARN',    {fatal: 1, error: 1, warn: 1}],
-        ['ERROR',   {fatal: 1, error: 1}],
-        ['FATAL',   {fatal: 1}],
+        [undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+        ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+        ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
+        ['WARN',    { fatal: 1, error: 1, warn: 1 }],
+        ['ERROR',   { fatal: 1, error: 1 }],
+        ['FATAL',   { fatal: 1 }],
         ['OFF',     {}]
       ]
       tests.forEach(([level, expects]) => {
         it(`shall ${level === 'OFF' ? 'never' : 'always'} log for level ${level}`, function () {
-          Log.options({level, namespaces: 'aaa', json: false, colors: true})
+          Log.options({ level, namespaces: 'aaa', json: false, colors: true })
           const log = new Log('*')
           const res = {
             debug: log.debug('test') ? 1 : undefined,
@@ -357,7 +357,7 @@ bdescribe('#Log', function () {
 
     describe('skip', function () {
       it('should skip "one"', function () {
-        Log.options({level: undefined, namespaces: '-one,two'})
+        Log.options({ level: undefined, namespaces: '-one,two' })
         const log1 = new Log('one')
         const log2 = new Log('two')
         assert(!/one/.test(log1.error('one')))
@@ -372,8 +372,8 @@ bdescribe('#Log', function () {
     after(reset)
 
     before(() => {
-      Log.options({level: 'ERROR', namespaces: undefined})
-      log = new Log('custom:format', {colors: false, formatters: {h: (n) => n.toString(16)}})
+      Log.options({ level: 'ERROR', namespaces: undefined })
+      log = new Log('custom:format', { colors: false, formatters: { h: (n) => n.toString(16) } })
     })
 
     it('should display result hex formatted', function () {

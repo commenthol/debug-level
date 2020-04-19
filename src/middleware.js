@@ -1,8 +1,8 @@
-const {parse: urlParse} = require('url')
-const {parse: qsParse} = require('querystring')
+const { parse: urlParse } = require('url')
+const { parse: qsParse } = require('querystring')
 const MapLRU = require('map-lru').default
 const Log = require('./node')
-const {adjustLevel, DEBUG} = require('./utils')
+const { adjustLevel, DEBUG } = require('./utils')
 
 // https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
@@ -11,6 +11,7 @@ class Loggers {
   constructor (maxSize = 100) {
     this.cache = new MapLRU(maxSize)
   }
+
   get (name) {
     let log = this.cache.get(name)
     if (!log) {
@@ -42,8 +43,8 @@ module.exports = middleware
 * @return {function} connect middleware
 */
 function middleware (opts) {
-  opts = Object.assign({maxSize: 100, logAll: false}, opts)
-  const log = opts.logAll ? new CustomLog() : void (0)
+  opts = Object.assign({ maxSize: 100, logAll: false }, opts)
+  const log = opts.logAll ? new CustomLog() : undefined
   const loggers = new Loggers(opts.maxSize)
 
   return function (req, res) {

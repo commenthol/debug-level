@@ -1,7 +1,7 @@
 /* global navigator window document Image chrome */
 
-import {Queue} from 'asyncc'
-import {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random} from './utils'
+import { Queue } from 'asyncc'
+import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random } from './utils'
 import ms from 'ms'
 import LogBase from './LogBase'
 
@@ -11,8 +11,8 @@ const COLOR_RESET = 'color:inherit'
 * global log options
 */
 const options = {
-  level: void (0),
-  namespaces: void (0),
+  level: undefined,
+  namespaces: undefined,
   colors: true, // apply coloring to browser console
   url: undefined // [optional] url to report errors
 }
@@ -180,7 +180,7 @@ Object.assign(Log.prototype, {
         case 'c':
           lastC = idx
           break
-        default:
+        default: {
           const formatter = this.formatter.formatters[format]
           if (typeof formatter === 'function') {
             const val = args[idx]
@@ -188,6 +188,7 @@ Object.assign(Log.prototype, {
             args.splice(idx, 1) // remove `args[idx]` as being inlined
             idx--
           }
+        }
       }
       return match
     })

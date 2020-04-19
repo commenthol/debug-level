@@ -2,11 +2,11 @@
 /* global describe, it, after */
 
 const assert = require('assert')
-const {inspect} = require('util')
+const { inspect } = require('util')
 
 const Format = require('../src/Format.js')
 const fixtures = require('./fixtures/Format.js')
-const {testcases} = require('./fixtures/testcases.js')
+const { testcases } = require('./fixtures/testcases.js')
 
 const WRITE = false
 
@@ -14,13 +14,13 @@ describe('#Format', function () {
   describe('format', function () {
     const fixture = fixtures
     const format = new Format()
-    let exp = []
+    const exp = []
 
     after(() => {
-      if (WRITE) console.log(inspect(exp, {depth: Infinity}))
+      if (WRITE) console.log(inspect(exp, { depth: Infinity }))
     })
 
-    testcases.forEach(({name, args}, idx) => {
+    testcases.forEach(({ name, args }, idx) => {
       it(name, function () {
         const res = format.format(...args)
         if (WRITE) exp.push(res)
@@ -32,7 +32,7 @@ describe('#Format', function () {
       const err = new TypeError('untyped')
       delete err.stack
       const res = format.format(err)
-      assert.deepEqual(res, [ '"TypeError untyped"' ])
+      assert.deepEqual(res, ['"TypeError untyped"'])
     })
 
     it('should set noQuotes option', function () {
@@ -51,7 +51,7 @@ describe('#Format', function () {
 
     it('should set spaces option', function () {
       format.spaces = 2
-      assert.deepEqual(format.format('%j', {a: {b: {c: 'd'}}}), [ '{\n  "a": {\n    "b": {\n      "c": "d"\n    }\n  }\n}' ])
+      assert.deepEqual(format.format('%j', { a: { b: { c: 'd' } } }), ['{\n  "a": {\n    "b": {\n      "c": "d"\n    }\n  }\n}'])
     })
 
     it('should get spaces option', function () {
@@ -59,8 +59,8 @@ describe('#Format', function () {
     })
 
     it('should ignore formatter which is not a function', function () {
-      const format = new Format({formatters: {x: 'no-function'}})
-      assert.deepEqual(format.format('%x', 'cant format'), [ '%x', 'cant format' ])
+      const format = new Format({ formatters: { x: 'no-function' } })
+      assert.deepEqual(format.format('%x', 'cant format'), ['%x', 'cant format'])
     })
   })
 })

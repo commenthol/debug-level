@@ -4,7 +4,7 @@ const logB = require('..')('client:B')
 
 function client (log, path) {
   function request () {
-    http.get({host: 'localhost', port: '3000', path})
+    http.get({ host: 'localhost', port: '3000', path })
       .on('response', (res) => {
         const status = res.statusCode
         res.on('data', (chunk) => {

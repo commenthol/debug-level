@@ -1,11 +1,11 @@
 const Log = require('..')
-Log.options({level: 'DEBUG', json: true, serverinfo: true, spaces: 2})
+Log.options({ level: 'DEBUG', json: true, serverinfo: true, spaces: 2 })
 
 const log = new Log('package')
 
 // ----
 // use formatters (NOT RECOMMENDED for objects, errors)
-log.debug('a %s, a number %d, an %o and %j', 'string', 1.2, {object: 1}, {NOT: 'RECOMMENDED'})
+log.debug('a %s, a number %d, an %o and %j', 'string', 1.2, { object: 1 }, { NOT: 'RECOMMENDED' })
 /* > {
   "level": "DEBUG",
   "name": "package",
@@ -17,7 +17,7 @@ log.debug('a %s, a number %d, an %o and %j', 'string', 1.2, {object: 1}, {NOT: '
 
 // ----
 // objects get merged/ assigned - string overwrites msg
-log.debug({object: 1}, {json: true}, [1, 2, 3], '%s #%d', 'message', 1)
+log.debug({ object: 1 }, { json: true }, [1, 2, 3], '%s #%d', 'message', 1)
 /* > {
   "level": "DEBUG",
   "name": "package",
@@ -35,7 +35,7 @@ const err = new Error('baam')
 err.status = 500
 
 // error - string overwrites msg
-log.error(err, {object: 1}, 'A very bad Error')
+log.error(err, { object: 1 }, 'A very bad Error')
 /* > {
   "level": "ERROR",
   "name": "package",
@@ -78,23 +78,23 @@ log.info('formatter %s', 'message1', 'message2', 'message3')
 // ----
 // using toJSON custom serializers
 function reqToJSON () {
-  const {ip, method, url, headers} = this
-  const userAgent = headers ? headers['user-agent'] : void (0)
-  return {ip, method, url, userAgent}
+  const { ip, method, url, headers } = this
+  const userAgent = headers ? headers['user-agent'] : undefined
+  return { ip, method, url, userAgent }
 }
 
 const req = { // a client request
   method: 'GET',
   url: '/path',
   ip: '10.10.10.10',
-  headers: {'user-agent': 'debug-level/1.0'},
+  headers: { 'user-agent': 'debug-level/1.0' },
   socket: {} // ....
 }
 req.toJSON = reqToJSON
 
 function resToJSON () {
-  const {statusCode} = this
-  return {statusCode}
+  const { statusCode } = this
+  return { statusCode }
 }
 
 const res = { // a server response
@@ -103,7 +103,7 @@ const res = { // a server response
 }
 res.toJSON = resToJSON
 
-log.warn({req, res})
+log.warn({ req, res })
 /* > {
   "level": "WARN",
   "name": "package",

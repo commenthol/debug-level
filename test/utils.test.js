@@ -1,7 +1,7 @@
 /* eslint no-console: 0 no-multi-spaces: 0 */
 
 const assert = require('assert')
-const {adjustLevel, inspectOpts, inspectNamespaces, random} = require('../src/utils')
+const { adjustLevel, inspectOpts, inspectNamespaces, random } = require('../src/utils')
 
 describe('#utils', function () {
   it('adjustLevel() should use default', function () {
@@ -48,7 +48,7 @@ describe('#utils', function () {
   })
 
   it('inspectNamespaces() should return', function () {
-    const res = inspectNamespaces({debug: '*'})
+    const res = inspectNamespaces({ debug: '*' })
     assert.strictEqual(res.namespaces, '*')
   })
 

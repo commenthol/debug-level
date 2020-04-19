@@ -43,8 +43,8 @@ module.exports = function karmaConfig (config) {
     // Configure code coverage reporter
     coverageReporter: {
       reporters: [
-        {type: 'html', dir: 'coverage/'},
-        {type: 'text'}
+        { type: 'html', dir: 'coverage/' },
+        { type: 'text' }
       ]
     },
 
@@ -66,7 +66,7 @@ module.exports = function karmaConfig (config) {
       'karma-sourcemap-loader',
       'karma-coverage',
       'karma-coverage-istanbul-reporter',
-      {'middleware:test': ['factory', karmaTestMiddleware]}
+      { 'middleware:test': ['factory', karmaTestMiddleware] }
     ],
 
     // Test webpack config

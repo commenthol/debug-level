@@ -90,7 +90,7 @@ const saveOpts = (obj, options) => {
 const selectColor = (namespace, fn) => {
   let hash = 0
 
-  for (let i in namespace) {
+  for (const i in namespace) {
     hash = ((hash << 5) - hash) + namespace.charCodeAt(i)
     hash |= 0 // Convert to 32bit integer
   }
@@ -111,7 +111,7 @@ const levelColors = (fn) => {
 
 const inspectNamespaces = (obj) => {
   const namespaces = obj.DEBUG || obj.debug
-  if (namespaces) return {namespaces}
+  if (namespaces) return { namespaces }
 }
 
 const random = (len) => Math.random().toString(16).toLowerCase().substr(2, len)

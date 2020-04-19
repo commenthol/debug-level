@@ -1,5 +1,5 @@
 const Format = require('./Format')
-const {adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL} = require('./utils')
+const { adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL } = require('./utils')
 const Namespaces = require('./Namespaces')
 
 function LogBase (name, opts) {
@@ -70,7 +70,7 @@ LogBase.prototype = {
   */
   _formatJson (level, _args) {
     let args = _args.slice() // work on copy
-    const {opts} = this
+    const { opts } = this
     const o = {
       level,
       name: this.name,

@@ -10,19 +10,20 @@
   "bugs": {
     "url": "https://github.com/commenthol/debug-level/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/commenthol/debug-level.git"
+  },
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
   "main": "lib",
   "module": "src",
+  "browser": "./lib/browser.js",
   "directories": {
     "lib": "lib",
     "doc": "docs",
     "example": "examples",
     "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/commenthol/debug-level.git"
   },
   "scripts": {
     "all": "npm run clean && npm run lint && npm run build && npm test",
@@ -37,7 +38,6 @@
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start"
   },
-  "browser": "./lib/browser.js",
   "babel": {
     "presets": [
       "env"
@@ -46,46 +46,49 @@
   "eslintConfig": {
     "env": {
       "es6": true,
-      "node": true,
-      "mocha": true
+      "mocha": true,
+      "node": true
     },
-    "extends": "standard"
+    "extends": "standard",
+    "rules": {
+      "node/no-deprecated-api": "warn"
+    }
   },
   "dependencies": {
-    "asyncc": "^2.0.1",
-    "chalk": "^2.2.0",
+    "asyncc": "^2.0.4",
+    "chalk": "^4.0.0",
     "json-stringify-safe": "^5.0.1",
-    "map-lru": "^1.0.0",
-    "ms": "^2.0.0"
+    "map-lru": "^1.1.0",
+    "ms": "^2.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-loader": "^7.1.2",
+    "babel-loader": "^8.1.0",
     "babel-minify-webpack-plugin": "^0.3.1",
-    "babel-preset-env": "^1.6.0",
+    "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
-    "coveralls": "^3.0.0",
-    "eslint": "^4.8.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
+    "coveralls": "^3.0.11",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "karma": "^2.0.2",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.1",
-    "karma-coverage-istanbul-reporter": "^2.0.1",
-    "karma-firefox-launcher": "^1.0.1",
-    "karma-mocha": "^1.3.0",
+    "karma": "^5.0.2",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.2",
+    "karma-coverage-istanbul-reporter": "^2.1.1",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-mocha": "^2.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.32",
-    "karma-webpack": "^3.0.0",
-    "mocha": "^5.2.0",
-    "nyc": "^11.3.0",
-    "rimraf": "^2.4.0",
-    "sinon": "^5.0.10",
-    "webpack": "^4.10.2"
+    "karma-webpack": "^4.0.2",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.0.2",
+    "webpack": "^4.42.1"
   },
   "engines": {
     "node": ">=4"

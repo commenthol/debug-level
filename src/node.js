@@ -2,7 +2,7 @@ const os = require('os')
 const ms = require('ms')
 const chalk = require('chalk')
 
-const {inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors} = require('./utils')
+const { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors } = require('./utils')
 const LogBase = require('./LogBase')
 
 const env = process.env.NODE_ENV || 'development'
@@ -12,8 +12,8 @@ const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as d
 * global log options
 */
 const options = {
-  level: void (0),
-  namespaces: void (0),
+  level: undefined,
+  namespaces: undefined,
   json: !isDevEnv, // log in json format
   serverinfo: !isDevEnv, // append server information
   hideDate: isDevEnv, // do not hide date from output
@@ -105,12 +105,12 @@ Object.assign(Log.prototype, {
     const prefix = '  ' + this._color(level, this.levColors[level], true) + ' ' +
       this._color(this.name, this.color, true)
 
-    let str = [
+    const str = [
       prefix,
       this.opts.hideDate ? '' : new Date().toISOString(),
       !this.opts.splitLine ? msg.replace(/[\r\n]/g, '\\n') : msg.split(/\\n|\n/).join('\n' + prefix + ' '),
       this._color('+' + ms(this.diff), this.color),
-      this.opts.serverinfo ? os.hostname() + ' ' + process.pid : void (0)
+      this.opts.serverinfo ? os.hostname() + ' ' + process.pid : undefined
     ].filter(f => f).join(' ')
 
     return str
@@ -135,7 +135,7 @@ Object.assign(Log.prototype, {
   _serverinfo (o) {
     // istanbul ignore else
     if (this.opts.serverinfo) {
-      Object.assign(o, {hostname: os.hostname(), pid: process.pid})
+      Object.assign(o, { hostname: os.hostname(), pid: process.pid })
     }
   }
 })

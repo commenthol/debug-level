@@ -8,8 +8,8 @@ import LogBase from './LogBase'
 const COLOR_RESET = 'color:inherit'
 
 /**
-* global log options
-*/
+ * global log options
+ */
 const options = {
   level: undefined,
   namespaces: undefined,
@@ -18,9 +18,9 @@ const options = {
 }
 
 /**
-* get storage
-* @private
-*/
+ * get storage
+ * @private
+ */
 const storage = () => {
   try {
     return typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined'
@@ -33,11 +33,11 @@ const storage = () => {
 }
 
 /**
-* check if console colors are supported
-* @copyright debug contributors
-* @see https://github.com/visionmedia/debug
-* @private
-*/
+ * check if console colors are supported
+ * @copyright debug contributors
+ * @see https://github.com/visionmedia/debug
+ * @private
+ */
 const supportsColors = () => {
   let tmp
   const userAgent = typeof navigator !== 'undefined' && navigator.userAgent
@@ -75,10 +75,10 @@ const supportsColors = () => {
 }
 
 /**
-* creates a new logger for the browser
-* @constructor
-* @param {String} name - namespace of Logger
-*/
+ * creates a new logger for the browser
+ * @constructor
+ * @param {String} name - namespace of Logger
+ */
 function Log (name, opts) {
   if (!(this instanceof Log)) return new Log(name, opts)
   const _storage = storage()
@@ -98,22 +98,22 @@ Object.setPrototypeOf(Log.prototype, LogBase.prototype)
 
 Object.assign(Log.prototype, {
   /**
-    * render arguments to console.log
-    * @public
-    * @param {Array} args - console.log arguments
-    * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
-    * @return {String}
-    */
+   * render arguments to console.log
+   * @public
+   * @param {Array} args - console.log arguments
+   * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
+   * @return {String}
+   */
   render (args) {
     console.log(...args) // eslint-disable-line no-console
     return args
   },
 
   /**
-  * send log to server
-  * @param {Array} args - log arguments
-  * @param {String} level - log level
-  */
+   * send log to server
+   * @param {Array} args - log arguments
+   * @param {String} level - log level
+   */
   send (args, level) {
     const o = this._formatJson(level, args)
     o.userAgent = navigator.userAgent
@@ -122,9 +122,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * format log arguments
-  * @private
-  */
+   * format log arguments
+   * @private
+   */
   _log (level, args) {
     this._diff()
 
@@ -139,10 +139,10 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * format arguments for console.log
-  * @private
-  * @return {Array} args for console.log
-  */
+   * format arguments for console.log
+   * @private
+   * @return {Array} args for console.log
+   */
   _formatArgs (level, _args) {
     const args = _args.slice() // work on copy
     const color = this.color
@@ -201,8 +201,8 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * transfer log to server via zero pixel image request
-  */
+   * transfer log to server via zero pixel image request
+   */
   _sendLog (str, cb) {
     const img = new Image()
     const done = () => cb()
@@ -213,9 +213,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * Add colors, style to string
-  * @private
-  */
+   * Add colors, style to string
+   * @private
+   */
   _color (str) {
     return this.opts.colors
       ? `%c${str}%c`
@@ -224,10 +224,10 @@ Object.assign(Log.prototype, {
 })
 
 /**
-* Apply (and get) global options
-* @param {object} [opts] - changed options
-* @return {object} global options
-*/
+ * Apply (and get) global options
+ * @param {object} [opts] - changed options
+ * @return {object} global options
+ */
 Log.options = function (opts) {
   if (!opts) return Object.assign({}, options)
   Object.assign(options, opts, {
@@ -237,8 +237,8 @@ Log.options = function (opts) {
 }
 
 /**
-* save options in `localStorage`
-*/
+ * save options in `localStorage`
+ */
 Log.save = function () {
   const _storage = storage()
   Log.reset()
@@ -246,8 +246,8 @@ Log.save = function () {
 }
 
 /**
-* reset saved options
-*/
+ * reset saved options
+ */
 Log.reset = function () {
   const _storage = storage()
 

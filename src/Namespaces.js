@@ -1,8 +1,8 @@
 /**
-* @license MIT
-* @copyright debug contributors, <commenthol@gmail.com>
-* @see https://github.com/visionmedia/debug
-*/
+ * @license MIT
+ * @copyright debug contributors, <commenthol@gmail.com>
+ * @see https://github.com/visionmedia/debug
+ */
 
 const LEVELS_REGEX = /^(DEBUG|INFO|WARN|ERROR|FATAL|OFF):/i
 
@@ -59,8 +59,8 @@ Namespaces.prototype = {
   },
 
   /**
-  * @private
-  */
+   * @private
+   */
   _namespaceNLevel (_namespace) {
     const level = (LEVELS_REGEX.exec(_namespace) || [])[1]
     const namespace = _namespace

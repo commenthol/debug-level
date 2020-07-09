@@ -24,11 +24,11 @@ const formatters = {
 module.exports = Format
 
 /**
-* @param {object} [opts]
-* @param {boolean} [opts.noQuotes] - remove quotes from object keys
-* @param {number} [opts.spaces] - JSON.stringify spaces
-* @param {object} [opts.formatters] - custom formatters (if needed)
-*/
+ * @param {object} [opts]
+ * @param {boolean} [opts.noQuotes] - remove quotes from object keys
+ * @param {number} [opts.spaces] - JSON.stringify spaces
+ * @param {object} [opts.formatters] - custom formatters (if needed)
+ */
 function Format (opts = {}) {
   Object.assign(this, {
     opts,
@@ -52,10 +52,10 @@ Format.prototype = {
   },
 
   /**
-  * formats arguments like `util.format`
-  * @param {...Any} arguments list - args[0] may contain "%" formatters
-  * @return {Array} first is formatted message, other args may follow
-  */
+   * formats arguments like `util.format`
+   * @param {...Any} arguments list - args[0] may contain "%" formatters
+   * @return {Array} first is formatted message, other args may follow
+   */
   format (...args) {
     switch (typeof args[0]) {
       case 'string':

@@ -66,8 +66,8 @@ LogBase.prototype = {
   _serverinfo () {},
 
   /**
-  * @return {object} json object
-  */
+   * @return {object} json object
+   */
   _formatJson (level, _args) {
     let args = _args.slice() // work on copy
     const { opts } = this

@@ -1,7 +1,7 @@
 /**
-* @license MIT
-* @copyright debug contributors, <commenthol@gmail.com>
-*/
+ * @license MIT
+ * @copyright debug contributors, <commenthol@gmail.com>
+ */
 
 const [LOG, DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['LOG', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
 
@@ -44,9 +44,9 @@ const adjustLevel = (level, _default) => {
 }
 
 /**
-* @copyright debug contributors
-* @see https://github.com/visionmedia/debug
-*/
+ * @copyright debug contributors
+ * @see https://github.com/visionmedia/debug
+ */
 const inspectOpts = (obj) => Object.keys(obj)
   .filter((key) => /^debug_/i.test(key))
   .reduce((opts, key) => {

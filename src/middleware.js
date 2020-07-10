@@ -35,13 +35,13 @@ CustomLog.prototype.log = function (obj) {
 module.exports = middleware
 
 /**
-* connect middleware which logs browser based logs on server side
-* sends a transparent gif as response
-* @param {Object} [opts]
-* @param {Object} [opts.maxSize=100] - max number of different name loggers
-* @param {Object} [opts.logAll=false] - log everything even strings
-* @return {function} connect middleware
-*/
+ * connect middleware which logs browser based logs on server side
+ * sends a transparent gif as response
+ * @param {Object} [opts]
+ * @param {Object} [opts.maxSize=100] - max number of different name loggers
+ * @param {Object} [opts.logAll=false] - log everything even strings
+ * @return {function} connect middleware
+ */
 function middleware (opts) {
   opts = Object.assign({ maxSize: 100, logAll: false }, opts)
   const log = opts.logAll ? new CustomLog() : undefined

@@ -1,10 +1,12 @@
 /**
-* @license MIT
-* @copyright debug contributors, <commenthol@gmail.com>
-* @see https://github.com/visionmedia/debug
-*/
+ * @license MIT
+ * @copyright debug contributors, <commenthol@gmail.com>
+ * @see https://github.com/visionmedia/debug
+ */
 
-const LEVELS_REGEX = /^(DEBUG|INFO|WARN|ERROR|FATAL|OFF):/i
+const { DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils')
+const LEVELS = [DEBUG, INFO, WARN, ERROR, FATAL, OFF]
+const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
 module.exports = Namespaces
 
@@ -31,6 +33,9 @@ Namespaces.prototype = {
         this.names.push({ re: new RegExp('^' + namespace + '$'), level })
       }
     }
+
+    // sort names by levels
+    this.names = this.names.sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level))
   },
 
   disable () {
@@ -59,8 +64,8 @@ Namespaces.prototype = {
   },
 
   /**
-  * @private
-  */
+   * @private
+   */
   _namespaceNLevel (_namespace) {
     const level = (LEVELS_REGEX.exec(_namespace) || [])[1]
     const namespace = _namespace

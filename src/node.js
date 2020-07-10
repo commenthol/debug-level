@@ -9,8 +9,8 @@ const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
 
 /**
-* global log options
-*/
+ * global log options
+ */
 const options = {
   level: undefined,
   namespaces: undefined,
@@ -24,10 +24,10 @@ const options = {
 }
 
 /**
-* creates a new logger
-* @constructor
-* @param {String} name - namespace of Logger
-*/
+ * creates a new logger
+ * @constructor
+ * @param {String} name - namespace of Logger
+ */
 function Log (name, opts) {
   if (!(this instanceof Log)) return new Log(name, opts)
   Object.assign(options,
@@ -46,12 +46,12 @@ Object.setPrototypeOf(Log.prototype, LogBase.prototype)
 
 Object.assign(Log.prototype, {
   /**
-    * render string to output stream
-    * @public
-    * @param {String} str - string to render
-    * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
-    * @return {String}
-    */
+   * render string to output stream
+   * @public
+   * @param {String} str - string to render
+   * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
+   * @return {String}
+   */
   render (str) {
     str += '\n'
     this.opts.stream.write(str)
@@ -59,9 +59,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * format object to json
-  * @private
-  */
+   * format object to json
+   * @private
+   */
   _log (level, args) {
     this._diff()
     const o = this._formatJson(level, args)
@@ -76,9 +76,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * debug like output if `this.opts.json === false`
-  * @private
-  */
+   * debug like output if `this.opts.json === false`
+   * @private
+   */
   _logOneLine (level, args) {
     this._diff()
     const str = this._formatArgs(level, args)
@@ -86,12 +86,12 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * format arguments to debug like string
-  * @private
-  * @param {String} level
-  * @param {Array} args - formatter arguments - first arg should contain "%" formatter directives
-  * @return {String} formatted String
-  */
+   * format arguments to debug like string
+   * @private
+   * @param {String} level
+   * @param {Array} args - formatter arguments - first arg should contain "%" formatter directives
+   * @return {String} formatted String
+   */
   _formatArgs (level, _args) {
     this.formatter.noQuotes = true
     const args = this.formatter.format(..._args)
@@ -117,9 +117,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * Add colors, style to string
-  * @private
-  */
+   * Add colors, style to string
+   * @private
+   */
   _color (str, color, isBold) {
     return !this.opts.colors
       ? str
@@ -129,9 +129,9 @@ Object.assign(Log.prototype, {
   },
 
   /**
-  * append server info to json object - used by `_formatJson`
-  * @private
-  */
+   * append server info to json object - used by `_formatJson`
+   * @private
+   */
   _serverinfo (o) {
     // istanbul ignore else
     if (this.opts.serverinfo) {
@@ -152,16 +152,16 @@ Log.options = function (opts) {
 }
 
 /**
-* save options in `process.env`
-*/
+ * save options in `process.env`
+ */
 Log.save = function () {
   Log.reset()
   saveOpts(process.env, options)
 }
 
 /**
-* reset saved options
-*/
+ * reset saved options
+ */
 Log.reset = function () {
   Object.keys(process.env).forEach((key) => {
     if (/^(DEBUG|DEBUG_.*)$/.test(key)) {

@@ -15,25 +15,37 @@ const LEVELS = {
 }
 
 const COLORS = [
-  '#0000FF', '#0033FF', '#0066FF', '#3333FF', '#3300FF',
-  '#0000CC', '#0033CC', '#0066CC', '#3333CC', '#3300CC',
-  '#000099', '#003399', '#333399', '#330099', '#000066',
-  '#00FF00', '#00FF33', '#00FF66', '#00FF99', '#006633',
-  '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#006666',
-  '#009900', '#009933', '#009966', '#009999', '#006600',
-  '#00FFFF', '#00CCFF', '#00FFCC', '#00CCCC', '#33CCCC',
-  '#FFFF00', '#FFFF33', '#FFCC33', '#FFCC66',
+  '#6600FF', '#3333FF', '#3333CC', '#0066FF',
+  '#0066CC', '#0066FF',
+  '#006633', '#006666', '#006600',
+  '#00CC00', '#00CC33', '#00CC66', '#00CC99',
+  '#009900', '#009933', '#009966', '#009999',
+  '#00CCFF', '#00CCCC',
   '#FF9900', '#FF9933', '#FF6600', '#FF6633',
   '#FF0000', '#FF0033', '#FF3300', '#FF3300', '#FF3333',
   '#CC0000', '#CC0033', '#CC0066', '#FF0066', '#FF3366',
-  '#FF00FF', '#FF33FF', '#CC00CC', '#990099', '#660066'
+  '#FF00FF', '#FF33FF', '#CC00CC', '#990099'
 ]
+
+// // dark colors for bright background
+// const COLORS_DARK = [
+//   '#0000FF', '#0000CC', '#3300CC', '#000099',
+//   '#003399', '#333399', '#330099', '#3300CC',
+//   '#000066', '#000099', '#660066'
+// ]
+//
+// // bright colors for dark background
+// const COLORS_BRIGHT = [
+//   '#00FF00', '#00FF33', '#00FF66', '#00FF99',
+//   '#00FFFF', '#00FFCC',
+//   '#FFFF00', '#FFFF33', '#FFCC33', '#FFCC66'
+// ]
 
 const LEVEL_COLORS = {
   LOG: '#999999',
-  DEBUG: '#0000CC',
-  INFO: '#00CC00',
-  WARN: '#CCCC00',
+  DEBUG: '#0066CC',
+  INFO: '#009900',
+  WARN: '#FF9900',
   ERROR: '#CC0000',
   FATAL: '#CC00CC'
 }
@@ -125,6 +137,8 @@ module.exports = {
   FATAL,
   OFF,
   LEVELS,
+  COLORS,
+  LEVEL_COLORS,
   adjustLevel,
   inspectOpts,
   saveOpts,

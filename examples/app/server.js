@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { resolve } = require('path')
+const { join } = require('path')
 const http = require('http')
 const Log = require('../..')
 
@@ -8,6 +8,17 @@ if (!process.env.DEBUG_LEVEL) process.env.DEBUG_LEVEL = 'DEBUG'
 const log = new Log('server')
 const logger = Log.logger()
 const port = 3000
+
+function serveStatic (req, res) {
+  const url = join(__dirname, '.', req.url)
+  fs.stat(url, (err) => {
+    if (err) {
+      res.end()
+    } else {
+      fs.createReadStream(url).pipe(res)
+    }
+  })
+}
 
 http.createServer((req, res) => {
   log.info(req.url)
@@ -18,14 +29,7 @@ http.createServer((req, res) => {
     if (req.url === '/') {
       req.url = '/index.html'
     }
-    const url = resolve(__dirname, '.' + req.url)
-    fs.stat(url, (err) => {
-      if (err) {
-        res.end()
-      } else {
-        fs.createReadStream(url).pipe(res)
-      }
-    })
+    serveStatic(req, res)
   }
 }).listen(port, () => {
   console.log(`\n  browse to http://localhost:${port}\n\n`)

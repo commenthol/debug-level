@@ -23,7 +23,7 @@ const WRITE = false
 bdescribe('#Log', function () {
   // this.timeout(1000000)
   // const Log = require('..')
-  const Log = require('../src/browser')
+  const Log = require('../lib/browser')
 
   const defaultOpts = Log.options()
 

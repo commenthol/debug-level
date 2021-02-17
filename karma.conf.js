@@ -19,7 +19,7 @@ module.exports = function karmaConfig (config) {
       'mocha'
     ],
 
-    reporters: ['progress', 'coverage-istanbul'],
+    reporters: ['progress'],
 
     coverageIstanbulReporter: {
       reports: ['text', 'html'],
@@ -65,7 +65,6 @@ module.exports = function karmaConfig (config) {
       'karma-firefox-launcher',
       'karma-sourcemap-loader',
       'karma-coverage',
-      'karma-coverage-istanbul-reporter',
       { 'middleware:test': ['factory', karmaTestMiddleware] }
     ],
 

@@ -1,5 +1,4 @@
 /* eslint no-console:0 */
-/* global describe, it, after */
 
 const assert = require('assert')
 const { inspect } = require('util')

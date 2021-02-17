@@ -1,6 +1,7 @@
-const MinifyPlugin = require('babel-minify-webpack-plugin')
+// const MinifyPlugin = require('babel-minify-webpack-plugin')
 
 module.exports = {
+  mode: 'development',
   // devtool: 'inline-source-map',
   entry: './index.js',
   output: {
@@ -11,11 +12,16 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader'
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
       }
     ]
   },
   plugins: [
-    new MinifyPlugin({ mangle: false })
+    // new MinifyPlugin({ mangle: false })
   ]
 }

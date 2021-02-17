@@ -1,4 +1,4 @@
-var path = require('path')
+const path = require('path')
 
 module.exports = {
   entry: '', // karma will set this
@@ -14,21 +14,16 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loaders: ['babel-loader'],
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'test')
-        ]
-      }, {
-        test: /\.js$/,
+        ],
         use: {
-          loader: 'istanbul-instrumenter-loader',
+          loader: 'babel-loader',
           options: {
-            esModules: true
+            presets: ['@babel/preset-env']
           }
-        },
-        enforce: 'post',
-        exclude: /node_modules|\.spec\.js$/
+        }
       }
     ]
   }

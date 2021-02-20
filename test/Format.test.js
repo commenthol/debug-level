@@ -1,11 +1,13 @@
 /* eslint no-console:0 */
 
 const assert = require('assert')
-const { inspect } = require('util')
 
 const Format = require('../src/Format.js')
 const fixtures = require('./fixtures/Format.js')
 const { testcases } = require('./fixtures/testcases.js')
+
+// const inspect = (o) => console.log(require('util').inspect(o, {depth: Infinity}))
+const inspect = () => {}
 
 const WRITE = false
 
@@ -16,7 +18,7 @@ describe('#Format', function () {
     const exp = []
 
     after(() => {
-      if (WRITE) console.log(inspect(exp, { depth: Infinity }))
+      if (WRITE) inspect(exp)
     })
 
     testcases.forEach(({ name, args }, idx) => {
@@ -29,9 +31,8 @@ describe('#Format', function () {
 
     it('should use error name and message if stack is missing', function () {
       const err = new TypeError('untyped')
-      delete err.stack
       const res = format.format(err)
-      assert.deepEqual(res, ['"TypeError untyped"'])
+      assert.strictEqual(res[0].substring(0, 19), '"TypeError: untyped')
     })
 
     it('should set noQuotes option', function () {

@@ -4,9 +4,12 @@ const chalk = require('chalk')
 
 const { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors } = require('./utils.js')
 const LogBase = require('./LogBase.js')
+const wrapConsole = require('./wrapConsole.js')
 
 const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
+
+const EXIT_EVENTS = ['unhandledRejection', 'uncaughtException']
 
 /**
  * global log options
@@ -170,5 +173,44 @@ Log.reset = function () {
 }
 
 Log.isDevEnv = isDevEnv
+
+/**
+ * wrap console logging functions like
+ * console.log, console.info, console.warn, console.error
+ * @param {string} [name='console']
+ * @param {object} opts - see Log.options
+ * @param {string} [opts.level4log='log'] - log level for console.log
+ * @return {function} unwrap function
+ */
+Log.wrapConsole = function (name = 'console', opts) {
+  const log = new Log(name, opts)
+  return wrapConsole(log, opts)
+}
+
+/**
+ * log exit events like 'unhandledRejection', 'uncaughtException'
+ * and then let the process die
+ * @param {string} [name='exit']
+ * @param {object} opts - see Log.options
+ * @param {boolean} [opts.code=1] - set exit code; code=0 will prevent triggering exit
+ * @param {boolean} [opts.gracefulExit=false] - uses process.exitCode to avoid forceful exit with process.exit()
+ */
+Log.handleExitEvents = function handleExitEvents (name = 'exit', opts = {}) {
+  const { code = 1, gracefulExit, ..._opts } = opts
+  const log = new Log(name, _opts)
+  EXIT_EVENTS.forEach(ev => {
+    process.on(ev, (err) => {
+      log.fatal(err)
+      /* c8 ignore next 7 */
+      if (code) {
+        if (gracefulExit) {
+          process.exitCode = code // let die...
+        } else {
+          setTimeout(() => process.exit(code), 5)
+        }
+      }
+    })
+  })
+}
 
 module.exports = Log

@@ -23,27 +23,29 @@ Prints colored and human readable output for development and [bunyan][] like JSO
 
 **Table of Contents**
 
-<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+<!-- !toc (minlevel=2) -->
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Examples](#examples)
-- [Settings](#settings)
-	- [Environment Variables](#environment-variables)
-	- [Options](#options)
-- [Levels](#levels)
-- [Namespaces](#namespaces)
-	- [Conventions](#conventions)
-	- [Wildcards](#wildcards)
-- [Output](#output)
-	- [JSON output](#json-output)
-	- [Custom Formatters](#custom-formatters)
-	- [toJSON](#tojson)
-- [Logging Browser messages](#logging-browser-messages)
-- [License](#license)
-- [References](#references)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Examples](#examples)
+* [Settings](#settings)
+  * [Environment Variables](#environment-variables)
+  * [Options](#options)
+* [Levels](#levels)
+* [Namespaces](#namespaces)
+  * [Conventions](#conventions)
+  * [Wildcards](#wildcards)
+* [Output](#output)
+  * [JSON output](#json-output)
+  * [Custom formatters](#custom-formatters)
+  * [toJSON](#tojson)
+* [Wrap console logs](#wrap-console-logs)
+* [Handle node exit events](#handle-node-exit-events)
+* [Logging Browser messages](#logging-browser-messages)
+* [License](#license)
+* [References](#references)
 
-<!-- /TOC -->
+<!-- toc! -->
 
 ## Installation
 
@@ -190,7 +192,7 @@ You may set the global log options with:
 const fs = require('fs')
 const Log = require('debug-level')
 
-// log into file instead of process.stderr
+// log into file instead of process.stdout
 const stream = fs.createWriteStream('./my.log')
 
 // The options will be set for all Loggers...
@@ -340,9 +342,9 @@ log.info({object: 1}, {json: true}, [1, 2, 3], '%s #%d', 'message', 1)
 // >
 { "level": "INFO",
   "name": "package:feature",
-	"msg": "message #1"
+    "msg": "message #1"
   "object": 1,
-	"json": true,
+    "json": true,
   "arr": [1,2,3],
   "time": "2017-11-09T21:09:49.482Z",
   "diff": 0
@@ -358,7 +360,7 @@ log.error(err, {object: 1}) // you may add an additional object
 // >
 { "level":"ERROR",
   "name":"package:feature",
-	"msg":"bam",
+    "msg":"bam",
   "err": { // the error object
     "name":"TypeError",
     "stack":"Error: bam\n    at Object.<anonymous> (...\n    at bootstrap_node.js:608:3",
@@ -412,6 +414,36 @@ log.debug({req: req})
 //> DEBUG * {"req":{"ip":"10.10.10.10","method":"GET","url":"/path"}} +0ms
 ```
 
+## Wrap console logs
+
+Some packages may use `console.log` statements which you may wish to log with `debug-level` as well.
+
+By standard levels are assigned the same way as console does. E.g. `console.debug` is assigned to level DEBUG, `console.error` to ERROR.
+
+You may explicitly assign `console.log` to a log level by attributing e.g. `{ level4log: 'INFO' }`
+
+```js
+const Log = require('debug-level')
+
+// standard - namespace is `console`
+Log.wrapConsole()
+
+// with custom namespace and console.log at level INFO
+Log.wrapConsole('my-console', {level4log: 'INFO'})
+```
+
+## Handle node exit events
+
+For node only. To handle exit events like [unhandledRejection](https://nodejs.org/api/process.html#process_event_unhandledrejection) and [uncaughtException](https://nodejs.org/api/process.html#process_event_uncaughtexception) add `Log.handleExitEvents()` somewhere in your code. This with log the error at level FATAL and exit the process with code 1.
+
+```js
+// standard - namespace is `exit`
+Log.handleExitEvents()
+
+// with custom namespace
+Log.handleExitEvents('process-exit')
+```
+
 ## Logging Browser messages
 
 To log debug messages from the browser on your server you can enable a logger middleware in your express/ connect server.
@@ -440,7 +472,7 @@ log.debug('my first %s', 'logline')
 Check example at `examples/app`. To run it use:
 
 ```bash
-DEBUG=* node examples/app/server.js
+npm run example
 ```
 
 and open <http://localhost:3000>

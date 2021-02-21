@@ -390,4 +390,38 @@ describe('#Log', function () {
       assert.strictEqual(res, '  ERROR custom:format hex(d05) +0ms\n')
     })
   })
+
+  describe('wrap console', function () {
+    let unwrap
+    before(function () {
+      Log.options({ level: 'DEBUG', namespaces: 'test', json: true, colors: true })
+      unwrap = Log.wrapConsole('test')
+    })
+    after(function () {
+      reset()
+      unwrap()
+    })
+
+    it('shall wrap console.log', function () {
+      console.log('log %s', 'log')
+      console.debug({ debug: true })
+      console.info('log %j', { info: 1 })
+      console.warn('warn')
+      console.error(new Error('Baam'))
+    })
+  })
+
+  describe('handle exit events', function () {
+    before(function () {
+      Log.options({ level: 'FATAL' })
+      Log.handleExitEvents('exit', { code: 0 })
+    })
+    after(reset)
+
+    it('shall log unrejected promise', function () {
+      Promise.resolve().then(() => {
+        JSON.prase(null)
+      })
+    })
+  })
 })

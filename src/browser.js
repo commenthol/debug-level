@@ -4,6 +4,7 @@ import { Queue } from 'asyncc'
 import ms from 'ms'
 import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random } from './utils'
 import LogBase from './LogBase.js'
+import wrapConsole from './wrapConsole.js'
 
 const COLOR_RESET = 'color:inherit'
 
@@ -256,6 +257,19 @@ Log.reset = function () {
       _storage.removeItem(key)
     }
   })
+}
+
+/**
+ * wrap console logging functions like
+ * console.log, console.info, console.warn, console.error
+ * @param {string} [name='console']
+ * @param {object} opts - see Log.options
+ * @param {string} [opts.level4log='log'] - log level for console.log
+ * @return {function} unwrap function
+ */
+Log.wrapConsole = function (name = 'console', opts) {
+  const log = new Log(name, opts)
+  return wrapConsole(log, opts)
 }
 
 module.exports = Log

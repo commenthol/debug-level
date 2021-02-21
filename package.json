@@ -26,15 +26,17 @@
     "test": "test"
   },
   "scripts": {
-    "all": "npm run clean && npm run lint && npm run build && npm test",
+    "all": "npm run clean && npm run lint && npm run build && npm run coverage",
     "build": "npm run clean && babel -d lib src",
     "build:example": "cd examples/app && webpack",
     "clean": "rimraf lib coverage",
     "coverage": "c8 -r lcov -r text npm test",
     "coveralls": "npm run build && c8 npm test && c8 report --reporter=text-lcov | coveralls",
+    "example": "npm run build:example && npm run start:example",
     "lint": "eslint '**/*.js'",
     "prepublishOnly": "npm run all",
-    "start:example": "node examples/app/server.js",
+    "readme": "markedpp --github -i README.md -o README.md",
+    "start:example": "DEBUG=* node examples/app/server.js",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start"
   },

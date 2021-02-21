@@ -66,7 +66,7 @@ Object.assign(Log.prototype, {
     this._diff()
     const o = this._formatJson(level, args)
     let str = this.formatter.format(o)[0]
-    /* istanbul ignore next */ // can't cover with test as underlying tty is unknown
+    /* c8 ignore next */ // can't cover with test as underlying tty is unknown
     if (this.opts.colors) { // this is slow...
       str = str
         .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
@@ -133,7 +133,6 @@ Object.assign(Log.prototype, {
    * @private
    */
   _serverinfo (o) {
-    // istanbul ignore else
     if (this.opts.serverinfo) {
       Object.assign(o, { hostname: os.hostname(), pid: process.pid })
     }

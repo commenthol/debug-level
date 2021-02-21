@@ -38,8 +38,8 @@ Namespaces.prototype = {
     this.names = this.names.sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level))
   },
 
+  /* c8 ignore next 3 */
   disable () {
-    /* istanbul ignore next */
     this.enable('')
   },
 

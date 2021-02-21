@@ -3,6 +3,7 @@ const stringify = require('json-stringify-safe')
 const replacer = (key, value) => {
   if (value instanceof Error) {
     let stack = value.stack
+    /* c8 ignore next 3 */
     if (stack && stack.indexOf(value.name) !== 0) {
       stack = value.name + ': ' + value.message + '\n' + stack
     }

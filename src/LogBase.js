@@ -63,6 +63,7 @@ LogBase.prototype = {
     return this._log(FATAL, args)
   },
 
+  /* c8 ignore next */
   _serverinfo () {},
 
   /**
@@ -143,8 +144,8 @@ LogBase.prototype = {
     this.prev = curr
   },
 
+  /* c8 ignore next 3 */
   _log (/* level, args */) {
-    /* istanbul ignore next */
     throw new Error('needs implementation')
   }
 }

@@ -42,7 +42,7 @@ bdescribe('#Log', function () {
 
     it('should get default options', function () {
       const res = Log.options()
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         level: undefined,
         namespaces: undefined,
         colors: true,
@@ -53,7 +53,7 @@ bdescribe('#Log', function () {
     it('should set options', function () {
       Log.options({ level: 'error', colors: false, url: 'http://localhost:3000/log', namespaces: 'foo*,bar' })
       const res = Log.options()
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         level: 'error',
         namespaces: 'foo*,bar',
         url: 'http://localhost:3000/log',
@@ -71,7 +71,7 @@ bdescribe('#Log', function () {
           obj[key] = store[key]
           return obj
         }, {})
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         DEBUG: 'foo*,bar',
         DEBUG_LEVEL: 'ERROR',
         DEBUG_COLORS: 'true',
@@ -112,7 +112,7 @@ bdescribe('#Log', function () {
           error: expects.error,
           fatal: expects.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
 
@@ -146,7 +146,7 @@ bdescribe('#Log', function () {
             error: expects.error,
             fatal: expects.fatal
           }
-          assert.deepEqual(res, exp)
+          assert.deepStrictEqual(res, exp)
         })
       })
     })
@@ -193,7 +193,7 @@ bdescribe('#Log', function () {
           error: expects.error,
           fatal: expects.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
   })
@@ -220,7 +220,7 @@ bdescribe('#Log', function () {
           error: log.enabled.error,
           fatal: log.enabled.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
   })
@@ -258,7 +258,7 @@ bdescribe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          else assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -285,7 +285,7 @@ bdescribe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          else assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -350,7 +350,7 @@ bdescribe('#Log', function () {
             error: expects.error,
             fatal: expects.fatal
           }
-          assert.deepEqual(res, exp)
+          assert.deepStrictEqual(res, exp)
         })
       })
     })
@@ -378,7 +378,7 @@ bdescribe('#Log', function () {
 
     it('should display result hex formatted', function () {
       const res = log.error('hex(%h)', 3333)
-      assert.equal(res[0], 'ERROR custom:format hex(d05) +0ms')
+      assert.strictEqual(res[0], 'ERROR custom:format hex(d05) +0ms')
     })
   })
 })

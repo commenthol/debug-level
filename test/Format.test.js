@@ -25,7 +25,7 @@ describe('#Format', function () {
       it(name, function () {
         const res = format.format(...args)
         if (WRITE) exp.push(res)
-        else assert.deepEqual(res, fixture[idx])
+        else assert.deepStrictEqual(res, fixture[idx])
       })
     })
 
@@ -37,30 +37,30 @@ describe('#Format', function () {
 
     it('should set noQuotes option', function () {
       format.noQuotes = false
-      assert.deepEqual(format.format('quotes %o', 'test'), ['quotes "test"'])
+      assert.deepStrictEqual(format.format('quotes %o', 'test'), ['quotes "test"'])
       format.noQuotes = true
-      assert.deepEqual(format.format('noQuotes %o', 'test'), ['noQuotes test'])
+      assert.deepStrictEqual(format.format('noQuotes %o', 'test'), ['noQuotes test'])
     })
 
     it('should get noQuotes option', function () {
       format.noQuotes = true
-      assert.equal(format.noQuotes, true)
+      assert.strictEqual(format.noQuotes, true)
       format.noQuotes = false
-      assert.equal(format.noQuotes, false)
+      assert.strictEqual(format.noQuotes, false)
     })
 
     it('should set spaces option', function () {
       format.spaces = 2
-      assert.deepEqual(format.format('%j', { a: { b: { c: 'd' } } }), ['{\n  "a": {\n    "b": {\n      "c": "d"\n    }\n  }\n}'])
+      assert.deepStrictEqual(format.format('%j', { a: { b: { c: 'd' } } }), ['{\n  "a": {\n    "b": {\n      "c": "d"\n    }\n  }\n}'])
     })
 
     it('should get spaces option', function () {
-      assert.equal(format.spaces, 2)
+      assert.strictEqual(format.spaces, 2)
     })
 
     it('should ignore formatter which is not a function', function () {
       const format = new Format({ formatters: { x: 'no-function' } })
-      assert.deepEqual(format.format('%x', 'cant format'), ['%x', 'cant format'])
+      assert.deepStrictEqual(format.format('%x', 'cant format'), ['%x', 'cant format'])
     })
   })
 })

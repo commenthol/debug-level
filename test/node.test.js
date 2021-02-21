@@ -29,7 +29,7 @@ describe('#Log', function () {
 
     it('should get default options', function () {
       const res = Log.options()
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         level: undefined,
         namespaces: undefined,
         json: false,
@@ -45,7 +45,7 @@ describe('#Log', function () {
     it('should set options', function () {
       Log.options({ level: 'error', json: true, colors: false, namespaces: 'foo*,bar' })
       const res = Log.options()
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         level: 'error',
         namespaces: 'foo*,bar',
         json: true,
@@ -67,7 +67,7 @@ describe('#Log', function () {
           obj[key] = process.env[key]
           return obj
         }, {})
-      assert.deepEqual(res, {
+      assert.deepStrictEqual(res, {
         DEBUG: 'foo*,bar',
         DEBUG_LEVEL: 'ERROR',
         DEBUG_COLORS: 'false',
@@ -112,7 +112,7 @@ describe('#Log', function () {
           error: expects.error,
           fatal: expects.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
 
@@ -146,7 +146,7 @@ describe('#Log', function () {
             error: expects.error,
             fatal: expects.fatal
           }
-          assert.deepEqual(res, exp)
+          assert.deepStrictEqual(res, exp)
         })
       })
     })
@@ -195,7 +195,7 @@ describe('#Log', function () {
           error: expects.error,
           fatal: expects.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
   })
@@ -222,7 +222,7 @@ describe('#Log', function () {
           error: log.enabled.error,
           fatal: log.enabled.fatal
         }
-        assert.deepEqual(res, exp)
+        assert.deepStrictEqual(res, exp)
       })
     })
   })
@@ -253,7 +253,7 @@ describe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.equal(res, f[idx], res + ' !== ' + f[idx])
+          else assert.strictEqual(res, f[idx], res + ' !== ' + f[idx])
         })
       })
 
@@ -268,14 +268,22 @@ describe('#Log', function () {
         const log = new Log('test:multiple', { level: 'DEBUG' })
         const msg = '1 test\n2 test\n3 test'
         const res = log.error(msg)
-        assert.equal(res, '  ERROR test:multiple 1 test\n  ERROR test:multiple 2 test\n  ERROR test:multiple 3 test +0ms\n')
+        assert.strictEqual(res, '  ERROR test:multiple 1 test\n  ERROR test:multiple 2 test\n  ERROR test:multiple 3 test +0ms\n')
       })
 
       it('should not log over multiple lines', function () {
         const log = new Log('test:multiple', { json: false, splitLine: false, level: 'DEBUG' })
         const msg = '1 test\n2 test\n3 test'
         const res = log.error(msg)
-        assert.equal(res, '  ERROR test:multiple 1 test\\n2 test\\n3 test +0ms\n')
+        assert.strictEqual(res, '  ERROR test:multiple 1 test\\n2 test\\n3 test +0ms\n')
+      })
+
+      it('shall format an error where stack trace is missing', function () {
+        const log = new Log('test', { level: 'DEBUG' })
+        const err = new Error('Baam')
+        delete err.stack
+        const res = log.error(err)
+        assert.strictEqual(res, '  ERROR test Error Baam +0ms\n')
       })
     })
 
@@ -301,14 +309,14 @@ describe('#Log', function () {
           const res = log.error(...args)
           clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.equal(res, f[idx], res + ' !== ' + f[idx])
+          else assert.strictEqual(res, f[idx], res + ' !== ' + f[idx])
         })
       })
 
       it('should remove object only formatters', function () {
         const log = Log('*')
         const res = log.error('%j ', { a: { b: 'c' } })
-        assert.equal(res, '{"level":"ERROR","name":"*","a":{"b":"c"},"diff":0}\n')
+        assert.strictEqual(res, '{"level":"ERROR","name":"*","a":{"b":"c"},"diff":0}\n')
       })
 
       it('should log serverinfo and pid', function () {
@@ -351,7 +359,7 @@ describe('#Log', function () {
             error: expects.error,
             fatal: expects.fatal
           }
-          assert.deepEqual(res, exp)
+          assert.deepStrictEqual(res, exp)
         })
       })
     })
@@ -379,7 +387,7 @@ describe('#Log', function () {
 
     it('should display result hex formatted', function () {
       const res = log.error('hex(%h)', 3333)
-      assert.equal(res, '  ERROR custom:format hex(d05) +0ms\n')
+      assert.strictEqual(res, '  ERROR custom:format hex(d05) +0ms\n')
     })
   })
 })

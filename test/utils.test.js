@@ -6,7 +6,7 @@ const { adjustLevel, inspectOpts, inspectNamespaces, random } = require('../src/
 describe('#utils', function () {
   it('adjustLevel() should use default', function () {
     const res = adjustLevel(undefined, 'DEBUG')
-    assert.equal(res, 'DEBUG')
+    assert.strictEqual(res, 'DEBUG')
   })
 
   it('inspectOpts() should read opts', function () {
@@ -30,7 +30,7 @@ describe('#utils', function () {
       hideDate: false
     }
     const res = inspectOpts(opts)
-    assert.deepEqual(res, exp)
+    assert.deepStrictEqual(res, exp)
   })
 
   it('inspectOpts() should omit wrong level', function () {
@@ -39,7 +39,7 @@ describe('#utils', function () {
     }
     const exp = {}
     const res = inspectOpts(opts)
-    assert.deepEqual(res, exp)
+    assert.deepStrictEqual(res, exp)
   })
 
   it('inspectNamespaces() should return undefined', function () {

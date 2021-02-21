@@ -1,5 +1,5 @@
 const assert = require('assert')
-const Namespaces = require('../src/Namespaces')
+const Namespaces = require('../src/Namespaces.js')
 
 describe('Namespaces', function () {
   it('should log ns test in DEBUG and all the rest with ERROR', function () {

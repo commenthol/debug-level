@@ -1,9 +1,9 @@
 /* global navigator window document Image chrome */
 
 import { Queue } from 'asyncc'
-import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random } from './utils'
 import ms from 'ms'
-import LogBase from './LogBase'
+import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random } from './utils'
+import LogBase from './LogBase.js'
 
 const COLOR_RESET = 'color:inherit'
 

@@ -1,6 +1,6 @@
-const Format = require('./Format')
-const { adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL } = require('./utils')
-const Namespaces = require('./Namespaces')
+const Format = require('./Format.js')
+const { adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL } = require('./utils.js')
+const Namespaces = require('./Namespaces.js')
 
 function LogBase (name, opts) {
   Object.assign(this, {

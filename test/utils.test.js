@@ -1,7 +1,7 @@
 /* eslint no-console: 0 no-multi-spaces: 0 */
 
 const assert = require('assert')
-const { adjustLevel, inspectOpts, inspectNamespaces, random } = require('../src/utils')
+const { adjustLevel, inspectOpts, inspectNamespaces, random } = require('../src/utils.js')
 
 describe('#utils', function () {
   it('adjustLevel() should use default', function () {

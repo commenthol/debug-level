@@ -2,8 +2,8 @@ const os = require('os')
 const ms = require('ms')
 const chalk = require('chalk')
 
-const { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors } = require('./utils')
-const LogBase = require('./LogBase')
+const { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors } = require('./utils.js')
+const LogBase = require('./LogBase.js')
 
 const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env

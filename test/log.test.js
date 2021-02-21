@@ -1,4 +1,4 @@
-const { log } = require('../src')
+const { log } = require('../src/index.js')
 
 describe('#Log.log', function () {
   it('should use global Log instance', function () {

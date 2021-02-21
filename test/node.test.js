@@ -5,7 +5,7 @@ const os = require('os')
 const sinon = require('sinon')
 const { inspect } = require('util')
 
-const Log = require('../src')
+const Log = require('../src/index.js')
 const fixtures = require('./fixtures/node.js')
 const { testcases } = require('./fixtures/testcases.js')
 

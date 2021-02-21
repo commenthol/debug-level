@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const sinon = require('sinon')
-const { inspect } = require('util')
 
 const fixtures = require('./fixtures/browser.js')
 const { testcases: _testcases } = require('./fixtures/testcases.js')
@@ -19,11 +18,12 @@ if (!isBrowser) {
 }
 
 const WRITE = false
+const inspect = (o) => console.log('%j', o)
 
 bdescribe('#Log', function () {
   // this.timeout(1000000)
   // const Log = require('..')
-  const Log = require('../src/browser')
+  const Log = require('../lib/browser')
 
   const defaultOpts = Log.options()
 
@@ -249,7 +249,7 @@ bdescribe('#Log', function () {
 
       after(() => {
         clock.restore()
-        if (WRITE) console.log(inspect(exp))
+        if (WRITE) inspect(exp)
         Object.keys(window.localStorage).forEach((i) => window.localStorage.removeItem(i))
       })
 
@@ -277,7 +277,7 @@ bdescribe('#Log', function () {
 
       after(() => {
         clock.restore()
-        if (WRITE) console.log(inspect(exp, { depth: Infinity }))
+        if (WRITE) inspect(exp)
       })
 
       testcases.forEach(({ name, args }, idx) => {
@@ -303,7 +303,7 @@ bdescribe('#Log', function () {
 
       after((done) => {
         clock.restore()
-        if (WRITE) console.log(inspect(exp))
+        if (WRITE) inspect(exp)
         setTimeout(() => {
           done()
         }, 1000) // need timeout such that chrome finished loading the imgs

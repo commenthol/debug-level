@@ -2,7 +2,11 @@ const stringify = require('json-stringify-safe')
 
 const replacer = (key, value) => {
   if (value instanceof Error) {
-    return value.stack || value.name + ' ' + value.message
+    let stack = value.stack
+    if (stack && stack.indexOf(value.name) !== 0) {
+      stack = value.name + ': ' + value.message + '\n' + stack
+    }
+    return stack || value.name + ' ' + value.message
   }
   return value
 }

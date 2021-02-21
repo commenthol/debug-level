@@ -1,10 +1,11 @@
 const karmaTestMiddleware = require('./test/helpers/karma-test-middleware.js')
+const path = require('path')
 
 // Reference: http://karma-runner.github.io/0.13/config/configuration-file.html
 module.exports = function karmaConfig (config) {
   config.set({
     browsers: [
-      // 'Firefox',
+      'Firefox',
       'Chrome'
       // 'ChromeHeadless'
     ],
@@ -16,10 +17,11 @@ module.exports = function karmaConfig (config) {
     frameworks: [
       // Reference: https://github.com/karma-runner/karma-mocha
       // Set framework to mocha
-      'mocha'
+      'mocha',
+      'webpack'
     ],
 
-    reporters: ['progress', 'coverage-istanbul'],
+    reporters: ['progress'],
 
     coverageIstanbulReporter: {
       reports: ['text', 'html'],
@@ -28,6 +30,7 @@ module.exports = function karmaConfig (config) {
 
     files: [
       // Grab all files in the tests directory that contain _test.
+      'test/helpers/global.js',
       'test/browser.test.js',
       'test/Format.test.js',
       'test/utils.test.js'
@@ -65,12 +68,29 @@ module.exports = function karmaConfig (config) {
       'karma-firefox-launcher',
       'karma-sourcemap-loader',
       'karma-coverage',
-      'karma-coverage-istanbul-reporter',
       { 'middleware:test': ['factory', karmaTestMiddleware] }
     ],
 
     // Test webpack config
-    webpack: require('./webpack.config'),
+    webpack: {
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            include: [
+              path.resolve(__dirname, 'src'),
+              path.resolve(__dirname, 'test')
+            ],
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          }
+        ]
+      }
+    },
 
     // Hide webpack build information from output
     webpackMiddleware: {

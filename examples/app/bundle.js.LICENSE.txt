@@ -1,0 +1,10 @@
+/**
+ * @license MIT
+ * @copyright debug contributors, <commenthol@gmail.com>
+ * @see https://github.com/visionmedia/debug
+ */
+
+/**
+ * @license MIT
+ * @copyright debug contributors, <commenthol@gmail.com>
+ */

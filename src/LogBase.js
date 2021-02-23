@@ -1,6 +1,6 @@
-const Format = require('./Format')
-const { adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL } = require('./utils')
-const Namespaces = require('./Namespaces')
+const Format = require('./Format.js')
+const { adjustLevel, LEVELS, LOG, DEBUG, INFO, WARN, ERROR, FATAL } = require('./utils.js')
+const Namespaces = require('./Namespaces.js')
 
 function LogBase (name, opts) {
   Object.assign(this, {
@@ -63,6 +63,7 @@ LogBase.prototype = {
     return this._log(FATAL, args)
   },
 
+  /* c8 ignore next */
   _serverinfo () {},
 
   /**
@@ -143,8 +144,8 @@ LogBase.prototype = {
     this.prev = curr
   },
 
+  /* c8 ignore next 3 */
   _log (/* level, args */) {
-    /* istanbul ignore next */
     throw new Error('needs implementation')
   }
 }

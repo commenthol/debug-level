@@ -1,4 +1,4 @@
-const Log = require('./node')
+const Log = require('./node.js')
 
 const loggers = {}
 

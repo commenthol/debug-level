@@ -1,6 +1,6 @@
 {
   "name": "debug-level",
-  "version": "1.0.0",
+  "version": "1.1.0-0",
   "description": "debug with levels",
   "keywords": [
     "debug",
@@ -26,15 +26,17 @@
     "test": "test"
   },
   "scripts": {
-    "all": "npm run clean && npm run lint && npm run build && npm test",
+    "all": "npm run clean && npm run lint && npm run build && npm run coverage",
     "build": "npm run clean && babel -d lib src",
     "build:example": "cd examples/app && webpack",
     "clean": "rimraf lib coverage",
-    "coverage": "nyc -r lcov -r text npm test",
-    "coveralls": "npm run build && nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "coverage": "c8 -r lcov -r text npm test",
+    "coveralls": "npm run build && c8 npm test && c8 report --reporter=text-lcov | coveralls",
+    "example": "npm run build:example && npm run start:example",
     "lint": "eslint '**/*.js'",
     "prepublishOnly": "npm run all",
-    "start:example": "node examples/app/server.js",
+    "readme": "markedpp --github -i README.md -o README.md",
+    "start:example": "DEBUG=* node examples/app/server.js",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start"
   },
@@ -56,6 +58,7 @@
     "@babel/register": "^7.12.13",
     "assert": "^2.0.0",
     "babel-loader": "^8.2.2",
+    "c8": "^7.6.0",
     "coveralls": "^3.1.0",
     "eslint": "^7.20.0",
     "eslint-config-standard": "^16.0.2",
@@ -71,7 +74,6 @@
     "karma-spec-reporter": "^0.0.32",
     "karma-webpack": "^5.0.0",
     "mocha": "^8.3.0",
-    "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "sinon": "^9.2.4",
     "webpack": "^5.23.0",

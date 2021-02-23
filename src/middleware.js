@@ -1,8 +1,8 @@
 const { parse: urlParse } = require('url')
 const { parse: qsParse } = require('querystring')
 const MapLRU = require('map-lru').default
-const Log = require('./node')
-const { adjustLevel, DEBUG } = require('./utils')
+const Log = require('./node.js')
+const { adjustLevel, DEBUG } = require('./utils.js')
 
 // https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')

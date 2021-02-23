@@ -4,7 +4,7 @@
  * @see https://github.com/visionmedia/debug
  */
 
-const { DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils')
+const { DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils.js')
 const LEVELS = [DEBUG, INFO, WARN, ERROR, FATAL, OFF]
 const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
@@ -38,8 +38,8 @@ Namespaces.prototype = {
     this.names = this.names.sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level))
   },
 
+  /* c8 ignore next 3 */
   disable () {
-    /* istanbul ignore next */
     this.enable('')
   },
 

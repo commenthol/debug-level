@@ -1,4 +1,4 @@
-const Log = require('../src')
+const Log = require('../src/index.js')
 
 const fakeRes = () => ({
   write: () => {},

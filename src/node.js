@@ -1,10 +1,14 @@
 const os = require('os')
 const ms = require('ms')
 const chalk = require('chalk')
+const fastStringify = require('fast-safe-stringify')
+const flatstr = require('flatstr')
 
-const { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors } = require('./utils.js')
+const { fromNumLevel, inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, INFO } = require('./utils.js')
 const LogBase = require('./LogBase.js')
 const wrapConsole = require('./wrapConsole.js')
+const Sonic = require('./Sonic.js')
+const errSerializer = require('./serializers/err.js')
 
 const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
@@ -15,15 +19,20 @@ const EXIT_EVENTS = ['unhandledRejection', 'uncaughtException']
  * global log options
  */
 const options = {
-  level: undefined,
+  level: INFO,
   namespaces: undefined,
+  levelNumbers: false,
   json: !isDevEnv, // log in json format
-  serverinfo: !isDevEnv, // append server information
-  hideDate: isDevEnv, // do not hide date from output
   colors: isDevEnv, // apply colors
+  timestamp: !isDevEnv && 'iso', // time format: either `epoch`, `unix`, `iso`
+  serverinfo: !isDevEnv, // append server information
   stream: process.stderr, // output stream
+  sonic: !isDevEnv, // use Sonic as stream writer
+  sonicLength: 4096, // buffer length for Sonic
+  sonicFlushMs: 1000, // min. timeout before write
   spaces: null, // pretty print JSON
-  splitLine: isDevEnv
+  splitLine: isDevEnv, // split lines for pretty debug like output
+  serializers: { err: errSerializer }
 }
 
 /**
@@ -37,12 +46,26 @@ function Log (name, opts) {
     inspectOpts(process.env),
     inspectNamespaces(process.env)
   )
-  LogBase.call(this, name, Object.assign({}, options, opts))
+  const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
+  LogBase.call(this, name, Object.assign({}, options, opts, { serializers }))
+
   const colorFn = (n) => chalk.hex(n)
   this.color = selectColor(name, colorFn)
   this.levColors = levelColors(colorFn)
+
+  this.stream = this.opts.sonic
+    ? new Sonic(this.opts.stream, { minLength: this.opts.sonicLength, timeout: this.opts.sonicFlushMs })
+    : this.opts.stream
+
   if (!this.opts.json) {
-    this._log = this._logOneLine
+    this._log = this._logDebugLike
+  } else if (this.opts.colors) {
+    this._log = this._logJsonColor
+  }
+
+  if (this.opts.serverinfo) {
+    this.hostname = os.hostname()
+    this.pid = process.pid
   }
 }
 Object.setPrototypeOf(Log.prototype, LogBase.prototype)
@@ -56,25 +79,36 @@ Object.assign(Log.prototype, {
    * @return {String}
    */
   render (str) {
-    str += '\n'
-    this.opts.stream.write(str)
+    this.stream.write(flatstr(str + '\n'))
     return str
+  },
+
+  flush () {
+    this.stream.flush && this.stream.flush()
   },
 
   /**
    * format object to json
    * @private
    */
-  _log (level, args) {
-    this._diff()
-    const o = this._formatJson(level, args)
-    let str = this.formatter.format(o)[0]
-    /* c8 ignore next */ // can't cover with test as underlying tty is unknown
-    if (this.opts.colors) { // this is slow...
-      str = str
-        .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
-        .replace(/"name":\s?"[^"]+"/, (m) => this._color(m, this.color, true))
-    }
+  _log (level, fmt, args) {
+    const o = this._formatJson(level, fmt, args)
+    const str = toJson(o, this.serializers)
+    return this.render(str, level)
+  },
+
+  /**
+   * format object to json
+   * @private
+   */
+  _logJsonColor (level, fmt, args) {
+    const o = this._formatJson(level, fmt, args)
+    let str = toJson(o, this.serializers)
+    /* c8 ignore next 4 */ // can't cover with tests as underlying tty is unknown
+    str = str
+      .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
+      .replace(/"level":\s?(\d+)/, (m, level) => this._color(m, this.levColors[fromNumLevel(Number(level))], true))
+      .replace(/"name":\s?"[^"]+"/, (m) => this._color(m, this.color, true))
     return this.render(str, level)
   },
 
@@ -82,41 +116,38 @@ Object.assign(Log.prototype, {
    * debug like output if `this.opts.json === false`
    * @private
    */
-  _logOneLine (level, args) {
-    this._diff()
-    const str = this._formatArgs(level, args)
-    return this.render(str, level)
-  },
+  _logDebugLike (_level, fmt, args) {
+    const o = this._formatJson(_level, fmt, args)
+    const { level, time, name, msg, pid, hostname, diff, ...other } = o
 
-  /**
-   * format arguments to debug like string
-   * @private
-   * @param {String} level
-   * @param {Array} args - formatter arguments - first arg should contain "%" formatter directives
-   * @return {String} formatted String
-   */
-  _formatArgs (level, _args) {
-    this.formatter.noQuotes = true
-    const args = this.formatter.format(..._args)
-    let msg = args.shift()
-    // if there are still unformatted args push through formatter and append to msg
-    if (args.length) {
-      msg += ' ' + args.map((arg) => this.formatter.format('%O', arg)).join(' ')
-    }
-    this.formatter.noQuotes = false
-
-    const prefix = '  ' + this._color(level, this.levColors[level], true) + ' ' +
+    const prefix = '  ' +
+      this._color(level, this.levColors[level], true) + ' ' +
       this._color(this.name, this.color, true)
 
-    const str = [
-      prefix,
-      this.opts.hideDate ? '' : new Date().toISOString(),
-      !this.opts.splitLine ? msg.replace(/[\r\n]/g, '\\n') : msg.split(/\\n|\n/).join('\n' + prefix + ' '),
-      this._color('+' + ms(this.diff), this.color),
-      this.opts.serverinfo ? os.hostname() + ' ' + process.pid : undefined
-    ].filter(f => f).join(' ')
+    const strOther = Object.keys(other).length
+      ? stringify(this._applySerializers(other), this.opts.splitLine && 2)
+      : ''
 
-    return str
+    const str = (this.opts.splitLine)
+      ? [
+          prefix,
+          time,
+          msg,
+          strOther,
+          this._color('+' + ms(diff), this.color),
+          hostname,
+          pid
+        ].filter(s => s).join(' ').split(/\\n|\n/).join('\n' + prefix + ' ')
+      : [
+          prefix,
+          time,
+          replaceLf(msg),
+          strOther,
+          this._color('+' + ms(diff), this.color),
+          hostname,
+          pid
+        ].filter(s => s).join(' ')
+    return this.render(str, level)
   },
 
   /**
@@ -129,16 +160,6 @@ Object.assign(Log.prototype, {
       : isBold
         ? color.bold(str)
         : color(str)
-  },
-
-  /**
-   * append server info to json object - used by `_formatJson`
-   * @private
-   */
-  _serverinfo (o) {
-    if (this.opts.serverinfo) {
-      Object.assign(o, { hostname: os.hostname(), pid: process.pid })
-    }
   }
 })
 
@@ -213,4 +234,84 @@ Log.handleExitEvents = function handleExitEvents (name = 'exit', opts = {}) {
   })
 }
 
+Log.Sonic = Sonic
+
 module.exports = Log
+
+/**
+ * @credits pino/lib/tools.js
+ * magically escape strings for json
+ * relying on their charCodeAt
+ * everything below 32 needs JSON.stringify()
+ * 34 and 92 happens all the time, so we
+ * have a fast case for them
+ */
+function asString (str) {
+  let result = ''
+  let last = 0
+  let found = false
+  let point = 255
+  const l = str.length
+  if (l > 100) {
+    return JSON.stringify(str)
+  }
+  for (let i = 0; i < l && point >= 32; i++) {
+    point = str.charCodeAt(i)
+    if (point === 34 || point === 92) {
+      result += str.slice(last, i) + '\\'
+      last = i
+      found = true
+    }
+  }
+  if (!found) {
+    result = str
+  } else {
+    result += str.slice(last)
+  }
+  return point < 32 ? JSON.stringify(str) : '"' + result + '"'
+}
+
+function toJson (obj, serializers, spaces) {
+  let s = '{'
+  let comma = ''
+  for (const key in obj) {
+    let value = obj[key]
+    if (Object.prototype.hasOwnProperty.call(obj, key) && value !== undefined) {
+      if (serializers && serializers[key]) {
+        value = serializers[key](value)
+      }
+      switch (typeof value) {
+        case 'function':
+          continue
+        case 'number':
+          if (!Number.isFinite(value)) {
+            continue
+          }
+          break
+        case 'boolean':
+          break
+        case 'string':
+          value = asString(value)
+          break
+        default:
+          value = stringify(value, spaces)
+          break
+      }
+      s += comma + asString(key) + ':' + value
+      comma = ','
+    }
+  }
+  return s + '}'
+}
+
+function stringify (any, spaces) {
+  try {
+    return JSON.stringify(any, null, spaces)
+  } catch (e) {
+    return fastStringify(any, null, spaces)
+  }
+}
+
+function replaceLf (str = '') {
+  return str.replace(/[\r\n]/g, '\\n')
+}

@@ -9,7 +9,7 @@ Log.options({
   level: 'DEBUG',
   json: true,
   serverinfo: true,
-  hideDate: false,
+  timestamp: 'iso',
   colors: false,
   stream
 })

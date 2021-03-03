@@ -1,7 +1,10 @@
 const debugF = require('debug')
 const Log = require('..')
+
+Log.options({ level: 'trace' }) // call options before your instances
 const log = new Log('test')
 
+log.trace({ trace: 'it' }) // logs an object at level TRACE
 log.debug({ object: 1 }) // logs an object at level DEBUG
 log.info('%s world', 'hello') // logs a formatted string at level INFO
 log.warn('huh %o', { ghost: 'rider' }) // logs a formatted object at level WARN

@@ -43,6 +43,14 @@ Prints colored and human readable output for development and [bunyan][] like JSO
 * [Handle node exit events](#handle-node-exit-events)
 * [Logging Browser messages](#logging-browser-messages)
 * [License](#license)
+* [Benchmarks](#benchmarks)
+  * [Basic String](#basic-string)
+  * [Long String 2000 chars](#long-string-2000-chars)
+  * [Hello World with %s format](#hello-world-with-s-format)
+  * [Multi Argument format](#multi-argument-format)
+  * [Object](#object)
+  * [Deep Object](#deep-object)
+  * [Deep Object with %j format](#deep-object-with-j-format)
 * [References](#references)
 
 <!-- toc! -->
@@ -97,12 +105,14 @@ ERROR       | --             | log.fatal, log.error
 WARN        | --             | log.fatal, log.error, log.warn
 INFO        | --             | log.fatal, log.error, log.warn and log.info
 DEBUG       | --             | log.fatal, log.error, log.warn, log.info and log.debug
+TRACE       | --             | log.fatal, log.error, log.warn, log.info, log.debug and log.trace
 --          | `<namespaces>`   | log.fatal, to log.debug which apply to `<namespaces>`. <br> Same behavior as [debug][].
 FATAL       | `<namespaces>`   | log.fatal for all `<namespaces>` only
 ERROR       | `<namespaces>`   | log.fatal, log.error for `<namespaces>` only
 WARN        | `<namespaces>`   | log.fatal, to log.warn for `<namespaces>` only
 INFO        | `<namespaces>`   | log.fatal, to log.info for `<namespaces>` only
 DEBUG       | `<namespaces>`   | log.fatal, to log.debug for `<namespaces>` only
+TRACE       | `<namespaces>`   | log.fatal, to log.trace for `<namespaces>` only
 --          | `ERROR:n1,DEBUG:n2,FATAL:*` | Logs namespace `n1` at level `ERROR`, namespace `n2` at level `DEBUG` and all other namespaces (`*`) at level `FATAL`
 FATAL       | `ERROR:n1,n2` | Logs `n1` at level `ERROR`, `n2` at level `FATAL`. All other namespaces will **NOT** get logged
 
@@ -152,27 +162,28 @@ $ DEBUG=INFO:server,ERROR:* node examples/server.js
 
 **Common**
 
-Setting          | Values         | Description
-----             | ----           | ----
-DEBUG            | <namespace>    | Enables/disables specific debugging namespaces
-DEBUG_LEVEL      | ERROR, WARN, INFO, DEBUG | sets debug level
-DEBUG_COLORS     | **true**/false | display colors (if supported)
+Setting      | Values         | Description
+----         | ----           | ----
+DEBUG        | <namespace>    | Enables/disables specific debugging namespaces
+DEBUG_LEVEL  | ERROR, WARN, **INFO**, DEBUG | sets debug level
+DEBUG_COLORS | **true**/false | display colors (if supported)
 
 **Node only**
 
-Setting          | Values         | `NODE_ENV=`<br>`development` | Description
-----             | ----           | ----  | ----
-DEBUG_JSON       | **true**/false | false | use JSON format instead of string based log
-DEBUG_SERVERINFO | **true**/false | false | adds server information like `pid` and `hostname`
-DEBUG_HIDE_DATE  | **true**/false | false | hides date from log output default false
+Setting             | Values             | `NODE_ENV=`<br>`development` | Description
+----                | ----               | ----      | ----
+DEBUG_JSON          | **true**/false     | false     | use JSON format instead of string based log
+DEBUG_SERVERINFO    | **true**/false     | false     | adds server information like `pid` and `hostname`
+DEBUG_TIMESTAMP     | **iso**/epoch/unix | undefined | datetime format
+DEBUG_LEVEL_NUMBERS | true/**false**     | false     | log levels as numbers
 
 For `NODE_ENV !== 'development'` the default logging is in JSON format using serverinfo and date.
 
 **Browsers only**
 
-Setting          | Values         | Description
-----             | ----           | ----
-DEBUG_URL        | URL            | log in JSON format to server (needs `middleware.js` at the server side)
+Setting     | Values         | Description
+----        | ----           | ----
+DEBUG_URL   | URL            | log in JSON format to server (needs `middleware.js` at the server side)
 
 In the browser `localStorage` is used to set/save the settings.
 E.g. to enable level ERROR an all namespaces type in console and refresh your page/ app:
@@ -192,34 +203,61 @@ You may set the global log options with:
 const fs = require('fs')
 const Log = require('debug-level')
 
-// log into file instead of process.stdout
+// log into file instead of process.stderr
 const stream = fs.createWriteStream('./my.log')
 
 // The options will be set for all Loggers...
 Log.options({
   level: 'DEBUG',
   json: true,
+  levelNumbers: false,
   serverinfo: true,
-  hideDate: false,
+  timestamp: 'epoch',
   colors: false,
-  stream
+  stream,
+  serializers: {
+    err: Log.serializers.err // default error serialzer is always set
+  }
 })
 const log = new Log('*')
 
 log.debug({object: 1}) // ...
 ```
 
-Option name | Setting         | env     | Type    | Description
------       | ----            | ----    | ----    | ----
-level       | DEBUG_LEVEL     | _both_  | String  |
-namespaces  | DEBUG           | _both_  | String  |
-json        | DEBUG_JSON      | node    | Boolean |
-spaces      | DEBUG_SPACES    | node    | Number  | JSON spaces
-hideDate    | DEBUG_HIDE_DATE | _both_  | Boolean |
-colors      | DEBUG_COLORS    | _both_  | Boolean |
-stream      | --              | node    | Stream  | output stream (defaults to `process.stderr`)
-url         | DEBUG_URL       | browser | String  |
-formatters  | --              | _both_  | Object  | custom formatters
+Option name  | Setting         | env     | Type    | Description
+-----        | ----            | ----    | ----    | ----
+level        | DEBUG_LEVEL     | _both_  | String  |
+namespaces   | DEBUG           | _both_  | String  |
+json         | DEBUG_JSON      | node    | Boolean |
+spaces       | DEBUG_SPACES    | node    | Number  | JSON spaces
+timestamp    | DEBUG_TIMESTAMP | node    | String  | Set null/iso/unix/epoch timestamp format
+colors       | DEBUG_COLORS    | _both_  | Boolean |
+stream       | --              | node    | Stream  | output stream (defaults to `process.stderr`)
+sonic        | DEBUG_SONIC     | node    | Boolean | faster buffered writer
+sonicLength  | DEBUG_SONIC_LENGTH | node | number  | min size of buffer in byte (default is 4096)
+sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node | number | flush after each x ms (default is 1000)
+serializers  | --              | _both_  | Object  | serializers by keys
+url          | DEBUG_URL       | browser | String  |
+
+### Serializers
+
+To serialize top-level object keys you may use standard or custom functions.
+Per default a serializer for key `err` is provided in node and browser.
+
+```js
+// custom serialize function for key `my`
+const mySerializer = function (val) {
+  if (typeof val !== 'object' || !val) return
+  const { foo } = val
+  return foo
+}
+
+const log = new Log('foobar', { serializers: { my: mySerializer }})
+
+const my = {foo: 'bar', sense: 42}
+log.info({my})
+//> INFO foobar {my: 'bar'} +0ms
+```
 
 ## Levels
 
@@ -232,6 +270,7 @@ formatters  | --              | _both_  | Object  | custom formatters
 - `WARN`: A note on something that should probably be looked at by an operator eventually.
 - `INFO`: Detail on regular operation.
 - `DEBUG`: Anything else, i.e. too verbose to be included in `INFO` level.
+- `TRACE`: Trace level.
 
 ## Namespaces
 
@@ -315,7 +354,7 @@ Core fields are:
 - `msg`: A message which should give reason for logging the line.
 - `hostname`: Hostname of the server. (Requires option serverinfo)
 - `pid`: PID of the logged process. (Requires option serverinfo).
-- `time`: Timestamp (Suppress with option hideDate).
+- `time`: Timestamp (Suppress with option timestamp=false).
 - `diff`: Difftime in milliseconds.
 
 See [examples/jsonOutput.js](./examples/jsonOutput.js).
@@ -481,6 +520,10 @@ and open <http://localhost:3000>
 
 [MIT](./LICENSE)
 
+## Benchmarks
+
+[benchmarks][benchmarks]
+
 ## References
 
 - [debug][]
@@ -489,6 +532,7 @@ and open <http://localhost:3000>
 [bunyan]: https://www.npmjs.com/package/bunyan
 [debug]: https://www.npmjs.com/package/debug
 
-[debug-level-dev.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-dev.png
-[debug-level-dev-json.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-dev-json.png
-[debug-level-prod.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/debug-level-prod.png
+[debug-level-dev.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/images/debug-level-dev.png
+[debug-level-dev-json.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/images/debug-level-dev-json.png
+[debug-level-prod.png]: https://raw.githubusercontent.com/commenthol/debug-level/master/docs/images/debug-level-prod.png
+[benchmarks]: https://github.com/commenthol/debug-level/blob/master/docs/benchmarks.md

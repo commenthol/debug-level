@@ -1,6 +1,6 @@
 {
   "name": "debug-level",
-  "version": "1.1.0",
+  "version": "2.0.0-0",
   "description": "debug with levels",
   "keywords": [
     "debug",
@@ -16,9 +16,8 @@
   },
   "license": "MIT",
   "author": "commenthol <commenthol@gmail.com>",
-  "main": "lib",
-  "module": "src",
-  "browser": "./lib/browser.js",
+  "main": "src",
+  "browser": "./src/browser.js",
   "directories": {
     "lib": "lib",
     "doc": "docs",
@@ -38,7 +37,8 @@
     "readme": "markedpp --github -i README.md -o README.md",
     "start:example": "DEBUG=* node examples/app/server.js",
     "test": "mocha",
-    "test:karma": "DEBUG_LEVEL=DEBUG karma start"
+    "test:karma": "DEBUG_LEVEL=DEBUG karma start",
+    "benchmarks": "node benchmarks/run.js > docs/benchmarks.md"
   },
   "babel": {
     "presets": [
@@ -48,19 +48,21 @@
   "dependencies": {
     "asyncc": "^2.0.4",
     "chalk": "^4.1.0",
-    "json-stringify-safe": "^5.0.1",
+    "fast-safe-stringify": "^2.0.7",
+    "flatstr": "^1.0.12",
     "map-lru": "^1.1.0",
-    "ms": "^2.1.3"
+    "ms": "^2.1.3",
+    "sonic-boom": "^1.3.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.17",
-    "@babel/preset-env": "^7.12.17",
-    "@babel/register": "^7.12.13",
+    "@babel/cli": "^7.13.0",
+    "@babel/preset-env": "^7.13.9",
+    "@babel/register": "^7.13.8",
     "assert": "^2.0.0",
     "babel-loader": "^8.2.2",
     "c8": "^7.6.0",
     "coveralls": "^3.1.0",
-    "eslint": "^7.20.0",
+    "eslint": "^7.21.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
@@ -76,7 +78,7 @@
     "mocha": "^8.3.0",
     "rimraf": "^3.0.2",
     "sinon": "^9.2.4",
-    "webpack": "^5.23.0",
+    "webpack": "^5.24.3",
     "webpack-cli": "^4.5.0"
   },
   "engines": {

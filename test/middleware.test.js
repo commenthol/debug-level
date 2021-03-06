@@ -10,7 +10,7 @@ describe('#middleware', function () {
   let mw
   const opts = Object.assign({}, Log.options())
   before(() => {
-    Log.options({ level: 'DEBUG' })
+    Log.options({ level: 'DEBUG', json: true, colors: true })
     mw = Log.logger({ maxSize: 3, logAll: false })
   })
   after(() => {
@@ -63,6 +63,18 @@ describe('#middleware', function () {
     const ip = '10.10.10.10'
     const query = { log: { name: '##' } }
     mw({ url, ip, query }, fakeRes())
+  })
+
+  it('should convert numbered levels', function () {
+    const mw = Log.logger({ maxSize: 3 })
+    const url = '/?log=' + escape('{"level":30,"name":"##"}')
+    mw({ url }, fakeRes())
+  })
+
+  it('should log with numbered level', function () {
+    const mw = Log.logger({ maxSize: 3, numbered: true })
+    const url = '/?log=' + escape('{"level":30,"name":"##"}')
+    mw({ url }, fakeRes())
   })
 
   it('should log all', function () {

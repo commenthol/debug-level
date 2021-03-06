@@ -4,8 +4,8 @@
  * @see https://github.com/visionmedia/debug
  */
 
-const { DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils.js')
-const LEVELS = [DEBUG, INFO, WARN, ERROR, FATAL, OFF]
+const { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils.js')
+const LEVELS = [TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF]
 const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
 module.exports = Namespaces

@@ -1,6 +1,17 @@
-const { adjustLevel, LOG, DEBUG, INFO, WARN, ERROR } = require('./utils.js')
+const { adjustLevel, LOG, TRACE, DEBUG, INFO, WARN, ERROR } = require('./utils.js')
 
-const LEVELS = [LOG, DEBUG, INFO, WARN, ERROR]
+const LEVELS = [LOG, TRACE, DEBUG, INFO, WARN, ERROR]
+
+let wrapped = null
+
+const unwrap = () => {
+  if (wrapped) {
+    LEVELS.forEach(level => {
+      console[level] = wrapped[level]
+    })
+    wrapped = null
+  }
+}
 
 /**
  * wrap console logging functions like
@@ -8,13 +19,14 @@ const LEVELS = [LOG, DEBUG, INFO, WARN, ERROR]
  * @return {function} unwrap function
  */
 function wrapConsole (log, { level4log = 'LOG' } = {}) {
+  if (wrapped) return unwrap
+  wrapped = {}
+
   const _level4log = adjustLevel(level4log, 'LOG').toLowerCase()
 
   const render = level => (...args) => {
     log[level](...args)
   }
-
-  const wrapped = {}
 
   LEVELS.map(l => l.toLowerCase()).forEach(level => {
     wrapped[level] = console[level]
@@ -24,10 +36,7 @@ function wrapConsole (log, { level4log = 'LOG' } = {}) {
     console[level] = render(renderLevel)
   })
 
-  // unwrap
-  return () => LEVELS.forEach(level => {
-    console[level] = wrapped[level]
-  })
+  return unwrap
 }
 
 module.exports = wrapConsole

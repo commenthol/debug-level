@@ -4,10 +4,7 @@ const assert = require('assert')
 const sinon = require('sinon')
 
 const fixtures = require('./fixtures/browser.js')
-const { testcases: _testcases } = require('./fixtures/testcases.js')
-const testcases = _testcases.concat([
-  { name: 'custom color %c%o', args: ['custom color %c%o', 'color: red', {}] }
-])
+const { testcases } = require('./fixtures/testcases.js')
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -43,7 +40,7 @@ bdescribe('#Log', function () {
     it('should get default options', function () {
       const res = Log.options()
       assert.deepStrictEqual(res, {
-        level: undefined,
+        level: 'WARN',
         namespaces: undefined,
         colors: true,
         url: undefined
@@ -256,9 +253,8 @@ bdescribe('#Log', function () {
       testcases.forEach(({ name, args }, idx) => {
         it(name, function () {
           const res = log.error(...args)
-          clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -283,9 +279,8 @@ bdescribe('#Log', function () {
       testcases.forEach(({ name, args }, idx) => {
         it(name, function () {
           const res = log.error(...args)
-          clock.tick(1)
           if (WRITE) exp.push(res)
-          else assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -363,22 +358,6 @@ bdescribe('#Log', function () {
         assert(!/one/.test(log1.error('one')))
         assert(/two/.test(log2.error('two')))
       })
-    })
-  })
-
-  describe('custom formatter', function () {
-    let log
-
-    after(reset)
-
-    before(() => {
-      Log.options({ level: 'ERROR', namespaces: undefined })
-      log = new Log('custom:format', { colors: false, formatters: { h: (n) => n.toString(16) } })
-    })
-
-    it('should display result hex formatted', function () {
-      const res = log.error('hex(%h)', 3333)
-      assert.strictEqual(res[0], 'ERROR custom:format hex(d05) +0ms')
     })
   })
 })

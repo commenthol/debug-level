@@ -1,70 +1,140 @@
 module.exports = {
   debug: [
-    '  ERROR test 1970-01-01T00:00:00.000Z string +0ms\n',
-    '  ERROR test 1970-01-01T00:00:00.001Z 1 +0ms\n',
-    '  ERROR test 1970-01-01T00:00:00.002Z false +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.003Z {"object":{"test":1},"msg":"the message"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.004Z TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.005Z string +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.006Z 1 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.007Z false +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.008Z {"object":{"test":1},"msg":"the message"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.009Z {"object":{"test":1},"msg":"the message"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.010Z [1,2,3] +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.011Z TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.012Z {"a":{"b":{"c":1},"e":"[Circular ~.a]"},"d":"[Circular ~]"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.013Z null +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.014Z undefined +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.015Z 0 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.016Z NaN +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.017Z hello world +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.018Z digit 42.7 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.019Z integer 42 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.020Z float 42.666 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.021Z json {"object":{"test":1},"msg":"the message"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.022Z obj {"object":{"test":1},"msg":"the message"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.023Z obj [1,2,3] +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.024Z error TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.025Z mixed %% string 1.1 2 3.33 {"object":{"test":1},"msg":"the message"} TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.026Z TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile %s %% %d string 1.1 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.027Z TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile {"object":{"test":1},"msg":"the message"} %s %% %d string 1.1 +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.028Z string %% 1.1 {"object":{"test":1},"msg":"the message"} TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.029Z {"7123000":7123000,"_abcdEF$01":"abcdef","0.1234":0.1234,"s p-a c e":"space","\\"\'``\\"":"\\"\'``\\"","\\"":"\\"","\'":"\'"} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.030Z {"req":{"url":"/test","ip":"10.10.10.10"}} +1ms\n',
-    '  ERROR test 1970-01-01T00:00:00.031Z {"name":{"test":1},"msg":"with level","level":"NONESENSE"} +1ms\n'
+    '  ERROR test 1970-01-01T00:00:00.000Z string +0ms',
+    '  ERROR test 1970-01-01T00:00:00.001Z 1 +0ms',
+    '  ERROR test 1970-01-01T00:00:00.002Z +1ms',
+    '  ERROR test 1970-01-01T00:00:00.003Z the message {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.004Z error message {\n' +
+    '  ERROR test   "err": {\n' +
+    '  ERROR test     "name": "TypeError",\n' +
+    '  ERROR test     "stack": "TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile",\n' +
+    '  ERROR test     "status": 500\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.005Z string +1ms',
+    '  ERROR test 1970-01-01T00:00:00.006Z 1 +1ms',
+    '  ERROR test 1970-01-01T00:00:00.007Z +1ms',
+    '  ERROR test 1970-01-01T00:00:00.008Z the message {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.009Z the message {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.010Z {\n' +
+    '  ERROR test   "arr": [\n' +
+    '  ERROR test     1,\n' +
+    '  ERROR test     2,\n' +
+    '  ERROR test     3\n' +
+    '  ERROR test   ]\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.011Z error message {\n' +
+    '  ERROR test   "err": {\n' +
+    '  ERROR test     "name": "TypeError",\n' +
+    '  ERROR test     "stack": "TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile",\n' +
+    '  ERROR test     "status": 500\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.012Z {\n' +
+    '  ERROR test   "a": {\n' +
+    '  ERROR test     "b": {\n' +
+    '  ERROR test       "c": 1\n' +
+    '  ERROR test     },\n' +
+    '  ERROR test     "e": "[Circular]"\n' +
+    '  ERROR test   },\n' +
+    '  ERROR test   "d": {\n' +
+    '  ERROR test     "a": {\n' +
+    '  ERROR test       "b": {\n' +
+    '  ERROR test         "c": 1\n' +
+    '  ERROR test       },\n' +
+    '  ERROR test       "e": "[Circular]"\n' +
+    '  ERROR test     },\n' +
+    '  ERROR test     "d": "[Circular]"\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.013Z null +1ms',
+    '  ERROR test 1970-01-01T00:00:00.014Z undefined +1ms',
+    '  ERROR test 1970-01-01T00:00:00.015Z %d +1ms',
+    '  ERROR test 1970-01-01T00:00:00.016Z %d +1ms',
+    '  ERROR test 1970-01-01T00:00:00.017Z hello world +1ms',
+    '  ERROR test 1970-01-01T00:00:00.018Z digit 42.7 +1ms',
+    '  ERROR test 1970-01-01T00:00:00.019Z json {"object":{"test":1},"msg":"the message"} +1ms',
+    '  ERROR test 1970-01-01T00:00:00.020Z obj {"object":{"test":1},"msg":"the message"} +1ms',
+    '  ERROR test 1970-01-01T00:00:00.021Z obj [1,2,3] +1ms',
+    '  ERROR test 1970-01-01T00:00:00.022Z error {"status":500} +1ms',
+    '  ERROR test 1970-01-01T00:00:00.023Z mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} +1ms',
+    '  ERROR test 1970-01-01T00:00:00.024Z %s %% %d {\n' +
+    '  ERROR test   "err": {\n' +
+    '  ERROR test     "name": "TypeError",\n' +
+    '  ERROR test     "stack": "TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile",\n' +
+    '  ERROR test     "status": 500\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.025Z %s %% %d {\n' +
+    '  ERROR test   "err": {\n' +
+    '  ERROR test     "name": "TypeError",\n' +
+    '  ERROR test     "stack": "TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile",\n' +
+    '  ERROR test     "status": 500\n' +
+    '  ERROR test   },\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.026Z string % 1.1 +1ms',
+    '  ERROR test 1970-01-01T00:00:00.027Z {\n' +
+    '  ERROR test   "7123000": 7123000,\n' +
+    '  ERROR test   "_abcdEF$01": "abcdef",\n' +
+    '  ERROR test   "0.1234": 0.1234,\n' +
+    '  ERROR test   "s p-a c e": "space",\n' +
+    '  ERROR test   "\\"\'``\\"": "\\"\'``\\"",\n' +
+    '  ERROR test   "\\"": "\\"",\n' +
+    '  ERROR test   "\'": "\'"\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.028Z {\n' +
+    '  ERROR test   "req": {\n' +
+    '  ERROR test     "url": "/test",\n' +
+    '  ERROR test     "ip": "10.10.10.10"\n' +
+    '  ERROR test   }\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.029Z with level +1ms'
   ],
   json: [
-    '{"level":"ERROR","name":"test","msg":"string","time":"1970-01-01T00:00:00.000Z","diff":0}\n',
-    '{"level":"ERROR","name":"test","msg":1,"time":"1970-01-01T00:00:00.001Z","diff":0}\n',
-    '{"level":"ERROR","name":"test","msg":false,"time":"1970-01-01T00:00:00.002Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"the message","object":{"test":1},"time":"1970-01-01T00:00:00.003Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"error message","err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500},"time":"1970-01-01T00:00:00.004Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"string","time":"1970-01-01T00:00:00.005Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":1,"time":"1970-01-01T00:00:00.006Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":false,"time":"1970-01-01T00:00:00.007Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"the message","object":{"test":1},"time":"1970-01-01T00:00:00.008Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"the message","object":{"test":1},"time":"1970-01-01T00:00:00.009Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","arr":[1,2,3],"time":"1970-01-01T00:00:00.010Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"error message","err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500},"time":"1970-01-01T00:00:00.011Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","a":{"b":{"c":1},"e":"[Circular ~.a]"},"d":{"a":{"b":{"c":1},"e":"[Circular ~.d.a]"},"d":"[Circular ~.d]"},"time":"1970-01-01T00:00:00.012Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"null","time":"1970-01-01T00:00:00.013Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"undefined","time":"1970-01-01T00:00:00.014Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"0","time":"1970-01-01T00:00:00.015Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"NaN","time":"1970-01-01T00:00:00.016Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"hello world","time":"1970-01-01T00:00:00.017Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"digit 42.7","time":"1970-01-01T00:00:00.018Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"integer 42","time":"1970-01-01T00:00:00.019Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"float 42.666","time":"1970-01-01T00:00:00.020Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"json {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"}","time":"1970-01-01T00:00:00.021Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"obj {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"}","time":"1970-01-01T00:00:00.022Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"obj [1,2,3]","time":"1970-01-01T00:00:00.023Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"error \\"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile\\"","time":"1970-01-01T00:00:00.024Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"mixed %% string 1.1 2 3.33 {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"} \\"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile\\"","time":"1970-01-01T00:00:00.025Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"string %% 1.1","err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500},"time":"1970-01-01T00:00:00.026Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"string %% 1.1","err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500},"object":{"test":1},"time":"1970-01-01T00:00:00.027Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"string %% 1.1","args":[{"object":{"test":1},"msg":"the message"},"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile"],"time":"1970-01-01T00:00:00.028Z","diff":1}\n',
-    '{"7123000":7123000,"level":"ERROR","name":"test","_abcdEF$01":"abcdef","0.1234":0.1234,"s p-a c e":"space","\\"\'``\\"":"\\"\'``\\"","\\"":"\\"","\'":"\'","time":"1970-01-01T00:00:00.029Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","req":{"url":"/test","ip":"10.10.10.10"},"time":"1970-01-01T00:00:00.030Z","diff":1}\n',
-    '{"level":"ERROR","name":"test","msg":"with level","time":"1970-01-01T00:00:00.031Z","diff":1}\n'
+    '{"level":"ERROR","time":0,"name":"test","msg":"string","diff":0}',
+    '{"level":"ERROR","time":1,"name":"test","msg":1,"diff":0}',
+    '{"level":"ERROR","time":2,"name":"test","msg":false,"diff":1}',
+    '{"level":"ERROR","time":3,"name":"test","msg":"the message","diff":1,"object":{"test":1}}',
+    '{"level":"ERROR","time":4,"name":"test","msg":"error message","diff":1,"err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500}}',
+    '{"level":"ERROR","time":5,"name":"test","msg":"string","diff":1}',
+    '{"level":"ERROR","time":6,"name":"test","msg":1,"diff":1}',
+    '{"level":"ERROR","time":7,"name":"test","msg":false,"diff":1}',
+    '{"level":"ERROR","time":8,"name":"test","msg":"the message","diff":1,"object":{"test":1}}',
+    '{"level":"ERROR","time":9,"name":"test","msg":"the message","diff":1,"object":{"test":1}}',
+    '{"level":"ERROR","time":10,"name":"test","diff":1,"arr":[1,2,3]}',
+    '{"level":"ERROR","time":11,"name":"test","msg":"error message","diff":1,"err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500}}',
+    '{"level":"ERROR","time":12,"name":"test","diff":1,"a":{"b":{"c":1},"e":"[Circular]"},"d":{"a":{"b":{"c":1},"e":"[Circular]"},"d":"[Circular]"}}',
+    '{"level":"ERROR","time":13,"name":"test","msg":"null","diff":1}',
+    '{"level":"ERROR","time":14,"name":"test","msg":"undefined","diff":1}',
+    '{"level":"ERROR","time":15,"name":"test","msg":"%d","diff":1}',
+    '{"level":"ERROR","time":16,"name":"test","msg":"%d","diff":1}',
+    '{"level":"ERROR","time":17,"name":"test","msg":"hello world","diff":1}',
+    '{"level":"ERROR","time":18,"name":"test","msg":"digit 42.7","diff":1}',
+    '{"level":"ERROR","time":19,"name":"test","msg":"json {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"}","diff":1}',
+    '{"level":"ERROR","time":20,"name":"test","msg":"obj {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"}","diff":1}',
+    '{"level":"ERROR","time":21,"name":"test","msg":"obj [1,2,3]","diff":1}',
+    '{"level":"ERROR","time":22,"name":"test","msg":"error {\\"status\\":500}","diff":1}',
+    '{"level":"ERROR","time":23,"name":"test","msg":"mixed % string 1.1 2.2 3.33 {\\"object\\":{\\"test\\":1},\\"msg\\":\\"the message\\"} {\\"status\\":500}","diff":1}',
+    '{"level":"ERROR","time":24,"name":"test","msg":"%s %% %d","diff":1,"err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500}}',
+    '{"level":"ERROR","time":25,"name":"test","msg":"%s %% %d","diff":1,"err":{"name":"TypeError","stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500},"object":{"test":1}}',
+    '{"level":"ERROR","time":26,"name":"test","msg":"string % 1.1","diff":1}',
+    '{"7123000":7123000,"level":"ERROR","time":27,"name":"test","diff":1,"_abcdEF$01":"abcdef","0.1234":0.1234,"s p-a c e":"space","\\"\'``\\"":"\\"\'``\\"","\\"":"\\"","\'":"\'"}',
+    '{"level":"ERROR","time":28,"name":"test","diff":1,"req":{"url":"/test","ip":"10.10.10.10"}}',
+    '{"level":"ERROR","time":29,"name":"test","msg":"with level","diff":1}'
   ]
 }

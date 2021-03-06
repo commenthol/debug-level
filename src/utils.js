@@ -3,9 +3,10 @@
  * @copyright debug contributors, <commenthol@gmail.com>
  */
 
-const [LOG, DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['LOG', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
+const [LOG, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['LOG', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
 
 const LEVELS = {
+  TRACE: [FATAL, ERROR, WARN, INFO, DEBUG, TRACE],
   DEBUG: [FATAL, ERROR, WARN, INFO, DEBUG],
   INFO: [FATAL, ERROR, WARN, INFO],
   WARN: [FATAL, ERROR, WARN],
@@ -27,22 +28,9 @@ const COLORS = [
   '#FF00FF', '#FF33FF', '#CC00CC', '#990099'
 ]
 
-// // dark colors for bright background
-// const COLORS_DARK = [
-//   '#0000FF', '#0000CC', '#3300CC', '#000099',
-//   '#003399', '#333399', '#330099', '#3300CC',
-//   '#000066', '#000099', '#660066'
-// ]
-//
-// // bright colors for dark background
-// const COLORS_BRIGHT = [
-//   '#00FF00', '#00FF33', '#00FF66', '#00FF99',
-//   '#00FFFF', '#00FFCC',
-//   '#FFFF00', '#FFFF33', '#FFCC33', '#FFCC66'
-// ]
-
 const LEVEL_COLORS = {
   LOG: '#999999',
+  TRACE: '#00CCFF',
   DEBUG: '#0066CC',
   INFO: '#009900',
   WARN: '#FF9900',
@@ -50,9 +38,34 @@ const LEVEL_COLORS = {
   FATAL: '#CC00CC'
 }
 
+const NUM_LEVELS = {
+  [TRACE]: 10,
+  [DEBUG]: 20,
+  [INFO]: 30,
+  [LOG]: 30,
+  [WARN]: 40,
+  [ERROR]: 50,
+  [FATAL]: 60
+}
+
 const adjustLevel = (level, _default) => {
   level = (level || '').toUpperCase()
   return LEVELS[level] ? level : _default
+}
+
+const toNumLevel = (level) => NUM_LEVELS[level] || NUM_LEVELS.DEBUG
+
+const fromNumLevel = (level) => {
+  if (typeof level === 'number') {
+    for (const slevel in NUM_LEVELS) {
+      const threshold = NUM_LEVELS[slevel]
+      if (level <= threshold) {
+        return slevel
+      }
+    }
+    return FATAL
+  }
+  return level
 }
 
 /**
@@ -91,7 +104,7 @@ const inspectOpts = (obj) => Object.keys(obj)
 
 const saveOpts = (obj, options) => {
   Object.keys(options).forEach((prop) => {
-    if (prop === 'stream' || prop === 'formatters') return // do not safe stream option
+    if (['stream', 'serializers'].includes(prop)) return // do not safe stream option
     let key = 'DEBUG_' + prop.replace(/([A-Z])/g, (_, prop) => '_' + prop.toLowerCase())
     if (prop === 'namespaces') key = 'DEBUG'
     key = key.toUpperCase()
@@ -130,6 +143,7 @@ const random = (len) => Math.random().toString(16).toLowerCase().substr(2, len)
 
 module.exports = {
   LOG,
+  TRACE,
   DEBUG,
   INFO,
   WARN,
@@ -140,6 +154,8 @@ module.exports = {
   COLORS,
   LEVEL_COLORS,
   adjustLevel,
+  toNumLevel,
+  fromNumLevel,
   inspectOpts,
   saveOpts,
   inspectNamespaces,

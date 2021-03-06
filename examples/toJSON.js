@@ -1,5 +1,5 @@
 const Log = require('..')
-const log = new Log('*')
+const log = new Log('req', { json: false })
 
 function reqToJSON () {
   const { ip, method, url } = this
@@ -16,5 +16,5 @@ const req = {
 }
 req.toJSON = reqToJSON
 
-log.debug({ req: req })
-// > DEBUG * {"req":{"ip":"10.10.10.10","method":"GET","url":"/path"}} +0ms
+log.info({ req })
+// > INFO req {"req":{"ip":"10.10.10.10","method":"GET","url":"/path"}} +0ms

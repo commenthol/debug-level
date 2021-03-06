@@ -2,9 +2,10 @@
 
 import { Queue } from 'asyncc'
 import ms from 'ms'
-import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random } from './utils'
+import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random, WARN } from './utils'
 import LogBase from './LogBase.js'
 import wrapConsole from './wrapConsole.js'
+import errSerializer from './serializers/err.js'
 
 const COLOR_RESET = 'color:inherit'
 
@@ -12,7 +13,7 @@ const COLOR_RESET = 'color:inherit'
  * global log options
  */
 const options = {
-  level: undefined,
+  level: WARN,
   namespaces: undefined,
   colors: true, // apply coloring to browser console
   url: undefined // [optional] url to report errors
@@ -89,7 +90,8 @@ function Log (name, opts) {
   )
   options.colors = options.colors === false ? false : supportsColors()
 
-  LogBase.call(this, name, Object.assign({}, options, opts))
+  const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
+  LogBase.call(this, name, Object.assign({}, options, opts, { serializers }))
   const colorFn = (c) => `color:${c}`
   this.color = selectColor(name, colorFn)
   this.levColors = levelColors(colorFn)
@@ -112,13 +114,20 @@ Object.assign(Log.prototype, {
 
   /**
    * send log to server
+   * @param {String|Object} level - log level
+   * @param {String|Any} fmt - log level
    * @param {Array} args - log arguments
-   * @param {String} level - log level
    */
-  send (args, level) {
-    const o = this._formatJson(level, args)
-    o.userAgent = navigator.userAgent
-    const str = this.formatter.format(o)[0]
+  send (level, fmt, args) {
+    let obj
+    if (typeof level === 'object') {
+      obj = level
+    } else {
+      const uns = this._formatJson(level, fmt, args)
+      obj = this._applySerializers(uns)
+    }
+    obj.userAgent = navigator.userAgent
+    const str = this.formatter.stringify(obj)
     this.queue.push(str)
   },
 
@@ -126,14 +135,14 @@ Object.assign(Log.prototype, {
    * format log arguments
    * @private
    */
-  _log (level, args) {
-    this._diff()
-
-    const _args = this._formatArgs(level, args)
+  _log (level, fmt, args) {
+    const uns = this._formatJson(level, fmt, args)
+    const obj = this._applySerializers(uns)
+    const _args = this._format(obj)
     const res = this.render(_args, level)
 
     if (this.opts.url) {
-      this.send(args, level)
+      this.send(obj)
     }
 
     return res
@@ -144,57 +153,35 @@ Object.assign(Log.prototype, {
    * @private
    * @return {Array} args for console.log
    */
-  _formatArgs (level, _args) {
-    const args = _args.slice() // work on copy
+  _format ({ level, name, time, msg = '', diff, ...other }) {
     const color = this.color
-
-    if (typeof args[0] !== 'string') {
-      args.unshift('%O')
-    }
+    const args = []
+    const hasOther = Object.keys(other).length
 
     args[0] = [
       this._color(level),
-      this._color(this.name),
-      args[0],
-      this._color('+' + ms(this.diff))
-    ].join(' ')
+      this._color(name),
+      msg,
+      hasOther ? '%O' : undefined,
+      this._color('+' + ms(diff))
+    ].filter(s => s !== undefined).join(' ')
+    if (hasOther) args.push(other)
 
     if (this.opts.colors) {
       args.splice(1, 0, color + ';font-weight:bold', COLOR_RESET)
       args.splice(1, 0, this.levColors[level], COLOR_RESET)
     }
-    let idx = 0
-    let lastC
-    // apply custom formatters
-    args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-      if (match === '%%') return match
-      idx++
-
-      switch (format) {
-        case 's':
-        case 'd':
-        case 'i':
-        case 'f':
-        case 'o':
-        case 'O':
-          break
-        case 'c':
-          lastC = idx
-          break
-        default: {
-          const formatter = this.formatter.formatters[format]
-          if (typeof formatter === 'function') {
-            const val = args[idx]
-            match = formatter(val)
-            args.splice(idx, 1) // remove `args[idx]` as being inlined
-            idx--
-          }
-        }
-      }
-      return match
-    })
 
     if (this.opts.colors) {
+      let idx = 0
+      let lastC
+      args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
+        idx++
+        if (format === 'c') {
+          lastC = idx
+        }
+        return match
+      })
       args.splice(lastC - 1, 0, color, COLOR_RESET)
     }
 
@@ -253,7 +240,7 @@ Log.reset = function () {
   const _storage = storage()
 
   Object.keys(_storage).forEach((key) => {
-    if (/^(DEBUG|DEBUG_.*)$/.test(key)) {
+    if (/^(DEBUG|DEBUG_.*)$/i.test(key)) {
       _storage.removeItem(key)
     }
   })
@@ -271,5 +258,7 @@ Log.wrapConsole = function (name = 'console', opts) {
   const log = new Log(name, opts)
   return wrapConsole(log, opts)
 }
+
+Log.serializers = { err: errSerializer }
 
 module.exports = Log

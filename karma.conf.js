@@ -5,7 +5,7 @@ const path = require('path')
 module.exports = function karmaConfig (config) {
   config.set({
     browsers: [
-      // 'Firefox',
+      'Firefox',
       // 'Chrome'
       'ChromeHeadless'
     ],

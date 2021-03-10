@@ -423,10 +423,10 @@ describe('#Log node', function () {
         const err = new Error('Baam')
         err.level = 'TEST_LEVEL'
         err.name = 'TEST_NAME'
-        delete err.stack
+        err.stack = err.stack.substring(0, 20)
         const log = new Log('all')
         const res = log.log(err)
-        assert.strictEqual(res, '{"level":"LOG","name":"all","msg":"Baam","diff":0,"err":{"name":"TEST_NAME"}}')
+        assert.strictEqual(res, '{"level":"LOG","name":"all","msg":"Baam","diff":0,"err":{"msg":"Baam","name":"Error","stack":"TEST_NAME: Baam\\n    ","level":"TEST_LEVEL"}}')
       })
 
       it('should stringify large string', function () {

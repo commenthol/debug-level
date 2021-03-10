@@ -225,6 +225,13 @@ bdescribe('#Log', function () {
   describe('formats', function () {
     after(reset)
 
+    const fixErr = (args) => args.map(v => {
+      if (typeof v === 'object' && v.err) {
+        v.err = { name: 'Error' }
+      }
+      return v
+    })
+
     describe('debug like', function () {
       const f = fixtures.browser
       let log
@@ -241,7 +248,7 @@ bdescribe('#Log', function () {
         window.localStorage.debug_level = 'error'
         window.localStorage.debug_colors = 'false'
         window.localStorage.debug = 'test*'
-        log = new Log('test')
+        log = new Log('test', { serializers: { err: null } })
       })
 
       after(() => {
@@ -254,7 +261,7 @@ bdescribe('#Log', function () {
         it(name, function () {
           const res = log.error(...args)
           if (WRITE) exp.push(res)
-          assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(fixErr(res), fixErr(f[idx]), '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })
@@ -280,7 +287,7 @@ bdescribe('#Log', function () {
         it(name, function () {
           const res = log.error(...args)
           if (WRITE) exp.push(res)
-          assert.deepStrictEqual(res, f[idx], '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(fixErr(res), fixErr(f[idx]), '[' + idx + '] ' + res + ' !== ' + f[idx])
         })
       })
     })

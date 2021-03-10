@@ -1,4 +1,4 @@
-const format = require('./quick-format-unescaped.js')
+const format = require('./quick-format.js')
 const fastStringify = require('fast-safe-stringify')
 
 module.exports = Format
@@ -34,15 +34,7 @@ Format.prototype = {
    * @param {...Any} arguments list - args[0] may contain "%" formatters
    * @return {Array} first is formatted message, other args may follow
    */
-  format (fmt, args) {
-    return args && args.length
-      ? format(fmt, args, this.formatOpts)
-      : typeof fmt !== 'string'
-        ? fastStringify(fmt)
-        : fmt
-  },
-
-  formatJson (fmt, args) {
-    return format(fmt, args, this.formatOpts)
+  format (fmt, args, obj) {
+    return format(fmt, args, this.formatOpts, obj)
   }
 }

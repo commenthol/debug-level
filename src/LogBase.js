@@ -82,46 +82,18 @@ LogBase.prototype = {
    * @return {object} json object
    */
   _formatJson (level, fmt, args = []) {
-    const isObject = typeof fmt === 'object'
+    const other = {}
+    const msg = this.formatter.format(fmt, args, other) || undefined
 
     const o = {
       level,
       time: this._time(),
       name: this.name,
-      msg: isObject ? undefined : this.formatter.formatJson(fmt, args),
+      msg,
       pid: this.pid,
       hostname: this.hostname,
-      diff: this.diff()
-    }
-
-    if (isObject) {
-      let arg = fmt
-      do {
-        const type = typeof arg
-        if (arg instanceof Error) {
-          o.err = {
-            name: arg.name,
-            stack: arg.stack
-          }
-          o.msg = arg.message
-          // append other keys
-          Object.keys(arg).forEach((key) => {
-            if (key === 'level') return
-            o.err[key] = arg[key]
-          })
-        } else if (arg && type === 'object') {
-          if (Array.isArray(arg)) {
-            o.arr = arg
-          } else {
-            const { name, level, ...rest } = arg
-            Object.assign(o, rest)
-          }
-        } else {
-          o.msg = arg
-          break
-        }
-        arg = args.shift()
-      } while (args.length)
+      diff: this.diff(),
+      ...other
     }
 
     return o

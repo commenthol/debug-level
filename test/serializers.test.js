@@ -7,6 +7,11 @@ const {
 
 describe('serializers', function () {
   describe('errSerializer', function () {
+    it('shall ignore non errors', function () {
+      const inp = { name: 'Error' }
+      const res = errSerializer(inp)
+      assert.deepStrictEqual(res, inp)
+    })
     it('shall serialize an error', function () {
       const err = new TypeError('boom')
       err.code = 'oneFinger'

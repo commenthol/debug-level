@@ -10,5 +10,5 @@ examples/
 karma.conf.js
 webpack.config.js
 yarn.lock
-benchmark/
+benchmarks/
 docs/

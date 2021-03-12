@@ -7,6 +7,7 @@ const flatstr = require('flatstr')
 const { fromNumLevel, inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, INFO } = require('./utils.js')
 const LogBase = require('./LogBase.js')
 const wrapConsole = require('./wrapConsole.js')
+const wrapDebug = require('./wrapDebug.js')
 const Sonic = require('./Sonic.js')
 const errSerializer = require('./serializers/err.js')
 
@@ -233,6 +234,8 @@ Log.handleExitEvents = function handleExitEvents (name = 'exit', opts = {}) {
     })
   })
 }
+
+Log.wrapDebug = () => wrapDebug(Log)
 
 Log.Sonic = Sonic
 

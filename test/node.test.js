@@ -3,6 +3,7 @@
 const assert = require('assert')
 const os = require('os')
 const sinon = require('sinon')
+const debug = require('debug')
 const { inspect } = require('util')
 
 const Log = require('../src/index.js')
@@ -550,6 +551,24 @@ describe('#Log node', function () {
       const unwrap2 = Log.wrapConsole('test2')
       assert.strictEqual(unwrap1, unwrap)
       assert.strictEqual(unwrap2, unwrap)
+    })
+  })
+
+  describe('wrap debug', function () {
+    let unwrap
+    before(function () {
+      Log.options({ level: 'debug', namespaces: '*', json: true, colors: true })
+      unwrap = Log.wrapDebug()
+    })
+    after(function () {
+      reset()
+      unwrap()
+    })
+
+    it('shall wrap debug', function () {
+      const log = debug('namespace')
+      log.enabled = '*'
+      log('hello %s', 'log')
     })
   })
 

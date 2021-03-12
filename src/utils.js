@@ -93,7 +93,7 @@ const inspectOpts = (obj) => Object.keys(obj)
     } else if (prop === 'level') {
       val = adjustLevel(obj[key])
       if (val) opts[prop] = val
-    } else if (prop === 'url') {
+    } else if (prop === 'url' || prop === 'timestamp') {
       opts[prop] = obj[key]
     } else {
       opts[prop] = val

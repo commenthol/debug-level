@@ -31,26 +31,20 @@ Prints colored and human readable output for development and [bunyan][] like JSO
 * [Settings](#settings)
   * [Environment Variables](#environment-variables)
   * [Options](#options)
+  * [Serializers](#serializers)
 * [Levels](#levels)
 * [Namespaces](#namespaces)
   * [Conventions](#conventions)
   * [Wildcards](#wildcards)
 * [Output](#output)
   * [JSON output](#json-output)
-  * [Custom formatters](#custom-formatters)
   * [toJSON](#tojson)
 * [Wrap console logs](#wrap-console-logs)
+* [Wrap debug output](#wrap-debug-output)
 * [Handle node exit events](#handle-node-exit-events)
 * [Logging Browser messages](#logging-browser-messages)
 * [License](#license)
 * [Benchmarks](#benchmarks)
-  * [Basic String](#basic-string)
-  * [Long String 2000 chars](#long-string-2000-chars)
-  * [Hello World with %s format](#hello-world-with-s-format)
-  * [Multi Argument format](#multi-argument-format)
-  * [Object](#object)
-  * [Deep Object](#deep-object)
-  * [Deep Object with %j format](#deep-object-with-j-format)
 * [References](#references)
 
 <!-- toc! -->
@@ -63,7 +57,7 @@ $ npm install --save debug-level
 
 ## Usage
 
-`debug-level` provides 6 log levels which are `DEBUG`, `INFO`, `WARN`, `ERROR`,
+`debug-level` provides 7 log levels which are `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`,
 `FATAL` and `OFF`.
 
 Each level has a corresponding method `DEBUG` -> `log.debug` ... `FATAL` -->
@@ -87,6 +81,7 @@ log.error(new Error('boom'))         // logs an Error at level ERROR
 log.warn('huh %o', {ghost: 'rider'}) // logs a formatted object at level WARN
 log.info('%s world', 'hello')        // logs a formatted string at level INFO
 log.debug({object: 1})               // logs an object at level DEBUG
+log.trace('hi')                      // logs a string at level TRACE
 log.log('always logs')               // always logs regardless of set level
 ```
 
@@ -106,13 +101,13 @@ WARN        | --             | log.fatal, log.error, log.warn
 INFO        | --             | log.fatal, log.error, log.warn and log.info
 DEBUG       | --             | log.fatal, log.error, log.warn, log.info and log.debug
 TRACE       | --             | log.fatal, log.error, log.warn, log.info, log.debug and log.trace
---          | `<namespaces>`   | log.fatal, to log.debug which apply to `<namespaces>`. <br> Same behavior as [debug][].
-FATAL       | `<namespaces>`   | log.fatal for all `<namespaces>` only
-ERROR       | `<namespaces>`   | log.fatal, log.error for `<namespaces>` only
-WARN        | `<namespaces>`   | log.fatal, to log.warn for `<namespaces>` only
-INFO        | `<namespaces>`   | log.fatal, to log.info for `<namespaces>` only
-DEBUG       | `<namespaces>`   | log.fatal, to log.debug for `<namespaces>` only
-TRACE       | `<namespaces>`   | log.fatal, to log.trace for `<namespaces>` only
+--          | `<namespaces>` | log.fatal, to log.debug which apply to `<namespaces>`. <br> Same behavior as [debug][].
+FATAL       | `<namespaces>` | log.fatal for all `<namespaces>` only
+ERROR       | `<namespaces>` | log.fatal, log.error for `<namespaces>` only
+WARN        | `<namespaces>` | log.fatal, to log.warn for `<namespaces>` only
+INFO        | `<namespaces>` | log.fatal, to log.info for `<namespaces>` only
+DEBUG       | `<namespaces>` | log.fatal, to log.debug for `<namespaces>` only
+TRACE       | `<namespaces>` | log.fatal, to log.trace for `<namespaces>` only
 --          | `ERROR:n1,DEBUG:n2,FATAL:*` | Logs namespace `n1` at level `ERROR`, namespace `n2` at level `DEBUG` and all other namespaces (`*`) at level `FATAL`
 FATAL       | `ERROR:n1,n2` | Logs `n1` at level `ERROR`, `n2` at level `FATAL`. All other namespaces will **NOT** get logged
 
@@ -177,7 +172,7 @@ DEBUG_SERVERINFO    | **true**/false     | false     | adds server information l
 DEBUG_TIMESTAMP     | **iso**/epoch/unix | undefined | datetime format
 DEBUG_LEVEL_NUMBERS | true/**false**     | false     | log levels as numbers
 
-For `NODE_ENV !== 'development'` the default logging is in JSON format using serverinfo and date.
+For `NODE_ENV !== 'development'` the default logging is in JSON format using serverinfo and iso date.
 
 **Browsers only**
 
@@ -411,22 +406,6 @@ log.error(err, {object: 1}) // you may add an additional object
 }
 ```
 
-### Custom formatters
-
-You may use custom formatters e.g. to display numbers converted into hex-format.
-
-[examples/customFormatters.js](./examples/customFormatters.js)
-
-```js
-const Log = require('..')
-Log.options({level: 'debug'})
-const log = new Log('test', {formatters: {
-  h: (n) => `x${n.toString(16).toUpperCase()}`
-}})
-
-log.debug('%h', 255) // logs 255 as hex 'xFF'
-```
-
 ### toJSON
 
 If logging an object you may define a `toJSON()` function on that object to change proper logging of the object itself:
@@ -470,6 +449,18 @@ Log.wrapConsole()
 // with custom namespace and console.log at level INFO
 Log.wrapConsole('my-console', {level4log: 'INFO'})
 ```
+
+## Wrap debug output
+
+For node only. A lot of packages use the popular [debug][] package. To write the output in JSON with this package you may wrap those log statements.
+
+```js
+const Log = require('debug-level')
+
+Log.wrapDebug()
+```
+
+Do not forget to add the debug package with `npm i debug` within your package.
 
 ## Handle node exit events
 

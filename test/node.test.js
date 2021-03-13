@@ -3,6 +3,7 @@
 const assert = require('assert')
 const os = require('os')
 const sinon = require('sinon')
+const debug = require('debug')
 const { inspect } = require('util')
 
 const Log = require('../src/index.js')
@@ -17,6 +18,8 @@ const reset = () => {
   Log.options(defaultOpts)
   Log.reset()
 }
+
+const cidescribe = process.env.npm_lifecycle_event === 'test:ci' ? () => {} : describe
 
 describe('#Log node', function () {
   it('should instantiate without new', function () {
@@ -553,7 +556,25 @@ describe('#Log node', function () {
     })
   })
 
-  describe('handle exit events', function () {
+  describe('wrap debug', function () {
+    let unwrap
+    before(function () {
+      Log.options({ level: 'debug', namespaces: '*', json: true, colors: true })
+      unwrap = Log.wrapDebug()
+    })
+    after(function () {
+      reset()
+      unwrap()
+    })
+
+    it('shall wrap debug', function () {
+      const log = debug('namespace')
+      log.enabled = '*'
+      log('hello %s', 'log')
+    })
+  })
+
+  cidescribe('handle exit events', function () {
     before(function () {
       Log.options({ level: 'FATAL' })
       Log.handleExitEvents('exit', { code: 0 })

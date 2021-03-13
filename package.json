@@ -38,6 +38,7 @@
     "start:example": "DEBUG=* node examples/app/server.js",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start",
+    "test:ci": "mocha",
     "benchmarks": "node benchmarks/run.js > docs/benchmarks.md"
   },
   "babel": {
@@ -80,6 +81,9 @@
     "sinon": "^9.2.4",
     "webpack": "^5.24.3",
     "webpack-cli": "^4.5.0"
+  },
+  "optionalDependencies": {
+    "debug": "^4.3.1"
   },
   "engines": {
     "node": ">=12"

@@ -38,6 +38,7 @@
     "start:example": "DEBUG=* node examples/app/server.js",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start",
+    "test:ci": "mocha",
     "benchmarks": "node benchmarks/run.js > docs/benchmarks.md"
   },
   "babel": {

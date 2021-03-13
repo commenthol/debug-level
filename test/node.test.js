@@ -19,6 +19,8 @@ const reset = () => {
   Log.reset()
 }
 
+const cidescribe = process.env.npm_lifecycle_event === 'test:ci' ? () => {} : describe
+
 describe('#Log node', function () {
   it('should instantiate without new', function () {
     const log = Log('test')
@@ -572,7 +574,7 @@ describe('#Log node', function () {
     })
   })
 
-  describe('handle exit events', function () {
+  cidescribe('handle exit events', function () {
     before(function () {
       Log.options({ level: 'FATAL' })
       Log.handleExitEvents('exit', { code: 0 })

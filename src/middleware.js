@@ -1,6 +1,6 @@
 const { parse: urlParse } = require('url')
 const { parse: qsParse } = require('querystring')
-const MapLRU = require('map-lru').default
+const MapLRU = require('map-lru')
 const Log = require('./node.js')
 const { adjustLevel, toNumLevel, fromNumLevel, INFO } = require('./utils.js')
 

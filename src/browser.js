@@ -261,4 +261,4 @@ Log.wrapConsole = function (name = 'console', opts) {
 
 Log.serializers = { err: errSerializer }
 
-module.exports = Log
+export default Log

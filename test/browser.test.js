@@ -20,7 +20,7 @@ const inspect = (o) => console.log('%j', o)
 bdescribe('#Log', function () {
   // this.timeout(1000000)
   // const Log = require('..')
-  const Log = require('../lib/browser')
+  const Log = require('../lib/browser').default
 
   const defaultOpts = Log.options()
 

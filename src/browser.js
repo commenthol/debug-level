@@ -197,7 +197,7 @@ Object.assign(Log.prototype, {
     img.onload = done
     img.onerror = done
     img.onabort = done
-    img.src = this.opts.url + '/0.gif?id=' + random(6) + '&log=' + encodeURIComponent(str)
+    img.src = this.opts.url + '?id=' + random(6) + '&log=' + encodeURIComponent(str)
   },
 
   /**

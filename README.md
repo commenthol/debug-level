@@ -219,20 +219,21 @@ const log = new Log('*')
 log.debug({object: 1}) // ...
 ```
 
-Option name  | Setting         | env     | Type    | Description
------        | ----            | ----    | ----    | ----
-level        | DEBUG_LEVEL     | _both_  | String  |
-namespaces   | DEBUG           | _both_  | String  |
-json         | DEBUG_JSON      | node    | Boolean |
-spaces       | DEBUG_SPACES    | node    | Number  | JSON spaces
-timestamp    | DEBUG_TIMESTAMP | node    | String  | Set null/iso/unix/epoch timestamp format
-colors       | DEBUG_COLORS    | _both_  | Boolean |
-stream       | --              | node    | Stream  | output stream (defaults to `process.stderr`)
-sonic        | DEBUG_SONIC     | node    | Boolean | faster buffered writer
-sonicLength  | DEBUG_SONIC_LENGTH | node | number  | min size of buffer in byte (default is 4096)
-sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node | number | flush after each x ms (default is 1000)
-serializers  | --              | _both_  | Object  | serializers by keys
-url          | DEBUG_URL       | browser | String  |
+| Option name  | Setting              | env     | Type    | Description                                  |
+| ------------ | -------------------- | ------- | ------- | -------------------------------------------- |
+| level        | DEBUG_LEVEL          | _both_  | String  |                                              |
+| namespaces   | DEBUG                | _both_  | String  |                                              |
+| json         | DEBUG_JSON           | node    | Boolean |                                              |
+| spaces       | DEBUG_SPACES         | node    | Number  | JSON spaces                                  |
+| splitLine    | DEBUG_SPLIT_LINE     | node    | Boolean | split lines for pretty, debug like, output   |
+| timestamp    | DEBUG_TIMESTAMP      | node    | String  | Set null/iso/unix/epoch timestamp format     |
+| colors       | DEBUG_COLORS         | _both_  | Boolean |                                              |
+| stream       | --                   | node    | Stream  | output stream (defaults to `process.stderr`) |
+| sonic        | DEBUG_SONIC          | node    | Boolean | faster buffered writer                       |
+| sonicLength  | DEBUG_SONIC_LENGTH   | node    | number  | min size of buffer in byte (default is 4096) |
+| sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node    | number  | flush after each x ms (default is 1000)      |
+| serializers  | --                   | _both_  | Object  | serializers by keys                          |
+| url          | DEBUG_URL            | browser | String  |                                              |
 
 ### Serializers
 

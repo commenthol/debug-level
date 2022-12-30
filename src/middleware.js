@@ -22,8 +22,7 @@ class Loggers {
   }
 }
 
-module.exports = middleware
-
+/** @param {string | object} str */
 function parseJson (str) {
   if (typeof str === 'object') {
     return str
@@ -80,3 +79,5 @@ function middleware (opts) {
     }
   }
 }
+
+module.exports = middleware

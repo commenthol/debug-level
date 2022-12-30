@@ -8,13 +8,14 @@ const { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils.js')
 const LEVELS = [TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF]
 const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
-module.exports = Namespaces
+class Namespaces {
+  constructor (namespaces) {
+    this.enable(namespaces)
+  }
 
-function Namespaces (namespaces) {
-  this.enable(namespaces)
-}
-
-Namespaces.prototype = {
+  /**
+   * @param {string} namespaces
+   */
   enable (namespaces) {
     this.skips = []
     this.names = []
@@ -36,13 +37,16 @@ Namespaces.prototype = {
 
     // sort names by levels
     this.names = this.names.sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level))
-  },
+  }
 
   /* c8 ignore next 3 */
   disable () {
     this.enable('')
-  },
+  }
 
+  /**
+   * @param {string} name
+   */
   isEnabled (name, level) {
     if (name === '*') {
       return level || 'DEBUG'
@@ -61,9 +65,10 @@ Namespaces.prototype = {
         return _name.level || level || 'DEBUG'
       }
     }
-  },
+  }
 
   /**
+   * @param {string} _namespace
    * @private
    */
   _namespaceNLevel (_namespace) {
@@ -74,3 +79,5 @@ Namespaces.prototype = {
     return { namespace, level }
   }
 }
+
+module.exports = Namespaces

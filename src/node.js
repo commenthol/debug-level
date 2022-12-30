@@ -36,42 +36,114 @@ const options = {
   serializers: { err: errSerializer }
 }
 
-/**
- * creates a new logger
- * @constructor
- * @param {String} name - namespace of Logger
- */
-function Log (name, opts) {
-  if (!(this instanceof Log)) return new Log(name, opts)
-  Object.assign(options,
-    inspectOpts(process.env),
-    inspectNamespaces(process.env)
-  )
-  const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
-  LogBase.call(this, name, Object.assign({}, options, opts, { serializers }))
+class Log extends LogBase {
+  /**
+   * creates a new logger
+   * @param {String} name - namespace of Logger
+   * @param {object} [opts] - see Log.options
+   */
+  constructor (name, opts) {
+    Object.assign(options,
+      inspectOpts(process.env),
+      inspectNamespaces(process.env)
+    )
 
-  const colorFn = (n) => chalk.hex(n)
-  this.color = selectColor(name, colorFn)
-  this.levColors = levelColors(colorFn)
+    const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
 
-  this.stream = this.opts.sonic
-    ? new Sonic(this.opts.stream, { minLength: this.opts.sonicLength, timeout: this.opts.sonicFlushMs })
-    : this.opts.stream
+    super(name, Object.assign({}, options, opts, { serializers }))
 
-  if (!this.opts.json) {
-    this._log = this._logDebugLike
-  } else if (this.opts.colors) {
-    this._log = this._logJsonColor
+    const colorFn = (n) => chalk.hex(n)
+    this.color = selectColor(name, colorFn)
+    this.levColors = levelColors(colorFn)
+
+    this.stream = this.opts.sonic
+      ? new Sonic(this.opts.stream, { minLength: this.opts.sonicLength, timeout: this.opts.sonicFlushMs })
+      : this.opts.stream
+
+    if (!this.opts.json) {
+      this._log = this._logDebugLike
+    } else if (this.opts.colors) {
+      this._log = this._logJsonColor
+    }
+
+    if (this.opts.serverinfo) {
+      this.hostname = os.hostname()
+      this.pid = process.pid
+    }
   }
 
-  if (this.opts.serverinfo) {
-    this.hostname = os.hostname()
-    this.pid = process.pid
+  /**
+   * Apply (and get) global options
+   * @param {object} [opts] - changed options
+   * @return {object} global options
+   */
+  static options (opts) {
+    if (!opts) { return { ...options } }
+    return Object.assign(options, opts)
   }
-}
-Object.setPrototypeOf(Log.prototype, LogBase.prototype)
 
-Object.assign(Log.prototype, {
+  /**
+   * save options in `process.env`
+   */
+  static save () {
+    Log.reset()
+    saveOpts(process.env, options)
+  }
+
+  /**
+   * reset saved options
+   */
+  static reset () {
+    Object.keys(process.env).forEach((key) => {
+      if (/^(DEBUG|DEBUG_.*)$/.test(key)) {
+        delete process.env[key]
+      }
+    })
+  }
+
+  /**
+   * wrap console logging functions like
+   * console.log, console.info, console.warn, console.error
+   * @param {string} [name='console']
+   * @param {object} opts - see Log.options
+   * @param {string} [opts.level4log='log'] - log level for console.log
+   * @return {function} unwrap function
+   */
+  static wrapConsole (name = 'console', opts) {
+    const log = new Log(name, opts)
+    return wrapConsole(log, opts)
+  }
+
+  /**
+   * log exit events like 'unhandledRejection', 'uncaughtException'
+   * and then let the process die
+   * @param {string} [name='exit']
+   * @param {object} opts - see Log.options
+   * @param {boolean} [opts.code=1] - set exit code; code=0 will prevent triggering exit
+   * @param {boolean} [opts.gracefulExit=false] - uses process.exitCode to avoid forceful exit with process.exit()
+   */
+  static handleExitEvents (name = 'exit', opts = {}) {
+    const { code = 1, gracefulExit, ..._opts } = opts
+    const log = new Log(name, _opts)
+    EXIT_EVENTS.forEach(ev => {
+      process.on(ev, (err) => {
+        log.fatal(err)
+        /* c8 ignore next 7 */
+        if (code) {
+          if (gracefulExit) {
+            process.exitCode = code // let die...
+          } else {
+            setTimeout(() => process.exit(code), 5)
+          }
+        }
+      })
+    })
+  }
+
+  static wrapDebug () {
+    return wrapDebug(Log)
+  }
+
   /**
    * render string to output stream
    * @public
@@ -82,11 +154,11 @@ Object.assign(Log.prototype, {
   render (str) {
     this.stream.write(flatstr(str + '\n'))
     return str
-  },
+  }
 
   flush () {
     this.stream.flush && this.stream.flush()
-  },
+  }
 
   /**
    * format object to json
@@ -96,7 +168,7 @@ Object.assign(Log.prototype, {
     const o = this._formatJson(level, fmt, args)
     const str = toJson(o, this.serializers)
     return this.render(str, level)
-  },
+  }
 
   /**
    * format object to json
@@ -111,7 +183,7 @@ Object.assign(Log.prototype, {
       .replace(/"level":\s?(\d+)/, (m, level) => this._color(m, this.levColors[fromNumLevel(Number(level))], true))
       .replace(/"name":\s?"[^"]+"/, (m) => this._color(m, this.color, true))
     return this.render(str, level)
-  },
+  }
 
   /**
    * debug like output if `this.opts.json === false`
@@ -149,7 +221,7 @@ Object.assign(Log.prototype, {
           pid
         ].filter(s => s).join(' ')
     return this.render(str, level)
-  },
+  }
 
   /**
    * Add colors, style to string
@@ -162,84 +234,10 @@ Object.assign(Log.prototype, {
         ? color.bold(str)
         : color(str)
   }
-})
-
-/**
-* Apply (and get) global options
-* @param {object} [opts] - changed options
-* @return {object} global options
-*/
-Log.options = function (opts) {
-  if (!opts) return Object.assign({}, options)
-  Object.assign(options, opts)
-  return options
-}
-
-/**
- * save options in `process.env`
- */
-Log.save = function () {
-  Log.reset()
-  saveOpts(process.env, options)
-}
-
-/**
- * reset saved options
- */
-Log.reset = function () {
-  Object.keys(process.env).forEach((key) => {
-    if (/^(DEBUG|DEBUG_.*)$/.test(key)) {
-      delete process.env[key]
-    }
-  })
 }
 
 Log.isDevEnv = isDevEnv
-
-/**
- * wrap console logging functions like
- * console.log, console.info, console.warn, console.error
- * @param {string} [name='console']
- * @param {object} opts - see Log.options
- * @param {string} [opts.level4log='log'] - log level for console.log
- * @return {function} unwrap function
- */
-Log.wrapConsole = function (name = 'console', opts) {
-  const log = new Log(name, opts)
-  return wrapConsole(log, opts)
-}
-
-/**
- * log exit events like 'unhandledRejection', 'uncaughtException'
- * and then let the process die
- * @param {string} [name='exit']
- * @param {object} opts - see Log.options
- * @param {boolean} [opts.code=1] - set exit code; code=0 will prevent triggering exit
- * @param {boolean} [opts.gracefulExit=false] - uses process.exitCode to avoid forceful exit with process.exit()
- */
-Log.handleExitEvents = function handleExitEvents (name = 'exit', opts = {}) {
-  const { code = 1, gracefulExit, ..._opts } = opts
-  const log = new Log(name, _opts)
-  EXIT_EVENTS.forEach(ev => {
-    process.on(ev, (err) => {
-      log.fatal(err)
-      /* c8 ignore next 7 */
-      if (code) {
-        if (gracefulExit) {
-          process.exitCode = code // let die...
-        } else {
-          setTimeout(() => process.exit(code), 5)
-        }
-      }
-    })
-  })
-}
-
-Log.wrapDebug = () => wrapDebug(Log)
-
 Log.Sonic = Sonic
-
-module.exports = Log
 
 /**
  * @credits pino/lib/tools.js
@@ -318,3 +316,5 @@ function stringify (any, spaces) {
 function replaceLf (str = '') {
   return str.replace(/[\r\n]/g, '\\n')
 }
+
+module.exports = Log

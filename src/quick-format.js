@@ -8,8 +8,6 @@ function tryStringify (o) {
   try { return JSON.stringify(o) } catch (e) { return '"[Circular]"' }
 }
 
-module.exports = format
-
 function format (f, args, opts, obj = {}) {
   const ss = (opts && opts.stringify) || tryStringify
   const argLen = args.length
@@ -128,3 +126,5 @@ function format (f, args, opts, obj = {}) {
 }
 
 const toFunctionSting = (name) => (name || '<anonymous>') + '()'
+
+module.exports = format

@@ -81,25 +81,81 @@ const supportsColors = () => {
  * @constructor
  * @param {String} name - namespace of Logger
  */
-function Log (name, opts) {
-  if (!(this instanceof Log)) return new Log(name, opts)
-  const _storage = storage()
-  Object.assign(options,
-    inspectOpts(_storage),
-    inspectNamespaces(_storage)
-  )
-  options.colors = options.colors === false ? false : supportsColors()
+class Log extends LogBase {
+  /**
+   * @param {string} name
+   * @param {{ level4log?: string | undefined; serializers?: any; }} opts
+   */
+  constructor (name, opts) {
+    const _storage = storage()
 
-  const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
-  LogBase.call(this, name, Object.assign({}, options, opts, { serializers }))
-  const colorFn = (c) => `color:${c}`
-  this.color = selectColor(name, colorFn)
-  this.levColors = levelColors(colorFn)
-  this.queue = new Queue(this._sendLog.bind(this), 3)
-}
-Object.setPrototypeOf(Log.prototype, LogBase.prototype)
+    Object.assign(options,
+      inspectOpts(_storage),
+      inspectNamespaces(_storage)
+    )
 
-Object.assign(Log.prototype, {
+    options.colors = options.colors === false ? false : supportsColors()
+
+    const serializers = Object.assign({}, options.serializers, opts?.serializers)
+
+    /** @type {import('./LogBase.js').LogBaseOptions} */
+    const _opts = Object.assign({}, options, opts, { serializers })
+    super(name, _opts)
+
+    const colorFn = (c) => `color:${c}`
+    this.color = selectColor(name, colorFn)
+    this.levColors = levelColors(colorFn)
+    this.queue = new Queue(this._sendLog.bind(this), 3)
+  }
+
+  /**
+   * Apply (and get) global options
+   * @param {object} [opts] - changed options
+   * @return {object} global options
+   */
+  static options (opts) {
+    if (!opts) { return Object.assign({}, options) }
+    Object.assign(options, opts, {
+      colors: opts.colors === false ? false : supportsColors()
+    })
+    return options
+  }
+
+  /**
+   * save options in `localStorage`
+   */
+  static save () {
+    const _storage = storage()
+    Log.reset()
+    saveOpts(_storage, options)
+  }
+
+  /**
+   * reset saved options
+   */
+  static reset () {
+    const _storage = storage()
+
+    Object.keys(_storage).forEach((key) => {
+      if (/^(DEBUG|DEBUG_.*)$/i.test(key)) {
+        _storage.removeItem(key)
+      }
+    })
+  }
+
+  /**
+   * wrap console logging functions like
+   * console.log, console.info, console.warn, console.error
+   * @param {string} [name='console']
+   * @param {object} opts - see Log.options
+   * @param {string} [opts.level4log='log'] - log level for console.log
+   * @return {function} unwrap function
+   */
+  static wrapConsole (name = 'console', opts) {
+    const log = new Log(name, opts)
+    return wrapConsole(log, opts)
+  }
+
   /**
    * render arguments to console.log
    * @public
@@ -110,7 +166,7 @@ Object.assign(Log.prototype, {
   render (args) {
     console.log(...args) // eslint-disable-line no-console
     return args
-  },
+  }
 
   /**
    * send log to server
@@ -129,7 +185,7 @@ Object.assign(Log.prototype, {
     obj.userAgent = navigator.userAgent
     const str = this.formatter.stringify(obj)
     this.queue.push(str)
-  },
+  }
 
   /**
    * format log arguments
@@ -146,7 +202,7 @@ Object.assign(Log.prototype, {
     }
 
     return res
-  },
+  }
 
   /**
    * format arguments for console.log
@@ -186,7 +242,7 @@ Object.assign(Log.prototype, {
     }
 
     return args
-  },
+  }
 
   /**
    * transfer log to server via zero pixel image request
@@ -198,7 +254,7 @@ Object.assign(Log.prototype, {
     img.onerror = done
     img.onabort = done
     img.src = this.opts.url + '?id=' + random(6) + '&log=' + encodeURIComponent(str)
-  },
+  }
 
   /**
    * Add colors, style to string
@@ -209,54 +265,6 @@ Object.assign(Log.prototype, {
       ? `%c${str}%c`
       : str
   }
-})
-
-/**
- * Apply (and get) global options
- * @param {object} [opts] - changed options
- * @return {object} global options
- */
-Log.options = function (opts) {
-  if (!opts) return Object.assign({}, options)
-  Object.assign(options, opts, {
-    colors: opts.colors === false ? false : supportsColors()
-  })
-  return options
-}
-
-/**
- * save options in `localStorage`
- */
-Log.save = function () {
-  const _storage = storage()
-  Log.reset()
-  saveOpts(_storage, options)
-}
-
-/**
- * reset saved options
- */
-Log.reset = function () {
-  const _storage = storage()
-
-  Object.keys(_storage).forEach((key) => {
-    if (/^(DEBUG|DEBUG_.*)$/i.test(key)) {
-      _storage.removeItem(key)
-    }
-  })
-}
-
-/**
- * wrap console logging functions like
- * console.log, console.info, console.warn, console.error
- * @param {string} [name='console']
- * @param {object} opts - see Log.options
- * @param {string} [opts.level4log='log'] - log level for console.log
- * @return {function} unwrap function
- */
-Log.wrapConsole = function (name = 'console', opts) {
-  const log = new Log(name, opts)
-  return wrapConsole(log, opts)
 }
 
 Log.serializers = { err: errSerializer }

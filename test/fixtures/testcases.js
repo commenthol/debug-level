@@ -20,15 +20,16 @@ const quotes = {
   '\'': '\''
 }
 
-function Custom (url) {
-  Object.assign(this, {
-    url,
-    ip: '10.10.10.10',
-    headers: { 'User-Agent': 'Custom/2.0' },
-    other: { obj, arr, circular }
-  })
-}
-Custom.prototype = {
+class Custom {
+  constructor (url) {
+    Object.assign(this, {
+      url,
+      ip: '10.10.10.10',
+      headers: { 'User-Agent': 'Custom/2.0' },
+      other: { obj, arr, circular }
+    })
+  }
+
   toJSON () {
     const { url, ip } = this
     return { url, ip }

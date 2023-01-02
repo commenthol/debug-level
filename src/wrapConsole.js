@@ -16,7 +16,7 @@ const unwrap = () => {
 /**
  * wrap console logging functions like
  * console.log, console.info, console.warn, console.error
- * @return {function} unwrap function
+ * @return unwrap function
  */
 function wrapConsole (log, { level4log = 'LOG' } = {}) {
   if (wrapped) return unwrap

@@ -22,11 +22,6 @@ const reset = () => {
 const cidescribe = process.env.npm_lifecycle_event === 'test:ci' ? () => {} : describe
 
 describe('#Log node', function () {
-  it('should instantiate without new', function () {
-    const log = Log('test')
-    assert(log instanceof Log)
-  })
-
   describe('options', function () {
     after(reset)
 
@@ -410,7 +405,7 @@ describe('#Log node', function () {
       })
 
       it('should NOT remove object only formatters', function () {
-        const log = Log('*')
+        const log = new Log('*')
         const res = log.error('%j ', { a: { b: 'c' } })
         assert.strictEqual(res, '{"level":"ERROR","name":"*","msg":"{\\"a\\":{\\"b\\":\\"c\\"}} ","diff":0}')
       })

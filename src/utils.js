@@ -53,8 +53,10 @@ const adjustLevel = (level, _default) => {
   return LEVELS[level] ? level : _default
 }
 
+/** @param {number|string} level */
 const toNumLevel = (level) => NUM_LEVELS[level] || NUM_LEVELS.DEBUG
 
+/** @param {number} level */
 const fromNumLevel = (level) => {
   if (typeof level === 'number') {
     for (const slevel in NUM_LEVELS) {
@@ -139,7 +141,7 @@ const inspectNamespaces = (obj) => {
   if (namespaces) return { namespaces }
 }
 
-const random = (len) => Math.random().toString(16).toLowerCase().substr(2, len)
+const random = (len) => Math.random().toString(16).toLowerCase().slice(2, len)
 
 module.exports = {
   LOG,

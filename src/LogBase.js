@@ -4,45 +4,61 @@ const Namespaces = require('./Namespaces.js')
 
 const noop = () => {}
 
+
 const time = {
   epoch: () => Date.now(),
   unix: () => Date.now() / 1000 | 0,
   iso: () => new Date().toISOString()
 }
 
-function LogBase (name, opts) {
-  Object.assign(this, {
-    name,
-    opts,
-    _enabled: {},
-    formatter: new Format(opts)
-  })
+/**
+ * @typedef {object} opts
+ * @property {string} [namespaces]
+ * @property {string} [level]
+ * @property {boolean} [levelNumbers]
+ * @property {'epoch'|'unix'|'iso'} [timestamp]
+ * @property {object} [serializers]
+ *
+ * @typedef {import('./Format.js').FormatOption} FormatOption
+ * @typedef {FormatOption & opts} LogBaseOptions
+ */
 
-  this.serializers = Object.entries(this.opts.serializers || {})
-    .reduce((o, [key, val]) => {
-      if (typeof val === 'function') {
-        o = o || {}
-        o[key] = val
-      }
-      return o
-    }, null)
+class LogBase {
+  /**
+   * @param {string} name
+   * @param {LogBaseOptions} opts
+   */
+  constructor (name, opts = {}) {
+    this.name = name
+    this.opts = opts
+    this._enabled = {}
+    this.formatter = new Format(opts)
 
-  this._timeF = time[opts.timestamp]
-  this._time = this._timeF ? this._timeF : noop
+    /** @type {{ [x: string]: (arg0: any) => any; } | null} */
+    this.serializers = Object.entries(this.opts.serializers || {})
+      .reduce((o, [key, val]) => {
+        if (typeof val === 'function') {
+          o = o || {}
+          o[key] = val
+        }
+        return o
+      }, null)
 
-  this.enable()
-}
+    this._timeF = time[opts.timestamp]
+    this._time = this._timeF ? this._timeF : noop
 
-LogBase.prototype = {
-  enable (namespaces) {
-    namespaces = namespaces || this.opts.namespaces
+    this.enable()
+  }
+
+  /** @param {string} [namespaces] */
+  enable (namespaces = this.opts.namespaces) {
     const namespace = new Namespaces(namespaces)
     this._enabled = {} // reset
     const level = namespace.isEnabled(this.name, this.opts.level)
     const active = level
       ? LEVELS[adjustLevel(level, INFO)]
       : []
-    LEVELS.TRACE.forEach(level => { // loop over all levels
+    LEVELS.TRACE.forEach(level => {
       const nlevel = this.opts.levelNumbers ? toNumLevel(level) : level
       const llevel = level.toLowerCase()
       if (active.includes(level)) {
@@ -60,7 +76,7 @@ LogBase.prototype = {
     })
     const nLOG = this.opts.levelNumbers ? toNumLevel(LOG) : LOG
     this.log = (fmt, ...args) => this._log(nLOG, fmt, args)
-  },
+  }
 
   get enabled () {
     return this._enabled._cache || (
@@ -69,14 +85,14 @@ LogBase.prototype = {
         return o
       }, {})
     )
-  },
+  }
 
   diff () {
     const curr = Date.now()
     const prev = this._prev || curr
     this._prev = curr
     return curr - prev
-  },
+  }
 
   /**
    * @return {object} json object
@@ -97,7 +113,7 @@ LogBase.prototype = {
     }
 
     return o
-  },
+  }
 
   _applySerializers (obj) {
     const o = {}
@@ -112,10 +128,10 @@ LogBase.prototype = {
       }
     }
     return o
-  },
+  }
 
   /* c8 ignore next */
-  _serverinfo () {},
+  _serverinfo () { }
 
   /* c8 ignore next 3 */
   _log (/* level, args */) {

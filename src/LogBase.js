@@ -4,7 +4,6 @@ const Namespaces = require('./Namespaces.js')
 
 const noop = () => {}
 
-
 const time = {
   epoch: () => Date.now(),
   unix: () => Date.now() / 1000 | 0,

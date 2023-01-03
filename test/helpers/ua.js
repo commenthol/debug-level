@@ -1,5 +1,5 @@
-const ua = (() => {
-  if (typeof global.navigator !== 'undefined') {
+export const ua = (() => {
+  if (typeof globalThis.navigator !== 'undefined') {
     const ua = navigator.userAgent
     return /firefox/i.test(ua)
       ? 'firefox'
@@ -8,5 +8,3 @@ const ua = (() => {
 })()
 
 // console.log(ua)
-
-module.exports = ua

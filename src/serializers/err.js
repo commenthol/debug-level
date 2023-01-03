@@ -1,6 +1,11 @@
 const circ = Symbol('circ')
 
-function errSerializer (val) {
+/**
+ * serializer for errors
+ * @param {object} [val]
+ * @returns {object}
+ */
+export function errSerializer (val) {
   if (!(val instanceof Error)) {
     return val
   }
@@ -28,5 +33,3 @@ function errSerializer (val) {
 
   return o
 }
-
-module.exports = errSerializer

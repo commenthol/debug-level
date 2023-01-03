@@ -1,4 +1,4 @@
-const debug = require('debug')
+import debug from 'debug'
 
 let wrapped = null
 
@@ -11,7 +11,7 @@ const unwrap = () => {
   }
 }
 
-function wrapDebug (Log) {
+export function wrapDebug (Log) {
   if (wrapped) return unwrap
   class Loggers {
     constructor () {
@@ -46,5 +46,3 @@ function wrapDebug (Log) {
 
   return unwrap
 }
-
-module.exports = wrapDebug

@@ -6,8 +6,13 @@
 [![Build Status](https://api.travis-ci.com/commenthol/debug-level.svg?branch=master)](https://travis-ci.com/commenthol/debug-level)
 [![Coverage Status](https://coveralls.io/repos/github/commenthol/debug-level/badge.svg?branch=master)](https://coveralls.io/github/commenthol/debug-level?branch=master)
 
-A universal JavaScript logging/ debugging utility which works in node and browsers. It behaves similar to the popular [debug][] module but adds additional log levels.
-Prints colored and human readable output for development and [bunyan][] like JSON for production environments.
+A universal JavaScript logging/ debugging utility which works in node and
+browsers.  
+It behaves similar to the popular [debug][] module but adds additional
+log levels.  
+Prints colored and human readable output for development and [bunyan][] like
+JSON for production environments.  
+Fully typed with JSDocs and Typescript.
 
 *human readable format for development*
 
@@ -42,6 +47,7 @@ Prints colored and human readable output for development and [bunyan][] like JSO
 * [Wrap console logs](#wrap-console-logs)
 * [Wrap debug output](#wrap-debug-output)
 * [Handle node exit events](#handle-node-exit-events)
+* [Logging HTTP requests](#logging-http-requests)
 * [Logging Browser messages](#logging-browser-messages)
 * [License](#license)
 * [Benchmarks](#benchmarks)
@@ -69,12 +75,15 @@ given in the first argument.
 [examples/levels.js](./examples/levels.js)
 
 ```js
-const Log = require('debug-level')
+// ESM
+import { Log, logger } from 'debug-level'
+// Commonjs
+const { Log, logger } = require('debug-level')
+
 // creates a logger for <namespace> `test`
 const log = new Log('test')
-
 // or using a global Log instance
-const log = require('debug-level').log('test')
+const log = logger('test')
 
 log.fatal(new Error('fatal'))        // logs an Error at level FATAL
 log.error(new Error('boom'))         // logs an Error at level ERROR
@@ -85,8 +94,8 @@ log.trace('hi')                      // logs a string at level TRACE
 log.log('always logs')               // always logs regardless of set level
 ```
 
-Running `levels.js` without environment variables will show no output (apart from `log.log`).
-Setting only `DEBUG_LEVEL` shows all lines with their respective level.
+Running `levels.js` without environment variables will show no output (apart from `log.log()`).
+Setting `DEBUG_LEVEL` only shows all lines with their respective level.
 Combined with `DEBUG`, using comma separated [namespaces](#namespaces), only
 those log lines with matching namespace and level get logged.
 
@@ -195,8 +204,8 @@ You may set the global log options with:
 [examples/options.js](./examples/options.js)
 
 ```js
-const fs = require('fs')
-const Log = require('debug-level')
+import fs from 'fs'
+import { Log } from 'debug-level'
 
 // log into file instead of process.stderr
 const stream = fs.createWriteStream('./my.log')
@@ -214,10 +223,12 @@ Log.options({
     err: Log.serializers.err // default error serialzer is always set
   }
 })
-const log = new Log('*')
+const log = new Log('my:namespace')
 
-log.debug({object: 1}) // ...
+log.debug({ object: 1 }) // ...
 ```
+
+> **NOTE:** Consider using a tool like [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file or use a tool like [@vrbo/pino-rotating-file](https://www.npmjs.com/package/@vrbo/pino-rotating-file) to write to a rotating file stream.
 
 | Option name  | Setting              | env     | Type    | Description                                  |
 | ------------ | -------------------- | ------- | ------- | -------------------------------------------- |
@@ -229,7 +240,7 @@ log.debug({object: 1}) // ...
 | timestamp    | DEBUG_TIMESTAMP      | node    | String  | Set null/iso/unix/epoch timestamp format     |
 | colors       | DEBUG_COLORS         | _both_  | Boolean |                                              |
 | stream       | --                   | node    | Stream  | output stream (defaults to `process.stderr`) |
-| sonic        | DEBUG_SONIC          | node    | Boolean | faster buffered writer                       |
+| sonic        | DEBUG_SONIC          | node    | Boolean | fast buffered writer                         |
 | sonicLength  | DEBUG_SONIC_LENGTH   | node    | number  | min size of buffer in byte (default is 4096) |
 | sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node    | number  | flush after each x ms (default is 1000)      |
 | serializers  | --                   | _both_  | Object  | serializers by keys                          |
@@ -250,8 +261,8 @@ const mySerializer = function (val) {
 
 const log = new Log('foobar', { serializers: { my: mySerializer }})
 
-const my = {foo: 'bar', sense: 42}
-log.info({my})
+const my = { foo: 'bar', sense: 42 }
+log.info({ my })
 //> INFO foobar {my: 'bar'} +0ms
 ```
 
@@ -274,7 +285,9 @@ Namespaces select dedicated packages for logging (check [Conventions](#conventio
 considering the level selected with `DEBUG_LEVEL`. To choose a different log-level
 prefix the namespace with the level to be set for that namespace.
 
-E.g. to log all packages on level `FATAL`, `test` on `ERROR`, `log:A` on `WARN`. As a side-effect `*` will also cause **all** modules using [debug][] being logged.
+E.g. to log all packages on level `FATAL`, `test` on `ERROR`, `log:A` on `WARN`.
+As a side-effect `*` will also cause **all** modules using [debug][] being
+logged.
 
 ```
 $ DEBUG_LEVEL=FATAL DEBUG=ERROR:test,WARN:log:A,* node examples/levels.js
@@ -319,12 +332,13 @@ environment variable. You can then use it for normal output as well as debug out
 
 The `*` character may be used as a wildcard. Suppose for example your library
 has debuggers named `connect:bodyParser`, `connect:compress`, `connect:session`,
-instead of listing all three with `DEBUG=connect:bodyParser,connect:compress,connect:session`,
-you may simply do `DEBUG=connect:*`, or to run everything using this module
-simply use `DEBUG=*`.
+instead of listing all three with
+`DEBUG=connect:bodyParser,connect:compress,connect:session`, you may simply do
+`DEBUG=connect:*`, or to run everything using this module simply use `DEBUG=*`.
 
 You can also exclude specific debuggers by prefixing them with a `-` character.
-For example, `DEBUG=*,-connect:*` would include all debuggers except those starting with `connect:`.
+For example, `DEBUG=*,-connect:*` would include all debuggers except those
+starting with `connect:`.
 
 ## Output
 
@@ -339,21 +353,22 @@ For example, `DEBUG=*,-connect:*` would include all debuggers except those start
 
 When using `%j`, `%o`, `%O` all will expand to `%j` JSON, so there is no difference when using in node.
 
-Nonetheless it is **not recommended to use** these formatters for logging errors and objects as this complicates later log inspection.
+Nonetheless it is **not recommended to use** these formatters for logging errors
+and objects as this complicates later log inspection.
 
 Each log records into a single JSON stringified line.
 
 Core fields are:
 
-- `level`: One of the five log levels.
+- `level`: One of the six log levels.
 - `name`: The name of the namespace logged.
 - `msg`: A message which should give reason for logging the line.
 - `hostname`: Hostname of the server. (Requires option serverinfo)
 - `pid`: PID of the logged process. (Requires option serverinfo).
-- `time`: Timestamp (Suppress with option timestamp=false).
-- `diff`: Difftime in milliseconds.
+- `time`: Timestamp (Suppress with option timestamp='').
+- `diff`: Diff-time in milliseconds.
 
-See [examples/jsonOutput.js](./examples/jsonOutput.js).
+See [examples/jsonOutput.cjs](./examples/jsonOutput.cjs).
 
 When logging a message string, number or a formatted string it will show up under `msg` like:
 
@@ -409,12 +424,13 @@ log.error(err, {object: 1}) // you may add an additional object
 
 ### toJSON
 
-If logging an object you may define a `toJSON()` function on that object to change proper logging of the object itself:
+If logging an object you may define a `toJSON()` function on that object to
+change proper logging of the object itself:
 
-[examples/toJSON.js](./examples/toJSON.js)
+[examples/toJSON.cjs](./examples/toJSON.cjs)
 
 ```js
-const Log = require('debug-level')
+import { Log } from 'debug-level'
 const log = new Log('*')
 
 function reqToJSON () {
@@ -435,14 +451,17 @@ log.debug({req: req})
 
 ## Wrap console logs
 
-Some packages may use `console.log` statements which you may wish to log with `debug-level` as well.
+Some packages may use `console.log` statements which you may wish to log with
+`debug-level` as well.
 
-By standard levels are assigned the same way as console does. E.g. `console.debug` is assigned to level DEBUG, `console.error` to ERROR.
+By standard levels are assigned the same way as console does. E.g.
+`console.debug` is assigned to level DEBUG, `console.error` to ERROR.
 
-You may explicitly assign `console.log` to a log level by attributing e.g. `{ level4log: 'INFO' }`
+You may explicitly assign `console.log` to a log level by attributing e.g. `{
+level4log: 'INFO' }`
 
 ```js
-const Log = require('debug-level')
+import { Log } from 'debug-level'
 
 // standard - namespace is `console`
 Log.wrapConsole()
@@ -453,10 +472,11 @@ Log.wrapConsole('my-console', {level4log: 'INFO'})
 
 ## Wrap debug output
 
-For node only. A lot of packages use the popular [debug][] package. To write the output in JSON with this package you may wrap those log statements.
+For node only. A lot of packages use the popular [debug][] package. To write the
+output in JSON with this package you may wrap those log statements.
 
 ```js
-const Log = require('debug-level')
+import { Log } from 'debug-level'
 
 Log.wrapDebug()
 ```
@@ -465,7 +485,11 @@ Do not forget to add the debug package with `npm i debug` within your package.
 
 ## Handle node exit events
 
-For node only. To handle exit events like [unhandledRejection](https://nodejs.org/api/process.html#process_event_unhandledrejection) and [uncaughtException](https://nodejs.org/api/process.html#process_event_uncaughtexception) add `Log.handleExitEvents()` somewhere in your code. This with log the error at level FATAL and exit the process with code 1.
+For node only. To handle exit events like
+[unhandledRejection](https://nodejs.org/api/process.html#process_event_unhandledrejection)
+and [uncaughtException](https://nodejs.org/api/process.html#process_event_uncaughtexception)
+add `Log.handleExitEvents()` somewhere in your code. This with log the error at
+level FATAL and exit the process with code 1.
 
 ```js
 // standard - namespace is `exit`
@@ -475,22 +499,70 @@ Log.handleExitEvents()
 Log.handleExitEvents('process-exit')
 ```
 
+## Logging HTTP requests
+
+To log http requests/ responses you can enable the `httpLogs` middleware in your
+express/ connect server.
+
+```js
+import express from 'express'
+import { httpLogs } from 'debug-level'
+
+const app = express()
+app.use(httpLogs('my-module:http'))
+```
+
+Request and Response are logged with the built in `reqSerializer` and
+`resSerializer`.  
+Additionally a request-id is set on `req.id` to allow for building associations
+on logs containing that same id. On each request a new id is generated.  
+Use `{ customGenerateRequestId }` in options, to overwrite the built-in method.
+
+**Example** using above code
+
+```js
+curl "http://localhost"
+---
+{
+  "level": "INFO",
+  "name": "my-module:http",
+  "diff": 0,
+  "req": {
+    "id": "1021",
+    "method": "GET",
+    "url": "/",
+    "remoteAddress": "::1",
+    "remotePort": 56259,
+    "headers": {
+      "host": "localhost",
+      "connection": "close"
+    }
+  },
+  "res": {
+    "headers": {},
+    "statusCode": 200,
+    "ms": 1
+  }
+}
+```
+
 ## Logging Browser messages
 
-To log debug messages from the browser on your server you can enable a logger middleware in your express/ connect server.
+To log debug messages from the browser on your server you can enable a logger
+middleware in your express/ connect server.
 
 ```js
 const app = require('express')()
-const {logger} = require('debug-level')
+const { browserLogs } = require('debug-level')
 
-app.use('./debug-level', logger({maxSize: 100}))
+app.use('./debug-level', browserLogs({ maxSize: 100 }))
 ...
 ```
 
 In your single page application use:
 
 ```js
-import Log from 'debug-level'
+import { Log } from 'debug-level'
 
 localStorage.setItem('DEBUG_URL', '/debug-level')
 localStorage.setItem('DEBUG', 'myApp*')

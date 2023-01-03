@@ -1,9 +1,9 @@
-const {
+import {
   circular,
   quotes,
   custom
-} = require('./testcases')
-const ua = require('../helpers/ua.js')
+} from './testcases.js'
+import { ua } from '../helpers/ua.js'
 
 const err = {
   err: {
@@ -19,7 +19,7 @@ const obj = {
   }
 }
 
-module.exports = {
+export default {
   browser: [
     ['ERROR test string +0ms'],
     ['ERROR test 1 +0ms'],

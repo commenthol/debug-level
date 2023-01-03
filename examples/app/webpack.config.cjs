@@ -1,5 +1,3 @@
-// const MinifyPlugin = require('babel-minify-webpack-plugin')
-
 module.exports = {
   mode: 'development',
   // devtool: 'inline-source-map',
@@ -22,6 +20,5 @@ module.exports = {
     ]
   },
   plugins: [
-    // new MinifyPlugin({ mangle: false })
   ]
 }

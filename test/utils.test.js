@@ -1,7 +1,16 @@
 /* eslint no-console: 0 no-multi-spaces: 0 */
 
-const assert = require('assert')
-const { adjustLevel, toNumLevel, fromNumLevel, inspectOpts, inspectNamespaces, random, LEVELS, LOG } = require('../src/utils.js')
+import assert from 'assert'
+import {
+  adjustLevel,
+  toNumLevel,
+  fromNumLevel,
+  inspectOpts,
+  inspectNamespaces,
+  random,
+  LEVELS,
+  LOG
+} from '../src/utils.js'
 
 describe('#utils', function () {
   it('adjustLevel() should use default', function () {

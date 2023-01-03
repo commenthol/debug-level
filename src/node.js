@@ -1,15 +1,15 @@
-const os = require('os')
-const ms = require('ms')
-const chalk = require('chalk')
-const fastStringify = require('fast-safe-stringify')
-const flatstr = require('flatstr')
+import os from 'os'
+import ms from 'ms'
+import chalk from 'chalk'
+import fastStringify from 'fast-safe-stringify'
+import flatstr from 'flatstr'
 
-const { fromNumLevel, inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, INFO } = require('./utils.js')
-const LogBase = require('./LogBase.js')
-const wrapConsole = require('./wrapConsole.js')
-const wrapDebug = require('./wrapDebug.js')
-const Sonic = require('./Sonic.js')
-const errSerializer = require('./serializers/err.js')
+import { fromNumLevel, inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, INFO } from './utils.js'
+import { LogBase } from './LogBase.js'
+import { wrapConsole } from './wrapConsole.js'
+import { wrapDebug } from './wrapDebug.js'
+import { Sonic } from './Sonic.js'
+import { errSerializer } from './serializers/err.js'
 
 const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
@@ -17,7 +17,22 @@ const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as d
 const EXIT_EVENTS = ['unhandledRejection', 'uncaughtException']
 
 /**
+ * @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions
+ * @typedef {import('./utils').Level} Level
+ *
+ * @typedef {object} ExtLogOptions
+ * @property {boolean} [serverinfo] log serverinfo like hostname and pid
+ * @property {NodeJS.WriteStream} [stream=process.stderr] stream writer
+ * @property {boolean} [sonic] use sonic (default for production use)
+ * @property {number} [sonicLength=4096] buffer length for Sonic
+ * @property {number} [sonicFlushMs=1000] min. timeout before flush of Sonic buffer in ms
+ *
+ * @typedef {LogBaseOptions & ExtLogOptions} LogOptions
+ */
+
+/**
  * global log options
+ * @type {LogOptions}
  */
 const options = {
   level: INFO,
@@ -25,40 +40,44 @@ const options = {
   levelNumbers: false,
   json: !isDevEnv, // log in json format
   colors: isDevEnv, // apply colors
-  timestamp: !isDevEnv && 'iso', // time format: either `epoch`, `unix`, `iso`
+  timestamp: !isDevEnv ? 'iso' : undefined, // time format: either `epoch`, `unix`, `iso`
   serverinfo: !isDevEnv, // append server information
   stream: process.stderr, // output stream
   sonic: !isDevEnv, // use Sonic as stream writer
   sonicLength: 4096, // buffer length for Sonic
   sonicFlushMs: 1000, // min. timeout before write
-  spaces: null, // pretty print JSON
+  spaces: undefined, // pretty print JSON
   splitLine: isDevEnv, // split lines for pretty debug like output
   serializers: { err: errSerializer }
 }
 
-class Log extends LogBase {
+export class Log extends LogBase {
   /**
    * creates a new logger
    * @param {String} name - namespace of Logger
-   * @param {object} [opts] - see Log.options
+   * @param {LogOptions} [opts] - see Log.options
    */
   constructor (name, opts) {
     Object.assign(options,
       inspectOpts(process.env),
       inspectNamespaces(process.env)
     )
-
-    const serializers = Object.assign({}, options.serializers, opts && opts.serializers)
-
-    super(name, Object.assign({}, options, opts, { serializers }))
+    const serializers = Object.assign({}, options.serializers, opts ? opts.serializers : {})
+    const _opts = Object.assign({}, options, opts, { serializers })
+    super(name, _opts)
 
     const colorFn = (n) => chalk.hex(n)
     this.color = selectColor(name, colorFn)
     this.levColors = levelColors(colorFn)
+    // noop for TS
+    this.opts = { ..._opts, ...this.opts }
 
     this.stream = this.opts.sonic
-      ? new Sonic(this.opts.stream, { minLength: this.opts.sonicLength, timeout: this.opts.sonicFlushMs })
-      : this.opts.stream
+      ? new Sonic(this.opts.stream, {
+        minLength: this.opts.sonicLength,
+        timeout: this.opts.sonicFlushMs
+      })
+      : this.opts.stream || process.stderr
 
     if (!this.opts.json) {
       this._log = this._logDebugLike
@@ -74,11 +93,13 @@ class Log extends LogBase {
 
   /**
    * Apply (and get) global options
-   * @param {object} [opts] - changed options
+   * @param {object} [opts] changed options
    * @return {object} global options
    */
   static options (opts) {
-    if (!opts) { return { ...options } }
+    if (!opts) {
+      return { ...options }
+    }
     return Object.assign(options, opts)
   }
 
@@ -102,11 +123,16 @@ class Log extends LogBase {
   }
 
   /**
+   * @typedef {object} ExtLogOptionWrapConsole
+   * @property {Level} [level4log='LOG']
+   *
+   * @typedef {LogOptions & ExtLogOptionWrapConsole} LogOptionWrapConsole
+   */
+  /**
    * wrap console logging functions like
    * console.log, console.info, console.warn, console.error
    * @param {string} [name='console']
-   * @param {object} opts - see Log.options
-   * @param {string} [opts.level4log='log'] - log level for console.log
+   * @param {LogOptionWrapConsole} [opts] options
    * @return {function} unwrap function
    */
   static wrapConsole (name = 'console', opts) {
@@ -115,12 +141,17 @@ class Log extends LogBase {
   }
 
   /**
+   * @typedef {object} ExtLogOptionHandleExitEvents
+   * @param {boolean} [code=1] set exit code; code=0 will prevent triggering exit
+   * @param {boolean} [gracefulExit=false] uses process.exitCode to avoid forceful exit with process.exit()
+   *
+   * @typedef {LogOptions & ExtLogOptionHandleExitEvents} LogOptionHandleExitEvents
+   */
+  /**
    * log exit events like 'unhandledRejection', 'uncaughtException'
    * and then let the process die
    * @param {string} [name='exit']
-   * @param {object} opts - see Log.options
-   * @param {boolean} [opts.code=1] - set exit code; code=0 will prevent triggering exit
-   * @param {boolean} [opts.gracefulExit=false] - uses process.exitCode to avoid forceful exit with process.exit()
+   * @param {LogOptionHandleExitEvents} [opts] options
    */
   static handleExitEvents (name = 'exit', opts = {}) {
     const { code = 1, gracefulExit, ..._opts } = opts
@@ -147,22 +178,23 @@ class Log extends LogBase {
   /**
    * render string to output stream
    * @public
-   * @param {String} str - string to render
-   * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
+   * @param {String} str string to render
+   * @param {String} level level of log line (might be used for custom Logger which uses different streams per level)
    * @return {String}
    */
-  render (str) {
+  render (str, level) {
     this.stream.write(flatstr(str + '\n'))
     return str
   }
 
   flush () {
+    // @ts-expect-error
     this.stream.flush && this.stream.flush()
   }
 
   /**
    * format object to json
-   * @private
+   * @protected
    */
   _log (level, fmt, args) {
     const o = this._formatJson(level, fmt, args)
@@ -198,7 +230,7 @@ class Log extends LogBase {
       this._color(this.name, this.color, true)
 
     const strOther = Object.keys(other).length
-      ? stringify(this._applySerializers(other), this.opts.splitLine && 2)
+      ? stringify(this._applySerializers(other), this.opts.splitLine ? 2 : undefined)
       : ''
 
     const str = (this.opts.splitLine)
@@ -241,11 +273,13 @@ Log.Sonic = Sonic
 
 /**
  * @credits pino/lib/tools.js
- * magically escape strings for json
- * relying on their charCodeAt
- * everything below 32 needs JSON.stringify()
- * 34 and 92 happens all the time, so we
- * have a fast case for them
+ *
+ * magically escape strings for json relying on charCodeAt;
+ * everything below 32 needs JSON.stringify() 34 and 92 happens all the time, so
+ * we have a fast case for them
+ *
+ * @param {string} str
+ * @returns {string}
  */
 function asString (str) {
   let result = ''
@@ -272,6 +306,12 @@ function asString (str) {
   return point < 32 ? JSON.stringify(str) : '"' + result + '"'
 }
 
+/**
+ * @param {object} obj
+ * @param {object} serializers
+ * @param {number} [spaces]
+ * @returns {string}
+ */
 function toJson (obj, serializers, spaces) {
   let s = '{'
   let comma = ''
@@ -305,16 +345,24 @@ function toJson (obj, serializers, spaces) {
   return s + '}'
 }
 
+/**
+ * @param {any} any
+ * @param {number} [spaces]
+ * @returns {string}
+ */
 function stringify (any, spaces) {
   try {
     return JSON.stringify(any, null, spaces)
   } catch (e) {
+    // @ts-expect-error
     return fastStringify(any, null, spaces)
   }
 }
 
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 function replaceLf (str = '') {
   return str.replace(/[\r\n]/g, '\\n')
 }
-
-module.exports = Log

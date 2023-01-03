@@ -1,6 +1,6 @@
-const assert = require('assert')
-const fs = require('fs')
-const { Sonic } = require('../src/index.js')
+import assert from 'assert'
+import fs from 'fs'
+import { Sonic } from '../src/Sonic.js'
 
 describe('Sonic', function () {
   it('shall throw if no stream is setup', function () {

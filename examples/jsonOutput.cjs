@@ -1,4 +1,4 @@
-const Log = require('..')
+const { Log } = require('..')
 Log.options({ level: 'DEBUG', json: true, serverinfo: true, spaces: 2 })
 
 const log = new Log('package')

@@ -4,8 +4,8 @@
  * @copyright Copyright (c) 2016-2019 David Mark Clements
  */
 
-const assert = require('assert')
-const format = require('../src/quick-format.js')
+import assert from 'assert'
+import { format } from '../src/quick-format.js'
 
 describe('quick-format', function () {
   it('empty object', function () {

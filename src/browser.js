@@ -2,10 +2,28 @@
 
 import { Queue } from 'asyncc'
 import ms from 'ms'
-import { inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, random, WARN } from './utils'
-import LogBase from './LogBase.js'
-import wrapConsole from './wrapConsole.js'
-import errSerializer from './serializers/err.js'
+import {
+  inspectOpts,
+  saveOpts,
+  inspectNamespaces,
+  selectColor,
+  levelColors,
+  random,
+  WARN
+} from './utils.js'
+import { LogBase } from './LogBase.js'
+import { wrapConsole } from './wrapConsole.js'
+import { errSerializer } from './serializers/err.js'
+
+/**
+ * @typedef {import('./utils').Level} Level
+ * @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions
+ *
+ * @typedef {object} ExtLogOptionsBrowser
+ * @property {string} [url] url to report errors
+ *
+ * @typedef {LogBaseOptions & ExtLogOptionsBrowser} LogOptionsBrowser
+ */
 
 const COLOR_RESET = 'color:inherit'
 
@@ -16,7 +34,7 @@ const options = {
   level: WARN,
   namespaces: undefined,
   colors: true, // apply coloring to browser console
-  url: undefined // [optional] url to report errors
+  url: undefined // [optional]
 }
 
 /**
@@ -25,7 +43,9 @@ const options = {
  */
 const storage = () => {
   try {
+    // @ts-expect-error
     return typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined'
+      // @ts-expect-error
       ? chrome.storage.local
       : window.localStorage
   } catch (err) {
@@ -42,18 +62,21 @@ const storage = () => {
  */
 const supportsColors = () => {
   let tmp
-  const userAgent = typeof navigator !== 'undefined' && navigator.userAgent
+  const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : ''
   // NB: In an Electron preload script, document will be defined but not fully
   // initialized. Since we know we're in Chrome, we'll just detect this case
   // explicitly
   const isElectron = typeof window !== 'undefined' &&
+    // @ts-expect-error
     (tmp = window.process) && (tmp.type === 'renderer')
   // is webkit? http://stackoverflow.com/a/16459606/376773
   // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
   const isReactNative = typeof document !== 'undefined' &&
+    // @ts-expect-error
     (tmp = document.documentElement) && (tmp = tmp.style) && tmp.WebkitAppearance
   // is firebug? http://stackoverflow.com/a/398120/376773
   const isFireBug = typeof window !== 'undefined' &&
+    // @ts-expect-error
     (tmp = window.console) && (tmp.firebug || (tmp.exception && tmp.table))
 
   if (isElectron) {
@@ -78,13 +101,11 @@ const supportsColors = () => {
 
 /**
  * creates a new logger for the browser
- * @constructor
- * @param {String} name - namespace of Logger
  */
-class Log extends LogBase {
+export class Log extends LogBase {
   /**
-   * @param {string} name
-   * @param {{ level4log?: string | undefined; serializers?: any; }} opts
+   * @param {string} name namespace of Logger
+   * @param {LogOptionsBrowser} opts
    */
   constructor (name, opts) {
     const _storage = storage()
@@ -98,9 +119,10 @@ class Log extends LogBase {
 
     const serializers = Object.assign({}, options.serializers, opts?.serializers)
 
-    /** @type {import('./LogBase.js').LogBaseOptions} */
     const _opts = Object.assign({}, options, opts, { serializers })
     super(name, _opts)
+    // noop for TS
+    this.opts = { ..._opts, ...this.opts }
 
     const colorFn = (c) => `color:${c}`
     this.color = selectColor(name, colorFn)
@@ -110,7 +132,7 @@ class Log extends LogBase {
 
   /**
    * Apply (and get) global options
-   * @param {object} [opts] - changed options
+   * @param {LogOptionsBrowser} [opts] changed options
    * @return {object} global options
    */
   static options (opts) {
@@ -144,14 +166,19 @@ class Log extends LogBase {
   }
 
   /**
+   * @typedef {object} ExtLogOptionWrapConsole
+   * @property {Level} [level4log='LOG']
+   *
+   * @typedef {LogOptionsBrowser & ExtLogOptionWrapConsole} LogOptionWrapConsole
+   */
+  /**
    * wrap console logging functions like
    * console.log, console.info, console.warn, console.error
    * @param {string} [name='console']
-   * @param {object} opts - see Log.options
-   * @param {string} [opts.level4log='log'] - log level for console.log
+   * @param {LogOptionWrapConsole} [opts]
    * @return {function} unwrap function
    */
-  static wrapConsole (name = 'console', opts) {
+  static wrapConsole (name = 'console', opts = {}) {
     const log = new Log(name, opts)
     return wrapConsole(log, opts)
   }
@@ -159,20 +186,20 @@ class Log extends LogBase {
   /**
    * render arguments to console.log
    * @public
-   * @param {Array} args - console.log arguments
-   * @param {String} level - level of log line (might be used for custom Logger which uses different streams per level)
-   * @return {String}
+   * @param {any[]} args console.log arguments
+   * @param {Level} level level of log line (might be used for custom Logger which uses different streams per level)
+   * @return {any[]}
    */
-  render (args) {
+  render (args, level) {
     console.log(...args) // eslint-disable-line no-console
     return args
   }
 
   /**
    * send log to server
-   * @param {String|Object} level - log level
-   * @param {String|Any} fmt - log level
-   * @param {Array} args - log arguments
+   * @param {Level|object} level log level
+   * @param {string} [fmt] formatter
+   * @param {any[]} [args] log arguments
    */
   send (level, fmt, args) {
     let obj
@@ -189,7 +216,7 @@ class Log extends LogBase {
 
   /**
    * format log arguments
-   * @private
+   * @protected
    */
   _log (level, fmt, args) {
     const uns = this._formatJson(level, fmt, args)
@@ -207,6 +234,7 @@ class Log extends LogBase {
   /**
    * format arguments for console.log
    * @private
+   * @param {object} param0
    * @return {Array} args for console.log
    */
   _format ({ level, name, time, msg = '', diff, ...other }) {
@@ -230,7 +258,7 @@ class Log extends LogBase {
 
     if (this.opts.colors) {
       let idx = 0
-      let lastC
+      let lastC = 0
       args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
         idx++
         if (format === 'c') {
@@ -246,10 +274,12 @@ class Log extends LogBase {
 
   /**
    * transfer log to server via zero pixel image request
+   * @param {string} str
+   * @param {Function} [cb]
    */
   _sendLog (str, cb) {
     const img = new Image()
-    const done = () => cb()
+    const done = () => { cb && cb() }
     img.onload = done
     img.onerror = done
     img.onabort = done

@@ -1,4 +1,4 @@
-const Log = require('../src/index.js')
+import { Log, browserLogs } from '../src/index.js'
 
 const fakeRes = () => ({
   write: () => {},
@@ -6,12 +6,12 @@ const fakeRes = () => ({
   end: () => {}
 })
 
-describe('#middleware', function () {
+describe('#browserLogs', function () {
   let mw
   const opts = Object.assign({}, Log.options())
   before(() => {
     Log.options({ level: 'DEBUG', json: true, colors: true })
-    mw = Log.logger({ maxSize: 3, logAll: false })
+    mw = browserLogs({ maxSize: 3, logAll: false })
   })
   after(() => {
     Log.options(opts)
@@ -66,19 +66,19 @@ describe('#middleware', function () {
   })
 
   it('should convert numbered levels', function () {
-    const mw = Log.logger({ maxSize: 3 })
+    const mw = browserLogs({ maxSize: 3 })
     const url = '/?log=' + escape('{"level":30,"name":"##"}')
     mw({ url }, fakeRes())
   })
 
   it('should log with numbered level', function () {
-    const mw = Log.logger({ maxSize: 3, numbered: true })
+    const mw = browserLogs({ maxSize: 3, numbered: true })
     const url = '/?log=' + escape('{"level":30,"name":"##"}')
     mw({ url }, fakeRes())
   })
 
   it('should log all', function () {
-    const mw = Log.logger({ maxSize: 3, logAll: true })
+    const mw = browserLogs({ maxSize: 3, logAll: true })
     const url = '/?log={name:bad}'
     mw({ url }, fakeRes())
   })

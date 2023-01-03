@@ -4,12 +4,15 @@
  * @see https://github.com/visionmedia/debug
  */
 
-const { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF } = require('./utils.js')
+import { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF } from './utils.js'
+
 const LEVELS = [TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF]
 const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
-class Namespaces {
+export class Namespaces {
   constructor (namespaces) {
+    this.skips = []
+    this.names = []
     this.enable(namespaces)
   }
 
@@ -79,5 +82,3 @@ class Namespaces {
     return { namespace, level }
   }
 }
-
-module.exports = Namespaces

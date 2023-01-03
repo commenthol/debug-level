@@ -1,4 +1,4 @@
-const Log = require('..')
+const { Log } = require('..')
 const log = new Log('req', { json: false })
 
 function reqToJSON () {

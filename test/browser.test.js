@@ -1,10 +1,10 @@
 /* eslint no-console: 0 no-multi-spaces: 0 */
 
-const assert = require('assert')
-const sinon = require('sinon')
+import assert from 'assert'
+import sinon from 'sinon'
 
-const fixtures = require('./fixtures/browser.js')
-const { testcases } = require('./fixtures/testcases.js')
+import fixtures from './fixtures/browser.js'
+import { testcases } from './fixtures/testcases.js'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -19,20 +19,18 @@ const inspect = (o) => console.log('%j', o)
 
 bdescribe('#Log', function () {
   // this.timeout(1000000)
-  // const Log = require('..')
-  const Log = require('../lib/browser').default
-
-  const defaultOpts = Log.options()
+  // const Log from '..')
+  let Log
+  before(async function () {
+    const pckg = await import('../src/browser.js')
+    Log = pckg.default
+  })
 
   const reset = () => {
+    const defaultOpts = Log.options()
     Log.options(defaultOpts)
     Log.reset()
   }
-
-  it('should instantiate without new', function () {
-    const log = Log('test')
-    assert(log instanceof Log)
-  })
 
   describe('options', function () {
     after(reset)

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "declarationDir": "types",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "strict": true,
+    "module": "esnext",
+    "target": "esnext"
+  },
+  "include": [
+    "src/*.js",
+    "src/serializers/*.js",
+  ],
+  "exclude": [
+    "node_modules",
+    "test"
+  ]
+}

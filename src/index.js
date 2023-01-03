@@ -1,6 +1,13 @@
-const M = require('./node.js')
-M.logger = require('./middleware.js')
-M.log = require('./log.js')
-M.serializers = require('./serializers/index.js')
+import { Log } from './node.js'
+import { logger } from './logger.js'
+import { browserLogs } from './browserLogs.js'
+import { httpLogs } from './httpLogs.js'
 
-module.exports = M
+export default Log
+
+export {
+  Log,
+  logger,
+  browserLogs,
+  httpLogs
+}

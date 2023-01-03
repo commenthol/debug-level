@@ -1,7 +1,8 @@
-import Log from '../..'
+import { Log } from '../../src/browser.js'
 
 window.localStorage.setItem('DEBUG_URL', '/debug-level')
 window.localStorage.setItem('DEBUG', '*')
+window.localStorage.setItem('DEBUG_LEVEL', 'TRACE')
 
 const log = new Log('myApp')
 

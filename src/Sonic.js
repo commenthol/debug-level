@@ -1,13 +1,14 @@
-const SonicBoom = require('sonic-boom')
+import SonicBoom from 'sonic-boom'
 
 const noop = () => {}
 
-class Sonic {
+export class Sonic {
   constructor (stream, opts = {}) {
     const { minLength = 4096, timeout = 1000 } = opts
     this._timer = undefined
     this._timeout = timeout
 
+    // @ts-expect-error
     const { fd, path } = typeof stream === 'string'
       ? { path: stream }
       : stream
@@ -34,6 +35,7 @@ class Sonic {
   }
 
   flush () {
+    // @ts-expect-error
     if (!this.stream.destroyed) {
       this.stream.flushSync()
     }
@@ -57,5 +59,3 @@ function filterBrokenPipe (stream, err) {
   }
   stream.removeListener('error', filterBrokenPipe)
 }
-
-module.exports = Sonic

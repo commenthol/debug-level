@@ -1,14 +1,14 @@
 /* eslint no-console: 0 no-multi-spaces: 0 */
 
-const assert = require('assert')
-const os = require('os')
-const sinon = require('sinon')
-const debug = require('debug')
-const { inspect } = require('util')
+import assert from 'assert'
+import os from 'os'
+import sinon from 'sinon'
+import debug from 'debug'
+import { inspect } from 'util'
 
-const Log = require('../src/index.js')
-const fixtures = require('./fixtures/node.js')
-const { testcases } = require('./fixtures/testcases.js')
+import Log from '../src/index.js'
+import fixtures from './fixtures/node.js'
+import { testcases } from './fixtures/testcases.js'
 
 const WRITE = false
 
@@ -33,12 +33,12 @@ describe('#Log node', function () {
         levelNumbers: false,
         json: false,
         serverinfo: false,
-        timestamp: false,
+        timestamp: undefined,
         sonic: false,
         sonicLength: 4096,
         sonicFlushMs: 1000,
         colors: true,
-        spaces: null,
+        spaces: undefined,
         splitLine: true
       })
     })
@@ -52,12 +52,12 @@ describe('#Log node', function () {
         levelNumbers: false,
         json: true,
         serverinfo: false,
-        timestamp: false,
+        timestamp: undefined,
         sonic: false,
         sonicLength: 4096,
         sonicFlushMs: 1000,
         colors: false,
-        spaces: null,
+        spaces: undefined,
         splitLine: true
       })
     })
@@ -78,11 +78,11 @@ describe('#Log node', function () {
         DEBUG_COLORS: 'false',
         DEBUG_JSON: 'true',
         DEBUG_SERVERINFO: 'false',
-        DEBUG_TIMESTAMP: 'false',
+        DEBUG_TIMESTAMP: 'undefined',
         DEBUG_SONIC: 'false',
         DEBUG_SONIC_LENGTH: '4096',
         DEBUG_SONIC_FLUSH_MS: '1000',
-        DEBUG_SPACES: 'null',
+        DEBUG_SPACES: 'undefined',
         DEBUG_SPLIT_LINE: 'true'
       })
     })

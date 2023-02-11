@@ -4,7 +4,6 @@
 
 [![NPM version](https://badge.fury.io/js/debug-level.svg)](https://www.npmjs.com/package/debug-level/)
 [![Build Status](https://api.travis-ci.com/commenthol/debug-level.svg?branch=master)](https://travis-ci.com/commenthol/debug-level)
-[![Coverage Status](https://coveralls.io/repos/github/commenthol/debug-level/badge.svg?branch=master)](https://coveralls.io/github/commenthol/debug-level?branch=master)
 
 A universal JavaScript logging/ debugging utility which works in node and
 browsers.  

@@ -9,7 +9,9 @@
     "noImplicitAny": false,
     "strict": true,
     "module": "esnext",
-    "target": "esnext"
+    "target": "esnext",
+    "emitDeclarationOnly": true, 
+    "noEmitOnError": true
   },
   "include": [
     "src/*.js",

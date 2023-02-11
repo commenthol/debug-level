@@ -49,7 +49,7 @@
     "start:example": "DEBUG=* node examples/app/server.cjs",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start karma.conf.cjs",
-    "types": "tsc --emitDeclarationOnly true --noEmitOnError"
+    "types": "tsc"
   },
   "babel": {
     "presets": [

@@ -9,6 +9,7 @@ import { inspect } from 'util'
 import Log from '../src/index.js'
 import fixtures from './fixtures/node.js'
 import { testcases } from './fixtures/testcases.js'
+import { describeBool } from './helpers/describeBool.js'
 
 const WRITE = false
 
@@ -18,8 +19,6 @@ const reset = () => {
   Log.options(defaultOpts)
   Log.reset()
 }
-
-const cidescribe = process.env.npm_lifecycle_event === 'test:ci' ? () => {} : describe
 
 describe('#Log node', function () {
   describe('options', function () {
@@ -353,7 +352,7 @@ describe('#Log node', function () {
       })
     })
 
-    describe('json with colors', function () {
+    describeBool(!process.env.CI)('json with colors', function () {
       let log
       let clock
 
@@ -569,7 +568,7 @@ describe('#Log node', function () {
     })
   })
 
-  cidescribe('handle exit events', function () {
+  describe('handle exit events', function () {
     before(function () {
       Log.options({ level: 'FATAL' })
       Log.handleExitEvents('exit', { code: 0 })

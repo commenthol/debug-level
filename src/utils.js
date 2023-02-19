@@ -3,9 +3,26 @@
  * @copyright debug contributors, <commenthol@gmail.com>
  */
 
-const [LOG, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF] = ['LOG', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF']
+/** @typedef {'LOG'|'FATAL'|'ERROR'|'WARN'|'INFO'|'DEBUG'|'TRACE'|'OFF'} Level */
 
-const LEVELS = {
+/** @type {Level} */
+export const LOG = 'LOG'
+/** @type {Level} */
+export const FATAL = 'FATAL'
+/** @type {Level} */
+export const ERROR = 'ERROR'
+/** @type {Level} */
+export const WARN = 'WARN'
+/** @type {Level} */
+export const INFO = 'INFO'
+/** @type {Level} */
+export const DEBUG = 'DEBUG'
+/** @type {Level} */
+export const TRACE = 'TRACE'
+/** @type {Level} */
+export const OFF = 'OFF'
+
+export const LEVELS = {
   TRACE: [FATAL, ERROR, WARN, INFO, DEBUG, TRACE],
   DEBUG: [FATAL, ERROR, WARN, INFO, DEBUG],
   INFO: [FATAL, ERROR, WARN, INFO],
@@ -15,7 +32,7 @@ const LEVELS = {
   OFF: [OFF]
 }
 
-const COLORS = [
+export const COLORS = [
   '#6600FF', '#3333FF', '#3333CC', '#0066FF',
   '#0066CC', '#0066FF',
   '#006633', '#006666', '#006600',
@@ -28,7 +45,7 @@ const COLORS = [
   '#FF00FF', '#FF33FF', '#CC00CC', '#990099'
 ]
 
-const LEVEL_COLORS = {
+export const LEVEL_COLORS = {
   LOG: '#999999',
   TRACE: '#00CCFF',
   DEBUG: '#0066CC',
@@ -38,7 +55,7 @@ const LEVEL_COLORS = {
   FATAL: '#CC00CC'
 }
 
-const NUM_LEVELS = {
+export const NUM_LEVELS = {
   [TRACE]: 10,
   [DEBUG]: 20,
   [INFO]: 30,
@@ -48,16 +65,21 @@ const NUM_LEVELS = {
   [FATAL]: 60
 }
 
-const adjustLevel = (level, _default) => {
+export const adjustLevel = (level, _default) => {
   level = (level || '').toUpperCase()
   return LEVELS[level] ? level : _default
 }
 
-/** @param {number|string} level */
-const toNumLevel = (level) => NUM_LEVELS[level] || NUM_LEVELS.DEBUG
+/**
+ * @param {Level} level
+ * @returns {number}
+ */
+export const toNumLevel = (level) => NUM_LEVELS[level] || NUM_LEVELS.DEBUG
 
-/** @param {number} level */
-const fromNumLevel = (level) => {
+/**
+ * @param {number} level
+ */
+export const fromNumLevel = (level) => {
   if (typeof level === 'number') {
     for (const slevel in NUM_LEVELS) {
       const threshold = NUM_LEVELS[slevel]
@@ -74,7 +96,7 @@ const fromNumLevel = (level) => {
  * @copyright debug contributors
  * @see https://github.com/visionmedia/debug
  */
-const inspectOpts = (obj) => Object.keys(obj)
+export const inspectOpts = (obj) => Object.keys(obj)
   .filter((key) => /^debug_/i.test(key))
   .reduce((opts, key) => {
     // camel-case
@@ -104,7 +126,7 @@ const inspectOpts = (obj) => Object.keys(obj)
     return opts
   }, {})
 
-const saveOpts = (obj, options) => {
+export const saveOpts = (obj, options) => {
   Object.keys(options).forEach((prop) => {
     if (['stream', 'serializers'].includes(prop)) return // do not safe stream option
     let key = 'DEBUG_' + prop.replace(/([A-Z])/g, (_, prop) => '_' + prop.toLowerCase())
@@ -114,7 +136,7 @@ const saveOpts = (obj, options) => {
   })
 }
 
-const selectColor = (namespace, fn) => {
+export const selectColor = (namespace, fn) => {
   let hash = 0
 
   for (const i in namespace) {
@@ -127,7 +149,7 @@ const selectColor = (namespace, fn) => {
   return color
 }
 
-const levelColors = (fn) => {
+export const levelColors = (fn) => {
   const colors = Object.keys(LEVEL_COLORS)
     .reduce((colors, level) => {
       colors[level] = fn(LEVEL_COLORS[level])
@@ -136,32 +158,9 @@ const levelColors = (fn) => {
   return colors
 }
 
-const inspectNamespaces = (obj) => {
+export const inspectNamespaces = (obj) => {
   const namespaces = obj.DEBUG || obj.debug
   if (namespaces) return { namespaces }
 }
 
-const random = (len) => Math.random().toString(16).toLowerCase().slice(2, len)
-
-module.exports = {
-  LOG,
-  TRACE,
-  DEBUG,
-  INFO,
-  WARN,
-  ERROR,
-  FATAL,
-  OFF,
-  LEVELS,
-  COLORS,
-  LEVEL_COLORS,
-  adjustLevel,
-  toNumLevel,
-  fromNumLevel,
-  inspectOpts,
-  saveOpts,
-  inspectNamespaces,
-  selectColor,
-  levelColors,
-  random
-}
+export const random = (len) => Math.random().toString(16).toLowerCase().slice(2, len)

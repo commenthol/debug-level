@@ -1,4 +1,4 @@
-const { adjustLevel, LOG, TRACE, DEBUG, INFO, WARN, ERROR } = require('./utils.js')
+import { adjustLevel, LOG, TRACE, DEBUG, INFO, WARN, ERROR } from './utils.js'
 
 const LEVELS = [LOG, TRACE, DEBUG, INFO, WARN, ERROR]
 
@@ -18,7 +18,7 @@ const unwrap = () => {
  * console.log, console.info, console.warn, console.error
  * @return unwrap function
  */
-function wrapConsole (log, { level4log = 'LOG' } = {}) {
+export function wrapConsole (log, { level4log = 'LOG' } = {}) {
   if (wrapped) return unwrap
   wrapped = {}
 
@@ -38,5 +38,3 @@ function wrapConsole (log, { level4log = 'LOG' } = {}) {
 
   return unwrap
 }
-
-module.exports = wrapConsole

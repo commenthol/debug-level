@@ -1,9 +1,10 @@
-const Format = require('./Format.js')
-const { toNumLevel, adjustLevel, LEVELS, LOG, INFO, FATAL } = require('./utils.js')
-const Namespaces = require('./Namespaces.js')
+import { Format } from './Format.js'
+import { toNumLevel, adjustLevel, LEVELS, LOG, INFO, FATAL } from './utils.js'
+import { Namespaces } from './Namespaces.js'
 
-const noop = () => {}
+const noop = (...args) => {}
 
+/** @typedef {'epoch'|'unix'|'iso'} Timestamp */
 
 const time = {
   epoch: () => Date.now(),
@@ -12,18 +13,24 @@ const time = {
 }
 
 /**
- * @typedef {object} opts
- * @property {string} [namespaces]
- * @property {string} [level]
- * @property {boolean} [levelNumbers]
- * @property {'epoch'|'unix'|'iso'} [timestamp]
- * @property {object} [serializers]
+ * @typedef {import('./utils').Level} Level
+ *
+ * @typedef {object} ExtLogBaseOptions
+ * @property {Level} [level] log level
+ * @property {string} [namespaces] namespaces for logging
+ * @property {boolean} [levelNumbers] use number instead of log level name
+ * @property {boolean} [json] log as nd-json
+ * @property {boolean} [colors] log with colors
+ * @property {Timestamp} [timestamp] log with timestamp; if undefined then no timestamp is logged
+ * @property {number} [spaces] number of spaces for pretty print JSON
+ * @property {boolean} [splitLine] split lines for pretty "debug" like output (not recommended for prod use)
+ * @property {object} [serializers] serializers to be applied on object properties
  *
  * @typedef {import('./Format.js').FormatOption} FormatOption
- * @typedef {FormatOption & opts} LogBaseOptions
+ * @typedef {FormatOption & ExtLogBaseOptions} LogBaseOptions
  */
 
-class LogBase {
+export class LogBase {
   /**
    * @param {string} name
    * @param {LogBaseOptions} opts
@@ -36,21 +43,45 @@ class LogBase {
 
     /** @type {{ [x: string]: (arg0: any) => any; } | null} */
     this.serializers = Object.entries(this.opts.serializers || {})
-      .reduce((o, [key, val]) => {
+      .reduce((/** @type {object} */ curr, [key, val]) => {
         if (typeof val === 'function') {
-          o = o || {}
-          o[key] = val
+          curr = curr || {}
+          curr[key] = val
         }
-        return o
+        return curr
       }, null)
 
     this._timeF = time[opts.timestamp]
     this._time = this._timeF ? this._timeF : noop
 
+    // log level function for TS
+    /** always logs */
+    this.log = noop
+    /** log with level FATAL */
+    this.fatal = noop
+    /** log with level ERROR */
+    this.error = noop
+    /** log with level WARN */
+    this.warn = noop
+    /** log with level INFO */
+    this.info = noop
+    /** log with level DEBUG */
+    this.debug = noop
+    /** log with level TRACE */
+    this.trace = noop
+
+    // other definitions for TS
+    /** @type {number|undefined} */
+    this.pid = undefined
+    /** @type {string|undefined} */
+    this.hostname = undefined
+
     this.enable()
   }
 
-  /** @param {string} [namespaces] */
+  /**
+   * @param {string} [namespaces]
+   */
   enable (namespaces = this.opts.namespaces) {
     const namespace = new Namespaces(namespaces)
     this._enabled = {} // reset
@@ -66,6 +97,7 @@ class LogBase {
         this[llevel] = level === FATAL
           ? (fmt, ...args) => {
               const str = this._log(nlevel, fmt, args)
+              // @ts-expect-error
               this.flush && this.flush()
               return str
             }
@@ -133,10 +165,11 @@ class LogBase {
   /* c8 ignore next */
   _serverinfo () { }
 
+  /**
+   * @protected
+   */
   /* c8 ignore next 3 */
-  _log (/* level, args */) {
+  _log (nlevel, fmt, args) {
     throw new Error('needs implementation')
   }
 }
-
-module.exports = LogBase

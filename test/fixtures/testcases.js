@@ -1,16 +1,18 @@
-const obj = { object: { test: 1 }, msg: 'the message' }
-const objEnsure = { name: { test: 1 }, msg: 'with level', level: 'NONESENSE' }
-const arr = [1, 2, 3]
+export const obj = { object: { test: 1 }, msg: 'the message' }
 
-const err = new TypeError('error message')
+export const objEnsure = { name: { test: 1 }, msg: 'with level', level: 'NONESENSE' }
+
+export const arr = [1, 2, 3]
+
+export const err = new TypeError('error message')
 err.stack = 'TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile' // shortened stack
 err.status = 500
 
-const circular = { a: { b: { c: 1 } } }
+export const circular = { a: { b: { c: 1 } } }
 circular.d = circular
 circular.a.e = circular.a
 
-const quotes = {
+export const quotes = {
   _abcdEF$01: 'abcdef',
   0.1234: 0.1234,
   7.123e6: 7.123e6,
@@ -36,9 +38,9 @@ class Custom {
   }
 }
 
-const custom = new Custom('/test')
+export const custom = new Custom('/test')
 
-const testcases = [
+export const testcases = [
   { name: 'string', args: ['string'] },
   { name: 'number', args: [1] },
   { name: 'boolean', args: [false] },
@@ -70,14 +72,3 @@ const testcases = [
   { name: 'custom', args: [{ req: custom }] },
   { name: 'ensure core fields', args: [objEnsure] }
 ]
-
-module.exports = {
-  testcases,
-  obj,
-  objEnsure,
-  err,
-  arr,
-  circular,
-  quotes,
-  custom
-}

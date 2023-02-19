@@ -1,11 +1,8 @@
-/* eslint no-console:0 */
-
-const assert = require('assert')
-
-const Format = require('../src/Format.js')
-const fixtures = require('./fixtures/Format.js')
-const { testcases } = require('./fixtures/testcases.js')
-const ua = require('./helpers/ua.js')
+import assert from 'assert'
+import { Format } from '../src/Format.js'
+import fixtures from './fixtures/Format.js'
+import { testcases } from './fixtures/testcases.js'
+import { ua } from './helpers/ua.js'
 
 const inspect = (o) => console.log('%j', o)
 

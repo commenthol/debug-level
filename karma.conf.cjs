@@ -1,4 +1,4 @@
-const karmaTestMiddleware = require('./test/helpers/karma-test-middleware.js')
+const karmaTestMiddleware = require('./test/helpers/karma-test-middleware.cjs')
 const path = require('path')
 
 // Reference: http://karma-runner.github.io/0.13/config/configuration-file.html

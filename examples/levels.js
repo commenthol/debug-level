@@ -1,5 +1,5 @@
-const debugF = require('debug')
-const Log = require('..')
+import debugF from 'debug'
+import Log from '../src/index.js'
 
 Log.options({ level: 'trace' }) // call options before your instances
 const log = new Log('test')

@@ -1,9 +1,11 @@
-const assert = require('assert')
-const {
+import assert from 'assert'
+import sinon from 'sinon'
+import {
   errSerializer,
   reqSerializer,
-  resSerializer
-} = require('../src/serializers/index.js')
+  resSerializer,
+  startTimeKey
+} from '../src/serializers/index.js'
 
 describe('serializers', function () {
   describe('errSerializer', function () {
@@ -48,13 +50,13 @@ describe('serializers', function () {
 
   describe('reqSerializer', function () {
     const req = {
+      id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
       method: 'GET',
-      url: '/path',
-      query: {
-        test: 1
-      },
+      url: '/path?test=1',
       headers: {
-        'user-agent': 'my-ua/1.0.0'
+        'user-agent': 'my-ua/1.0.0',
+        authorization: 'Basic foo:bar',
+        cookie: 'session=foobar; name=foo'
       },
       socket: {
         remoteAddress: '127.0.0.1',
@@ -64,15 +66,15 @@ describe('serializers', function () {
     }
 
     it('shall serialize a request', function () {
-      const res = reqSerializer(req)
-      assert.deepStrictEqual(res, {
+      const result = reqSerializer(req)
+      assert.deepStrictEqual(result, {
+        id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
         method: 'GET',
-        url: '/path',
-        query: {
-          test: 1
-        },
+        url: '/path?test=1',
         headers: {
-          'user-agent': 'my-ua/1.0.0'
+          'user-agent': 'my-ua/1.0.0',
+          authorization: '***',
+          cookie: 'session=***; name=***'
         },
         remoteAddress: '127.0.0.1',
         remotePort: 3333
@@ -80,21 +82,21 @@ describe('serializers', function () {
     })
 
     it('shall not serialize a request of type string', function () {
-      const res = reqSerializer('string')
-      assert.strictEqual(res, undefined)
+      const result = reqSerializer('string')
+      assert.strictEqual(result, undefined)
     })
 
     it('shall serialize a request with originalUrl', function () {
-      const _req = { ...req, originalUrl: '/mount/test/path' }
-      const res = reqSerializer(_req)
-      assert.deepStrictEqual(res, {
+      const _req = { ...req, originalUrl: '/mount/test/path?test=1' }
+      const result = reqSerializer(_req)
+      assert.deepStrictEqual(result, {
+        id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
         method: 'GET',
-        url: '/mount/test/path',
-        query: {
-          test: 1
-        },
+        url: '/mount/test/path?test=1',
         headers: {
-          'user-agent': 'my-ua/1.0.0'
+          'user-agent': 'my-ua/1.0.0',
+          authorization: '***',
+          cookie: 'session=***; name=***'
         },
         remoteAddress: '127.0.0.1',
         remotePort: 3333
@@ -103,28 +105,45 @@ describe('serializers', function () {
   })
 
   describe('resSerializer', function () {
+    before(function () {
+      this.clock = sinon.useFakeTimers()
+    })
+    after(function () {
+      this.clock.restore()
+    })
+
     const res = {
       statusCode: 500,
       _headers: {
-        'user-agent': 'my-server/1.0.0'
+        'user-agent': 'my-server/1.0.0',
+        'set-cookie': [
+          'foo=bar; Max-Age=10; SameSite=Strict',
+          'session=foobar'
+        ]
       },
       getHeaders: () => res._headers,
       body: { foo: 'bar' }
     }
 
     it('shall serialize a response', function () {
-      const r = resSerializer(res)
-      assert.deepStrictEqual(r, {
+      res[startTimeKey] = Date.now() - 3
+      const result = resSerializer(res)
+      assert.deepStrictEqual(result, {
+        ms: 3,
         statusCode: 500,
         headers: {
-          'user-agent': 'my-server/1.0.0'
+          'user-agent': 'my-server/1.0.0',
+          'set-cookie': [
+            'foo=***; Max-Age=10; SameSite=Strict',
+            'session=***'
+          ]
         }
       })
     })
 
     it('shall not serialize a response of type string', function () {
-      const res = resSerializer('string')
-      assert.strictEqual(res, undefined)
+      const result = resSerializer('string')
+      assert.strictEqual(result, undefined)
     })
   })
 })

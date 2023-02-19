@@ -1,5 +1,5 @@
-const fs = require('fs')
-const Log = require('..')
+import fs from 'fs'
+import Log from '../src/index.js'
 
 // log into file instead of process.stderr
 const stream = fs.createWriteStream('./my.log')

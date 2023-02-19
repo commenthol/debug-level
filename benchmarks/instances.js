@@ -4,7 +4,7 @@ const fs = require('fs')
 const debugF = require('debug')
 const bunyanF = require('bunyan')
 const pinoF = require('pino')
-const DebugLevel = require('..')
+const { Log: DebugLevel } = require('..')
 
 function setup (stream) {
   if (!stream) {

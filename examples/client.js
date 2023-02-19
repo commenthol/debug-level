@@ -1,6 +1,8 @@
-const http = require('http')
-const logA = require('..')('client:A')
-const logB = require('..')('client:B')
+import http from 'http'
+import { logger } from '../src/index.js'
+
+const logA = logger('client:A')
+const logB = logger('client:B')
 
 function client (log, path) {
   function request () {

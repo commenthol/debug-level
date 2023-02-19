@@ -1,15 +1,15 @@
-// @ts-check
-
-const format = require('./quick-format.js')
-const fastStringify = require('fast-safe-stringify')
+import fastStringify from 'fast-safe-stringify'
+import { format as quickFormat } from './quick-format.js'
 
 /**
  * @typedef {object} FormatOption
- * @property {number} [spaces] - number of spaces to use for formatting
+ * @property {number} [spaces] number of spaces to use for formatting
  */
 
-class Format {
-  /** @param {FormatOption} opts */
+export class Format {
+  /**
+   * @param {FormatOption} opts
+   */
   constructor (opts = {}) {
     this.opts = { opts }
     this._formatOpts()
@@ -25,21 +25,23 @@ class Format {
   }
 
   _formatOpts () {
+    // @ts-expect-error
     this.formatOpts = { stringify: (o) => fastStringify(o, null, this.opts.spaces) }
   }
 
   stringify (...args) {
+    // @ts-expect-error
     return fastStringify(...args)
   }
 
   /**
    * formats arguments like `util.format`
-   * @param {...any} arguments list - args[0] may contain "%" formatters
+   * @param {any} fmt may contain "%" formatters
+   * @param {any} args arguments list
+   * @param {any} obj
    * @return {Array} first is formatted message, other args may follow
    */
   format (fmt, args, obj) {
-    return format(fmt, args, this.formatOpts, obj)
+    return quickFormat(fmt, args, this.formatOpts, obj)
   }
 }
-
-module.exports = Format

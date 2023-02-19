@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   debug: [
     '  ERROR test 1970-01-01T00:00:00.000Z string +0ms',
     '  ERROR test 1970-01-01T00:00:00.001Z 1 +0ms',

@@ -1,11 +1,11 @@
-const Log = require('../..')
-const logger = Log.logger()
+const { browserLogs } = require('../..')
+const loggerMw = browserLogs()
 
 function factory () {
   return function (req, res, next) {
     if (/^\/logger/.test(req.url)) {
       req.ip = req.ip || req.connection.remoteAddress
-      logger(req, res)
+      loggerMw(req, res)
     } else {
       next()
     }

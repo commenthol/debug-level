@@ -3,7 +3,9 @@ import sinon from 'sinon'
 import {
   errSerializer,
   reqSerializer,
+  reqMaskSerializer,
   resSerializer,
+  resMaskSerializer,
   startTimeKey
 } from '../src/serializers/index.js'
 
@@ -72,9 +74,7 @@ describe('serializers', function () {
         method: 'GET',
         url: '/path?test=1',
         headers: {
-          'user-agent': 'my-ua/1.0.0',
-          authorization: '***',
-          cookie: 'session=***; name=***'
+          'user-agent': 'my-ua/1.0.0'
         },
         remoteAddress: '127.0.0.1',
         remotePort: 3333
@@ -94,8 +94,62 @@ describe('serializers', function () {
         method: 'GET',
         url: '/mount/test/path?test=1',
         headers: {
+          'user-agent': 'my-ua/1.0.0'
+        },
+        remoteAddress: '127.0.0.1',
+        remotePort: 3333
+      })
+    })
+  })
+
+  describe('reqMaskSerializer', function () {
+    const req = {
+      id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
+      method: 'GET',
+      url: '/path?test=1',
+      headers: {
+        'user-agent': 'my-ua/1.0.0',
+        authorization: 'Basic foo:bar',
+        cookie: 'session=foobar; name=foo'
+      },
+      socket: {
+        remoteAddress: '127.0.0.1',
+        remotePort: 3333
+      },
+      body: 'mybody'
+    }
+
+    it('shall serialize a request', function () {
+      const result = reqMaskSerializer(req)
+      assert.deepStrictEqual(result, {
+        id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
+        method: 'GET',
+        url: '/path?test=1',
+        headers: {
           'user-agent': 'my-ua/1.0.0',
-          authorization: '***',
+          authorization: 'Basic fo***',
+          cookie: 'session=***; name=***'
+        },
+        remoteAddress: '127.0.0.1',
+        remotePort: 3333
+      })
+    })
+
+    it('shall not serialize a request of type string', function () {
+      const result = reqMaskSerializer('string')
+      assert.strictEqual(result, undefined)
+    })
+
+    it('shall serialize a request with originalUrl', function () {
+      const _req = { ...req, originalUrl: '/mount/test/path?test=1' }
+      const result = reqMaskSerializer(_req)
+      assert.deepStrictEqual(result, {
+        id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
+        method: 'GET',
+        url: '/mount/test/path?test=1',
+        headers: {
+          'user-agent': 'my-ua/1.0.0',
+          authorization: 'Basic fo***',
           cookie: 'session=***; name=***'
         },
         remoteAddress: '127.0.0.1',
@@ -119,7 +173,8 @@ describe('serializers', function () {
         'set-cookie': [
           'foo=bar; Max-Age=10; SameSite=Strict',
           'session=foobar'
-        ]
+        ],
+        'proxy-authenticate': 'foobar'
       },
       getHeaders: () => res._headers,
       body: { foo: 'bar' }
@@ -132,17 +187,55 @@ describe('serializers', function () {
         ms: 3,
         statusCode: 500,
         headers: {
-          'user-agent': 'my-server/1.0.0',
-          'set-cookie': [
-            'foo=***; Max-Age=10; SameSite=Strict',
-            'session=***'
-          ]
+          'user-agent': 'my-server/1.0.0'
         }
       })
     })
 
     it('shall not serialize a response of type string', function () {
       const result = resSerializer('string')
+      assert.strictEqual(result, undefined)
+    })
+  })
+
+  describe('resMaskSerializer', function () {
+    before(function () {
+      this.clock = sinon.useFakeTimers()
+    })
+    after(function () {
+      this.clock.restore()
+    })
+
+    const res = {
+      statusCode: 500,
+      _headers: {
+        'user-agent': 'my-server/1.0.0',
+        'set-cookie': [
+          'foo=bar; Max-Age=10; SameSite=Strict',
+          'session=foobar'
+        ],
+        'proxy-authenticate': 'foobar'
+      },
+      getHeaders: () => res._headers,
+      body: { foo: 'bar' }
+    }
+
+    it('shall serialize a response', function () {
+      res[startTimeKey] = Date.now() - 3
+      const result = resMaskSerializer(res)
+      assert.deepStrictEqual(result, {
+        ms: 3,
+        statusCode: 500,
+        headers: {
+          'user-agent': 'my-server/1.0.0',
+          'proxy-authenticate': '***',
+          'set-cookie': ['foo=***; Max-Age=10; SameSite=Strict', 'session=***']
+        }
+      })
+    })
+
+    it('shall not serialize a response of type string', function () {
+      const result = resMaskSerializer('string')
       assert.strictEqual(result, undefined)
     })
   })

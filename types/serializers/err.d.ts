@@ -1,6 +1,6 @@
 /**
  * serializer for errors
- * @param {object} [val]
+ * @param {object} [err]
  * @returns {object}
  */
-export function errSerializer(val?: object): object;
+export function errSerializer(err?: object): object;

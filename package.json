@@ -21,7 +21,13 @@
     ".": {
       "import": "./src/index.js",
       "require": "./lib/index.cjs",
+      "browser": "./src/browser.js",
       "types": "./types/index.d.ts"
+    },
+    "./serializers": {
+      "import": "./src/serializers/index.js",
+      "require": "./lib/serializers/index.cjs",
+      "types": "./types/serializers/index.d.ts"
     },
     "./package.json": "./package.json"
   },

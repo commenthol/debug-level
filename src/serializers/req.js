@@ -1,30 +1,62 @@
 /**
  * request serializer
- * masks cookie values and authorization headers
- * @param {object} [val]
+ *
+ * removes cookie values and authorization headers
+ * @param {object} [req]
  * @returns {object}
  */
-export function reqSerializer (val) {
-  if (typeof val !== 'object' || !val) return
+export function reqSerializer (req) {
+  if (typeof req !== 'object' || !req) return
 
-  const _req = {}
-  _req.id = typeof val.id === 'function' ? val.id() : val.id
-  _req.method = val.method
-  _req.url = val.originalUrl || val.url
-  _req.remoteAddress = val.socket?.remoteAddress
-  _req.remotePort = val.socket?.remotePort
-  _req.headers = Object.assign({}, val.headers)
+  const { authorization, cookie, ...headers } = req.headers || {}
 
-  if (_req.headers?.authorization) {
-    _req.headers.authorization = '***'
+  const logReq = {
+    id: typeof req.id === 'function' ? req.id() : req.id,
+    method: req.method,
+    url: req.originalUrl || req.url,
+    remoteAddress: req.socket?.remoteAddress,
+    remotePort: req.socket?.remotePort
   }
-  if (_req.headers?.cookie) {
-    _req.headers.cookie = maskCookieVal(_req.headers.cookie)
+  if (Object.keys(headers).length) {
+    logReq.headers = headers
   }
 
-  return _req
+  return logReq
 }
 
+/**
+ * request serializer
+ *
+ * masks cookie values and authorization headers
+ * @param {object} [req]
+ * @returns {object}
+ */
+export function reqMaskSerializer (req) {
+  const logReq = reqSerializer(req)
+
+  if (!logReq) return
+
+  const { authorization, cookie } = req.headers || {}
+  if (!authorization || !cookie) {
+    return logReq
+  }
+
+  logReq.headers = logReq.headers || {}
+
+  if (authorization) {
+    logReq.headers.authorization = authorization.slice(0, 8) + '***'
+  }
+  if (cookie) {
+    logReq.headers.cookie = maskCookieVal(cookie)
+  }
+
+  return logReq
+}
+
+/**
+ * @param {string} cookie
+ * @returns {string}
+ */
 function maskCookieVal (cookie) {
   let masked = ''
   const len = cookie.length

@@ -1,32 +1,32 @@
 /**
- * @typedef {object} MwLogOption
- * @property {number} [maxSize=100] max number of different name loggers
- * @property {boolean} [logAll=false] log everything even strings
- * @property {boolean} [levelNumbers] log levels as numbers
- * @property {Log} [Log] different extended Log class, e.g. LogEcs
+ * @typedef {{
+ *  maxSize?: number
+ *  logAll?: boolean
+ *  levelNumbers?: boolean
+ *  Log?: typeof Log
+ * }} MwLogOption
+ * - [maxSize=100] max number of different name loggers
+ * - [logAll=false] log everything even strings
+ * - [levelNumbers=false] log levels as numbers
+ * - [Log=Log] allows overwrite of Log class
  */
 /**
  * connect middleware which logs browser based logs on server side;
  * sends a transparent gif as response
- * @param {MwLogOption} [opts]
+ * @param {MwLogOption} [options]
  * @return {function} connect middleware
  */
-export function browserLogs(opts?: MwLogOption | undefined): Function;
+export function browserLogs(options?: MwLogOption | undefined): Function;
+/**
+ * - [maxSize=100] max number of different name loggers
+ * - [logAll=false] log everything even strings
+ * - [levelNumbers=false] log levels as numbers
+ * - [Log=Log] allows overwrite of Log class
+ */
 export type MwLogOption = {
-    /**
-     * max number of different name loggers
-     */
-    maxSize?: number | undefined;
-    /**
-     * log everything even strings
-     */
-    logAll?: boolean | undefined;
-    /**
-     * log levels as numbers
-     */
-    levelNumbers?: boolean | undefined;
-    /**
-     * different extended Log class, e.g. LogEcs
-     */
-    Log?: Log | undefined;
+    maxSize?: number;
+    logAll?: boolean;
+    levelNumbers?: boolean;
+    Log?: typeof Log;
 };
+import { Log } from "./node.js";

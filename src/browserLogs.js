@@ -3,7 +3,10 @@ import { Log } from './node.js'
 import { adjustLevel, toNumLevel, fromNumLevel, INFO } from './utils.js'
 
 // https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
-const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64')
+const gif = Buffer.from(
+  'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+  'base64'
+)
 
 /**
  * @param {string} url
@@ -49,31 +52,38 @@ function parseJson (str) {
 }
 
 /**
- * @typedef {object} MwLogOption
- * @property {number} [maxSize=100] max number of different name loggers
- * @property {boolean} [logAll=false] log everything even strings
- * @property {boolean} [levelNumbers] log levels as numbers
- * @property {Log} [Log] different extended Log class, e.g. LogEcs
+ * @typedef {{
+ *  maxSize?: number
+ *  logAll?: boolean
+ *  levelNumbers?: boolean
+ *  Log?: typeof Log
+ * }} MwLogOption
+ * - [maxSize=100] max number of different name loggers
+ * - [logAll=false] log everything even strings
+ * - [levelNumbers=false] log levels as numbers
+ * - [Log=Log] allows overwrite of Log class
  */
 
 /**
  * connect middleware which logs browser based logs on server side;
  * sends a transparent gif as response
- * @param {MwLogOption} [opts]
+ * @param {MwLogOption} [options]
  * @return {function} connect middleware
  */
-export function browserLogs (opts = {}) {
-  opts = Object.assign({ maxSize: 100, logAll: false, levelNumbers: false }, opts)
+export function browserLogs (options) {
+  const opts = {
+    maxSize: 100,
+    logAll: false,
+    levelNumbers: false,
+    ...(options || {})
+  }
 
   const LogCls = opts?.Log || Log
-  // @ts-expect-error
   const log = opts.logAll ? new LogCls('debug-level:browser') : undefined
   const loggers = new Loggers(opts)
 
   return function _browserLogs (req, res) {
-    const query = req.query
-      ? req.query
-      : parseQuery(req.url)
+    const query = req.query ? req.query : parseQuery(req.url)
 
     res.setHeader('Cache-Control', 'no-store, no-cache')
     res.write(gif)

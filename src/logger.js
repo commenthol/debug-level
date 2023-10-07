@@ -3,8 +3,12 @@ import { Log } from './node.js'
 const loggers = {}
 
 /**
+ * @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions
+ */
+
+/**
  * @param {string} namespace
- * @param {import('./node.js').LogOptions & {Log: Log}} [opts]
+ * @param {LogOptions} [opts]
  */
 export function logger (namespace, opts) {
   const { Log: optsLog, ..._opts } = opts || {}
@@ -12,7 +16,6 @@ export function logger (namespace, opts) {
 
   let log = loggers[namespace]
   if (!log) {
-    // @ts-expect-error
     log = loggers[namespace] = new LogCls(namespace, _opts)
   }
   return log

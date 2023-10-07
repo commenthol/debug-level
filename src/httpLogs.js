@@ -16,21 +16,21 @@ const serializers = {
  * @typedef {import('node:http').IncomingMessage} IncomingMessage
  * @typedef {import('node:http').ServerResponse} ServerResponse
  * @typedef {import('./node.js').LogOptions} LogOptions
- *
+ *//**
  * @typedef {object} ExtIncomingMessageId
  * @property {string} [id] request Id
- *
+ *//**
  * @typedef {IncomingMessage & ExtIncomingMessageId} IncomingMessageWithId
- *
+ *//**
  * @typedef {object} ExtLogOptionsHttpLog
  * @property {() => string} [customGenerateRequestId]
- *
- * @typedef {LogOptions & ExtLogOptionsHttpLog} LogOptionsHttpLog
+ *//**
+ * @typedef {LogOptions & ExtLogOptionsHttpLog & {Log: typeof Log}} LogOptionsHttpLog
  */
 
 /**
  * @param {string} [namespace='debug-level:http']
- * @param {LogOptionsHttpLog & {Log: Log}} [opts]
+ * @param {LogOptionsHttpLog} [opts]
  * @returns {(req: IncomingMessageWithId, res: ServerResponse, next: Function) => void} connect middleware
  */
 export function httpLogs (namespace, opts) {
@@ -45,7 +45,6 @@ export function httpLogs (namespace, opts) {
     ...(options.serializers || {})
   }
 
-  // @ts-expect-error
   const log = new options.Log(namespace || 'debug-level:http', options)
   const generateId = options.customGenerateRequestId || generateRequestId
 

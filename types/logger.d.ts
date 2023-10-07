@@ -1,7 +1,12 @@
 /**
- * @param {string} namespace
- * @param {import('./node.js').LogOptions & {Log: Log}} [opts]
+ * @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions
  */
-export function logger(namespace: string, opts?: (import("./Format.js").FormatOption & import("./LogBase.js").ExtLogBaseOptions & import("./node.js").ExtLogOptions & {
-    Log: Log;
-}) | undefined): any;
+/**
+ * @param {string} namespace
+ * @param {LogOptions} [opts]
+ */
+export function logger(namespace: string, opts?: LogOptions | undefined): any;
+export type LogOptions = import('./node.js').LogOptions & {
+    Log: typeof Log;
+};
+import { Log } from "./node.js";

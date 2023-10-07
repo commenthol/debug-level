@@ -16,6 +16,7 @@
   "include": [
     "src/*.js",
     "src/serializers/*.js",
+    "src/ecs/*.js",
   ],
   "exclude": [
     "node_modules",

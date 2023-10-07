@@ -30,15 +30,23 @@ const serializers = {
 
 /**
  * @param {string} [namespace='debug-level:http']
- * @param {LogOptionsHttpLog} [opts]
+ * @param {LogOptionsHttpLog & {Log: Log}} [opts]
  * @returns {(req: IncomingMessageWithId, res: ServerResponse, next: Function) => void} connect middleware
  */
 export function httpLogs (namespace, opts) {
   const options = {
-    serializers,
+    Log,
     ...opts
   }
-  const log = new Log(namespace || 'debug-level:http', options)
+  options.serializers = {
+    ...serializers,
+    // @ts-expect-error
+    ...(options.Log.serializers || {}),
+    ...(options.serializers || {})
+  }
+
+  // @ts-expect-error
+  const log = new options.Log(namespace || 'debug-level:http', options)
   const generateId = options.customGenerateRequestId || generateRequestId
 
   return function _httpLogs (req, res, next) {
@@ -53,13 +61,10 @@ export function httpLogs (namespace, opts) {
       res.removeListener('error', handleComplete)
 
       const statusCode = res.statusCode
-      const level = statusCode < 400
-        ? 'info'
-        : statusCode < 500
-          ? 'warn'
-          : 'error'
+      const level =
+        statusCode < 400 ? 'info' : statusCode < 500 ? 'warn' : 'error'
 
-      log[level]({ req, res, err })
+      return log[level]({ req, res, err })
     }
 
     res.on('finish', handleComplete)
@@ -72,4 +77,4 @@ export function httpLogs (namespace, opts) {
 
 const maxCount = (1 << 30) - 1
 let count = 0
-const generateRequestId = () => String(count = count + 1 & maxCount)
+const generateRequestId = () => String((count = (count + 1) & maxCount))

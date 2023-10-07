@@ -1,3 +1,3 @@
 export { errSerializer } from './err.js'
-export { reqSerializer } from './req.js'
-export { resSerializer, startTimeKey } from './res.js'
+export { reqSerializer, reqMaskSerializer } from './req.js'
+export { resSerializer, resMaskSerializer, startTimeKey } from './res.js'

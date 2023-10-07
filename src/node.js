@@ -48,7 +48,7 @@ const options = {
   sonicFlushMs: 1000, // min. timeout before write
   spaces: undefined, // pretty print JSON
   splitLine: isDevEnv, // split lines for pretty debug like output
-  serializers: { err: errSerializer }
+  serializers: { err: errSerializer } // serializers definition
 }
 
 export class Log extends LogBase {
@@ -71,6 +71,7 @@ export class Log extends LogBase {
     this.levColors = levelColors(colorFn)
     // noop for TS
     this.opts = { ..._opts, ...this.opts }
+    this.toJson = toJson
 
     this.stream = this.opts.sonic
       ? new Sonic(this.opts.stream, {
@@ -198,7 +199,7 @@ export class Log extends LogBase {
    */
   _log (level, fmt, args) {
     const o = this._formatJson(level, fmt, args)
-    const str = toJson(o, this.serializers)
+    const str = this.toJson(o, this.serializers)
     return this.render(str, level)
   }
 
@@ -208,7 +209,7 @@ export class Log extends LogBase {
    */
   _logJsonColor (level, fmt, args) {
     const o = this._formatJson(level, fmt, args)
-    let str = toJson(o, this.serializers)
+    let str = this.toJson(o, this.serializers)
     /* c8 ignore next 4 */ // can't cover with tests as underlying tty is unknown
     str = str
       .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
@@ -350,7 +351,7 @@ function toJson (obj, serializers, spaces) {
  * @param {number} [spaces]
  * @returns {string}
  */
-function stringify (any, spaces) {
+export function stringify (any, spaces) {
   try {
     return JSON.stringify(any, null, spaces)
   } catch (e) {

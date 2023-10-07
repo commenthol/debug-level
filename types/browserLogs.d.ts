@@ -3,6 +3,7 @@
  * @property {number} [maxSize=100] max number of different name loggers
  * @property {boolean} [logAll=false] log everything even strings
  * @property {boolean} [levelNumbers] log levels as numbers
+ * @property {Log} [Log] different extended Log class, e.g. LogEcs
  */
 /**
  * connect middleware which logs browser based logs on server side;
@@ -24,4 +25,8 @@ export type MwLogOption = {
      * log levels as numbers
      */
     levelNumbers?: boolean | undefined;
+    /**
+     * different extended Log class, e.g. LogEcs
+     */
+    Log?: Log | undefined;
 };

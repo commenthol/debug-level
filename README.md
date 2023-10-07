@@ -48,6 +48,7 @@ Fully typed with JSDocs and Typescript.
 * [Handle node exit events](#handle-node-exit-events)
 * [Logging HTTP requests](#logging-http-requests)
 * [Logging Browser messages](#logging-browser-messages)
+* [Logging in Elastic Common Schema (ECS)](#logging-in-elastic-common-schema-ecs)
 * [License](#license)
 * [Benchmarks](#benchmarks)
 * [References](#references)
@@ -229,21 +230,22 @@ log.debug({ object: 1 }) // ...
 
 > **NOTE:** Consider using a tool like [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file or use a tool like [@vrbo/pino-rotating-file](https://www.npmjs.com/package/@vrbo/pino-rotating-file) to write to a rotating file stream.
 
-| Option name  | Setting              | env     | Type    | Description                                  |
-| ------------ | -------------------- | ------- | ------- | -------------------------------------------- |
-| level        | DEBUG_LEVEL          | _both_  | String  |                                              |
-| namespaces   | DEBUG                | _both_  | String  |                                              |
-| json         | DEBUG_JSON           | node    | Boolean |                                              |
-| spaces       | DEBUG_SPACES         | node    | Number  | JSON spaces                                  |
-| splitLine    | DEBUG_SPLIT_LINE     | node    | Boolean | split lines for pretty, debug like, output   |
-| timestamp    | DEBUG_TIMESTAMP      | node    | String  | Set null/iso/unix/epoch timestamp format     |
-| colors       | DEBUG_COLORS         | _both_  | Boolean |                                              |
-| stream       | --                   | node    | Stream  | output stream (defaults to `process.stderr`) |
-| sonic        | DEBUG_SONIC          | node    | Boolean | fast buffered writer                         |
-| sonicLength  | DEBUG_SONIC_LENGTH   | node    | number  | min size of buffer in byte (default is 4096) |
-| sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node    | number  | flush after each x ms (default is 1000)      |
-| serializers  | --                   | _both_  | Object  | serializers by keys                          |
-| url          | DEBUG_URL            | browser | String  |                                              |
+| Option name  | Setting              | env     | Type     | Description                                  |
+| ------------ | -------------------- | ------- | -------- | -------------------------------------------- |
+| level        | DEBUG_LEVEL          | _both_  | String   |                                              |
+| namespaces   | DEBUG                | _both_  | String   |                                              |
+| json         | DEBUG_JSON           | node    | Boolean  |                                              |
+| spaces       | DEBUG_SPACES         | node    | Number   | JSON spaces                                  |
+| splitLine    | DEBUG_SPLIT_LINE     | node    | Boolean  | split lines for pretty, debug like, output   |
+| timestamp    | DEBUG_TIMESTAMP      | node    | String   | Set null/iso/unix/epoch timestamp format     |
+| colors       | DEBUG_COLORS         | _both_  | Boolean  |                                              |
+| stream       | --                   | node    | Stream   | output stream (defaults to `process.stderr`) |
+| sonic        | DEBUG_SONIC          | node    | Boolean  | fast buffered writer                         |
+| sonicLength  | DEBUG_SONIC_LENGTH   | node    | number   | min size of buffer in byte (default is 4096) |
+| sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node    | number   | flush after each x ms (default is 1000)      |
+| toJson       | --                   | node    | Function | custom json serializer                       |
+| serializers  | --                   | _both_  | Object   | serializers by keys                          |
+| url          | DEBUG_URL            | browser | String   |                                              |
 
 ### Serializers
 
@@ -578,6 +580,41 @@ npm run example
 ```
 
 and open <http://localhost:3000>
+
+## Logging in Elastic Common Schema (ECS)
+
+debug-level supports logging in ECS format if case you use the ELK stack for log monitoring.
+
+Per default err, req, res serializers are available.
+
+```js
+import { LogEcs } from 'debug-level' 
+
+const log = new LogEcs('foobar')
+
+log.fatal(new Error('fatal')) // logs an Error at level FATAL
+//> {"log":{"level":"FATAL","logger":"foobar","diff_ms":0},"message":"fatal","@timestamp":"2023-07-06T18:40:25.154Z","error":{"type":"Error","message":"fatal","stack_trace":"Error: fatal\\n    at file:///logecs.js:6:11\\n    at ModuleJob.run (node:internal/modules/esm/module_job:194:25)"}}
+```
+
+`httpLogs` as well as `logger` allow overwriting the standard `Log` class in order to use ECS logging.
+
+```js
+import { LogEcs, httpLogs } from 'debug-level'
+
+const logHandler = httpLogs('my-pkg:http', { Log: LogEcs })
+
+// use then e.g. in express app
+app.use(logHandler)
+```
+
+```js
+import { LogEcs, logger } from 'debug-level'
+
+const log = logger('my-pkg:topic', { Log: LogEcs })
+
+log.error(new Error('baam'))
+```
+
 
 ## License
 

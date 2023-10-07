@@ -15,10 +15,12 @@
  */
 /**
  * @param {string} [namespace='debug-level:http']
- * @param {LogOptionsHttpLog} [opts]
+ * @param {LogOptionsHttpLog & {Log: Log}} [opts]
  * @returns {(req: IncomingMessageWithId, res: ServerResponse, next: Function) => void} connect middleware
  */
-export function httpLogs(namespace?: string | undefined, opts?: LogOptionsHttpLog | undefined): (req: IncomingMessageWithId, res: ServerResponse, next: Function) => void;
+export function httpLogs(namespace?: string | undefined, opts?: (import("./Format.js").FormatOption & import("./LogBase.js").ExtLogBaseOptions & import("./node.js").ExtLogOptions & ExtLogOptionsHttpLog & {
+    Log: Log;
+}) | undefined): (req: IncomingMessageWithId, res: ServerResponse, next: Function) => void;
 export type IncomingMessage = import('node:http').IncomingMessage;
 export type ServerResponse = import('node:http').ServerResponse;
 export type LogOptions = import('./node.js').LogOptions;

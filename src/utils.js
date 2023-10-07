@@ -128,7 +128,7 @@ export const inspectOpts = (obj) => Object.keys(obj)
 
 export const saveOpts = (obj, options) => {
   Object.keys(options).forEach((prop) => {
-    if (['stream', 'serializers'].includes(prop)) return // do not safe stream option
+    if (['stream', 'serializers', 'toJson'].includes(prop)) return // do not safe stream option
     let key = 'DEBUG_' + prop.replace(/([A-Z])/g, (_, prop) => '_' + prop.toLowerCase())
     if (prop === 'namespaces') key = 'DEBUG'
     key = key.toUpperCase()

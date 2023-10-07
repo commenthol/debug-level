@@ -244,6 +244,7 @@ log.debug({ object: 1 }) // ...
 | sonicFlushMs | DEBUG_SONIC_FLUSH_MS | node    | number  | flush after each x ms (default is 1000)      |
 | serializers  | --                   | _both_  | Object  | serializers by keys                          |
 | url          | DEBUG_URL            | browser | String  |                                              |
+| toJson       | --                   | node    | Function  |  custom json serializer                                            |
 
 ### Serializers
 

@@ -30,15 +30,17 @@ const serializers = {
 
 /**
  * @param {string} [namespace='debug-level:http']
- * @param {LogOptionsHttpLog} [opts]
+ * @param {LogOptionsHttpLog & {Log: Log}} [opts]
  * @returns {(req: IncomingMessageWithId, res: ServerResponse, next: Function) => void} connect middleware
  */
 export function httpLogs (namespace, opts) {
   const options = {
+    Log,
     serializers,
     ...opts
   }
-  const log = new Log(namespace || 'debug-level:http', options)
+  // @ts-expect-error
+  const log = new options.Log(namespace || 'debug-level:http', options)
   const generateId = options.customGenerateRequestId || generateRequestId
 
   return function _httpLogs (req, res, next) {

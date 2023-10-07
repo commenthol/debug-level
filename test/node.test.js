@@ -20,12 +20,12 @@ const reset = () => {
   Log.reset()
 }
 
-describe('#Log node', function () {
+describe('Log node', function () {
   describe('options', function () {
     after(reset)
 
     it('should get default options', function () {
-      const { stream, serializers, ...res } = Log.options()
+      const { stream, serializers, toJson, ...res } = Log.options()
       assert.deepStrictEqual(res, {
         level: 'INFO',
         namespaces: undefined,
@@ -44,7 +44,7 @@ describe('#Log node', function () {
 
     it('should set options', function () {
       Log.options({ level: 'error', json: true, colors: false, namespaces: 'foo*,bar' })
-      const { stream, serializers, ...res } = Log.options()
+      const { stream, serializers, toJson, ...res } = Log.options()
       assert.deepStrictEqual(res, {
         level: 'error',
         namespaces: 'foo*,bar',
@@ -490,7 +490,7 @@ describe('#Log node', function () {
   })
 
   describe('serializers', function () {
-    it('shall log with defaut err serializer', function () {
+    it('shall log with default err serializer', function () {
       const log = new Log('serialize', { json: true, colors: false })
       const err = new Error('baamm')
       err.stack = 'Error: baam\n    at Context.<anonymous>'

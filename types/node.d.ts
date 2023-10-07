@@ -1,3 +1,9 @@
+/**
+ * @param {any} any
+ * @param {number} [spaces]
+ * @returns {string}
+ */
+export function stringify(any: any, spaces?: number | undefined): string;
 export class Log extends LogBase {
     /**
      * Apply (and get) global options
@@ -110,6 +116,7 @@ export class Log extends LogBase {
          */
         sonicFlushMs?: number | undefined;
     };
+    toJson: typeof toJson;
     stream: NodeJS.WriteStream | Sonic;
     /**
      * format object to json
@@ -171,6 +178,13 @@ export type ExtLogOptions = {
 };
 export type LogOptions = LogBaseOptions & ExtLogOptions;
 import { LogBase } from "./LogBase.js";
+/**
+ * @param {object} obj
+ * @param {object} serializers
+ * @param {number} [spaces]
+ * @returns {string}
+ */
+declare function toJson(obj: object, serializers: object, spaces?: number | undefined): string;
 import { Sonic } from "./Sonic.js";
 declare const isDevEnv: boolean;
 export {};

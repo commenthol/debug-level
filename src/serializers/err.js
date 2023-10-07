@@ -2,24 +2,24 @@ const circ = Symbol('circ')
 
 /**
  * serializer for errors
- * @param {object} [val]
+ * @param {object} [err]
  * @returns {object}
  */
-export function errSerializer (val) {
-  if (!(val instanceof Error)) {
-    return val
+export function errSerializer (err) {
+  if (!(err instanceof Error)) {
+    return err
   }
 
   const o = {
-    msg: val.message,
-    name: Object.prototype.toString.call(val.constructor) === '[object Function]'
-      ? val.constructor.name
-      : val.name,
-    stack: val.stack
+    msg: err.message,
+    name: Object.prototype.toString.call(err.constructor) === '[object Function]'
+      ? err.constructor.name
+      : err.name,
+    stack: err.stack
   }
-  val[circ] = undefined
+  err[circ] = undefined
 
-  Object.entries(val).forEach(([key, val]) => {
+  for (const [key, val] of Object.entries(err)) {
     if (o[key] === undefined) {
       if (val instanceof Error) {
         if (!Object.prototype.hasOwnProperty.call(val, circ)) {
@@ -29,7 +29,7 @@ export function errSerializer (val) {
         o[key] = val
       }
     }
-  })
+  }
 
   return o
 }

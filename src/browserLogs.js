@@ -16,14 +16,17 @@ function parseQuery (url) {
 }
 
 class Loggers {
-  constructor (maxSize = 100) {
+  constructor (opts) {
+    const { maxSize = 100 } = opts || {}
+
+    this.LogCls = opts?.Log || Log
     this.cache = new MapLRU(maxSize)
   }
 
   get (name) {
     let log = this.cache.get(name)
     if (!log) {
-      log = new Log(name)
+      log = new this.LogCls(name)
       this.cache.set(name, log)
     }
     return log
@@ -50,6 +53,7 @@ function parseJson (str) {
  * @property {number} [maxSize=100] max number of different name loggers
  * @property {boolean} [logAll=false] log everything even strings
  * @property {boolean} [levelNumbers] log levels as numbers
+ * @property {Log} [Log] different extended Log class, e.g. LogEcs
  */
 
 /**
@@ -60,8 +64,11 @@ function parseJson (str) {
  */
 export function browserLogs (opts = {}) {
   opts = Object.assign({ maxSize: 100, logAll: false, levelNumbers: false }, opts)
-  const log = opts.logAll ? new Log('debug-level:browser') : undefined
-  const loggers = new Loggers(opts.maxSize)
+
+  const LogCls = opts?.Log || Log
+  // @ts-expect-error
+  const log = opts.logAll ? new LogCls('debug-level:browser') : undefined
+  const loggers = new Loggers(opts)
 
   return function _browserLogs (req, res) {
     const query = req.query

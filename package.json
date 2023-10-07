@@ -1,6 +1,6 @@
 {
   "name": "debug-level",
-  "version": "3.0.0",
+  "version": "3.1.0-0",
   "description": "debug with levels",
   "keywords": [
     "debug",
@@ -28,6 +28,11 @@
       "import": "./src/serializers/index.js",
       "require": "./lib/serializers/index.cjs",
       "types": "./types/serializers/index.d.ts"
+    },
+    "./ecs": {
+      "import": "./src/ecs/index.js",
+      "require": "./lib/ecs/index.cjs",
+      "types": "./types/ecs/index.d.ts"
     },
     "./package.json": "./package.json"
   },

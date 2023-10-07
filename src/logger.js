@@ -4,12 +4,16 @@ const loggers = {}
 
 /**
  * @param {string} namespace
- * @param {import('./node.js').LogOptions} [opts]
+ * @param {import('./node.js').LogOptions & {Log: Log}} [opts]
  */
 export function logger (namespace, opts) {
+  const { Log: optsLog, ..._opts } = opts || {}
+  const LogCls = optsLog || Log
+
   let log = loggers[namespace]
   if (!log) {
-    log = loggers[namespace] = new Log(namespace, opts)
+    // @ts-expect-error
+    log = loggers[namespace] = new LogCls(namespace, _opts)
   }
   return log
 }

@@ -69,7 +69,8 @@ $ npm install --save debug-level
 Each level has a corresponding method `DEBUG` -> `log.debug` ... `FATAL` -->
 `log.fatal` which shall be used to indicated the level to log.
 
-The characters `%s`, `%d`, `%i`, `%f`, `%j`, `%o`, `%O`, `%%` are supported [formatters](https://nodejs.org/api/util.html#util_util_format_format_args) when
+The characters `%s`, `%d`, `%i`, `%f`, `%j`, `%o`, `%O`, `%%` are supported
+[formatters](https://nodejs.org/api/util.html#util_util_format_format_args) when
 given in the first argument.
 
 [examples/levels.js](./examples/levels.js)
@@ -94,31 +95,32 @@ log.trace('hi')                      // logs a string at level TRACE
 log.log('always logs')               // always logs regardless of set level
 ```
 
-Running `levels.js` without environment variables will show no output (apart from `log.log()`).
-Setting `DEBUG_LEVEL` only shows all lines with their respective level.
-Combined with `DEBUG`, using comma separated [namespaces](#namespaces), only
-those log lines with matching namespace and level get logged.
+Running `levels.js` without environment variables will show no output (apart
+from `log.log()`). Setting `DEBUG_LEVEL` only shows all lines with their
+respective level. Combined with `DEBUG`, using comma separated
+[namespaces](#namespaces), only those log lines with matching namespace and
+level get logged.
 
 The following table gives an overview of possible combinations:
 
-DEBUG_LEVEL | DEBUG          | Output
-:----------:| :------------: | :----------------
---          | --             | no output
-FATAL       | --             | logs only log.fatal
-ERROR       | --             | log.fatal, log.error
-WARN        | --             | log.fatal, log.error, log.warn
-INFO        | --             | log.fatal, log.error, log.warn and log.info
-DEBUG       | --             | log.fatal, log.error, log.warn, log.info and log.debug
-TRACE       | --             | log.fatal, log.error, log.warn, log.info, log.debug and log.trace
---          | `<namespaces>` | log.fatal, to log.debug which apply to `<namespaces>`. <br> Same behavior as [debug][].
-FATAL       | `<namespaces>` | log.fatal for all `<namespaces>` only
-ERROR       | `<namespaces>` | log.fatal, log.error for `<namespaces>` only
-WARN        | `<namespaces>` | log.fatal, to log.warn for `<namespaces>` only
-INFO        | `<namespaces>` | log.fatal, to log.info for `<namespaces>` only
-DEBUG       | `<namespaces>` | log.fatal, to log.debug for `<namespaces>` only
-TRACE       | `<namespaces>` | log.fatal, to log.trace for `<namespaces>` only
---          | `ERROR:n1,DEBUG:n2,FATAL:*` | Logs namespace `n1` at level `ERROR`, namespace `n2` at level `DEBUG` and all other namespaces (`*`) at level `FATAL`
-FATAL       | `ERROR:n1,n2` | Logs `n1` at level `ERROR`, `n2` at level `FATAL`. All other namespaces will **NOT** get logged
+| DEBUG_LEVEL |            DEBUG            | Output                                                                                                                |
+| :---------: | :-------------------------: | :-------------------------------------------------------------------------------------------------------------------- |
+|     --      |             --              | no output                                                                                                             |
+|    FATAL    |             --              | logs only log.fatal                                                                                                   |
+|    ERROR    |             --              | log.fatal, log.error                                                                                                  |
+|    WARN     |             --              | log.fatal, log.error, log.warn                                                                                        |
+|    INFO     |             --              | log.fatal, log.error, log.warn and log.info                                                                           |
+|    DEBUG    |             --              | log.fatal, log.error, log.warn, log.info and log.debug                                                                |
+|    TRACE    |             --              | log.fatal, log.error, log.warn, log.info, log.debug and log.trace                                                     |
+|     --      |       `<namespaces>`        | log.fatal, to log.debug which apply to `<namespaces>`. <br> Same behavior as [debug][].                               |
+|    FATAL    |       `<namespaces>`        | log.fatal for all `<namespaces>` only                                                                                 |
+|    ERROR    |       `<namespaces>`        | log.fatal, log.error for `<namespaces>` only                                                                          |
+|    WARN     |       `<namespaces>`        | log.fatal, to log.warn for `<namespaces>` only                                                                        |
+|    INFO     |       `<namespaces>`        | log.fatal, to log.info for `<namespaces>` only                                                                        |
+|    DEBUG    |       `<namespaces>`        | log.fatal, to log.debug for `<namespaces>` only                                                                       |
+|    TRACE    |       `<namespaces>`        | log.fatal, to log.trace for `<namespaces>` only                                                                       |
+|     --      | `ERROR:n1,DEBUG:n2,FATAL:*` | Logs namespace `n1` at level `ERROR`, namespace `n2` at level `DEBUG` and all other namespaces (`*`) at level `FATAL` |
+|    FATAL    |        `ERROR:n1,n2`        | Logs `n1` at level `ERROR`, `n2` at level `FATAL`. All other namespaces will **NOT** get logged                       |
 
 ## Examples
 
@@ -166,28 +168,28 @@ $ DEBUG=INFO:server,ERROR:* node examples/server.js
 
 **Common**
 
-Setting      | Values         | Description
-----         | ----           | ----
-DEBUG        | <namespace>    | Enables/disables specific debugging namespaces
-DEBUG_LEVEL  | ERROR, WARN, **INFO**, DEBUG | sets debug level
-DEBUG_COLORS | **true**/false | display colors (if supported)
+| Setting      | Values                       | Description                                    |
+| ------------ | ---------------------------- | ---------------------------------------------- |
+| DEBUG        | <namespace>                  | Enables/disables specific debugging namespaces |
+| DEBUG_LEVEL  | ERROR, WARN, **INFO**, DEBUG | sets debug level                               |
+| DEBUG_COLORS | **true**/false               | display colors (if supported)                  |
 
 **Node only**
 
-Setting             | Values             | `NODE_ENV=`<br>`development` | Description
-----                | ----               | ----      | ----
-DEBUG_JSON          | **true**/false     | false     | use JSON format instead of string based log
-DEBUG_SERVERINFO    | **true**/false     | false     | adds server information like `pid` and `hostname`
-DEBUG_TIMESTAMP     | **iso**/epoch/unix | undefined | datetime format
-DEBUG_LEVEL_NUMBERS | true/**false**     | false     | log levels as numbers
+| Setting             | Values             | `NODE_ENV=`<br>`development` | Description                                       |
+| ------------------- | ------------------ | ---------------------------- | ------------------------------------------------- |
+| DEBUG_JSON          | **true**/false     | false                        | use JSON format instead of string based log       |
+| DEBUG_SERVERINFO    | **true**/false     | false                        | adds server information like `pid` and `hostname` |
+| DEBUG_TIMESTAMP     | **iso**/epoch/unix | undefined                    | datetime format                                   |
+| DEBUG_LEVEL_NUMBERS | true/**false**     | false                        | log levels as numbers                             |
 
 For `NODE_ENV !== 'development'` the default logging is in JSON format using serverinfo and iso date.
 
 **Browsers only**
 
-Setting     | Values         | Description
-----        | ----           | ----
-DEBUG_URL   | URL            | log in JSON format to server (needs `middleware.js` at the server side)
+| Setting   | Values | Description                                                             |
+| --------- | ------ | ----------------------------------------------------------------------- |
+| DEBUG_URL | URL    | log in JSON format to server (needs `middleware.js` at the server side) |
 
 In the browser `localStorage` is used to set/save the settings.
 E.g. to enable level ERROR an all namespaces type in console and refresh your page/ app:
@@ -220,7 +222,7 @@ Log.options({
   colors: false,
   stream,
   serializers: {
-    err: Log.serializers.err // default error serialzer is always set
+    err: Log.serializers.err // default error serializer is always set
   }
 })
 const log = new Log('my:namespace')
@@ -228,7 +230,11 @@ const log = new Log('my:namespace')
 log.debug({ object: 1 }) // ...
 ```
 
-> **NOTE:** Consider using a tool like [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file or use a tool like [@vrbo/pino-rotating-file](https://www.npmjs.com/package/@vrbo/pino-rotating-file) to write to a rotating file stream.
+> **NOTE:** Consider using a tool like
+> [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file or
+> use a tool like
+> [@vrbo/pino-rotating-file](https://www.npmjs.com/package/@vrbo/pino-rotating-file)
+> to write to a rotating file stream.
 
 | Option name  | Setting              | env     | Type     | Description                                  |
 | ------------ | -------------------- | ------- | -------- | -------------------------------------------- |
@@ -273,18 +279,20 @@ log.info({ my })
 
 - `FATAL`: The service/app is going to stop or becomes unusable.
    An operator should definitely look into this soon.
-- `ERROR`: Fatal for a particular request, but the service/app continues servicing.
-  An operator should look at this soon(ish)
-- `WARN`: A note on something that should probably be looked at by an operator eventually.
+- `ERROR`: Fatal for a particular request, but the service/app continues
+  servicing. An operator should look at this soon(ish)
+- `WARN`: A note on something that should probably be looked at by an operator
+  eventually.
 - `INFO`: Detail on regular operation.
 - `DEBUG`: Anything else, i.e. too verbose to be included in `INFO` level.
 - `TRACE`: Trace level.
 
 ## Namespaces
 
-Namespaces select dedicated packages for logging (check [Conventions](#conventions))
-considering the level selected with `DEBUG_LEVEL`. To choose a different log-level
-prefix the namespace with the level to be set for that namespace.
+Namespaces select dedicated packages for logging (check
+[Conventions](#conventions)) considering the level selected with `DEBUG_LEVEL`.
+To choose a different log-level prefix the namespace with the level to be set
+for that namespace.
 
 E.g. to log all packages on level `FATAL`, `test` on `ERROR`, `log:A` on `WARN`.
 As a side-effect `*` will also cause **all** modules using [debug][] being
@@ -319,13 +327,14 @@ $ DEBUG=ERROR:test,WARN:log:A,FATAL:*,using-debug:* node examples/levels.js
 
 (from [debug][])
 
-If you're using this in one or more of your libraries, you should use the name of
-your library so that developers may toggle debugging as desired without guessing
-names. If you have more than one debuggers you should prefix them with your
-package name and use ":" to separate features. For example `bodyParser` from
-Connect would then be `connect:bodyParser`. If you append a `*` to the end of
-your name, it will always be enabled regardless of the setting of the DEBUG
-environment variable. You can then use it for normal output as well as debug output.
+If you're using this in one or more of your libraries, you should use the name
+of your library so that developers may toggle debugging as desired without
+guessing names. If you have more than one debuggers you should prefix them with
+your package name and use ":" to separate features. For example `bodyParser`
+from Connect would then be `connect:bodyParser`. If you append a `*` to the end
+of your name, it will always be enabled regardless of the setting of the DEBUG
+environment variable. You can then use it for normal output as well as debug
+output.
 
 ### Wildcards
 
@@ -345,14 +354,15 @@ starting with `connect:`.
 
 `debug-level` supports two types of outputs
 
-1. human readable - this pretty much follows the output of [debug][]
-   This is the default for `NODE_ENV=development`. Can be forced using `DEBUG_JSON=0`
-2. machine readable - JSON output (similar to [bunyan][])
-   This is the default for test/production envs. Can be forced using `DEBUG_JSON=1`
+1. human readable - this pretty much follows the output of [debug][] This is the
+   default for `NODE_ENV=development`. Can be forced using `DEBUG_JSON=0`
+2. machine readable - JSON output (similar to [bunyan][]) This is the default
+   for test/production envs. Can be forced using `DEBUG_JSON=1`
 
 ### JSON output
 
-When using `%j`, `%o`, `%O` all will expand to `%j` JSON, so there is no difference when using in node.
+When using `%j`, `%o`, `%O` all will expand to `%j` JSON, so there is no
+difference when using in node.
 
 Nonetheless it is **not recommended to use** these formatters for logging errors
 and objects as this complicates later log inspection.
@@ -583,7 +593,8 @@ and open <http://localhost:3000>
 
 ## Logging in Elastic Common Schema (ECS)
 
-debug-level supports logging in ECS format if case you use the ELK stack for log monitoring.
+debug-level supports logging in ECS format in case you use the ELK stack for log
+monitoring.
 
 Per default err, req, res serializers are available.
 
@@ -596,7 +607,8 @@ log.fatal(new Error('fatal')) // logs an Error at level FATAL
 //> {"log":{"level":"FATAL","logger":"foobar","diff_ms":0},"message":"fatal","@timestamp":"2023-07-06T18:40:25.154Z","error":{"type":"Error","message":"fatal","stack_trace":"Error: fatal\\n    at file:///logecs.js:6:11\\n    at ModuleJob.run (node:internal/modules/esm/module_job:194:25)"}}
 ```
 
-`httpLogs` as well as `logger` allow overwriting the standard `Log` class in order to use ECS logging.
+`httpLogs`, `logger` and `browserLogs` allow overwriting the standard `Log`
+class in order to use ECS logging.
 
 ```js
 import { LogEcs, httpLogs } from 'debug-level'

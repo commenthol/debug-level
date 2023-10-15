@@ -4,17 +4,18 @@
  */
 export class Format {
     /**
-     * @param {FormatOption} opts
+     * @param {FormatOption} [opts]
      */
-    constructor(opts?: FormatOption);
+    constructor(opts?: FormatOption | undefined);
     opts: {
-        opts: FormatOption;
+        spaces: number | undefined;
     };
-    set spaces(arg: any);
-    get spaces(): any;
+    set spaces(arg: number | undefined);
+    get spaces(): number | undefined;
     _formatOpts(): void;
     formatOpts: {
         stringify: (o: any) => string;
+        spaces: number | undefined;
     } | undefined;
     stringify(...args: any[]): string;
     /**

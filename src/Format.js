@@ -8,10 +8,11 @@ import { format as quickFormat } from './quick-format.js'
 
 export class Format {
   /**
-   * @param {FormatOption} opts
+   * @param {FormatOption} [opts]
    */
-  constructor (opts = {}) {
-    this.opts = { opts }
+  constructor (opts) {
+    const { spaces } = opts || {}
+    this.opts = { spaces }
     this._formatOpts()
   }
 
@@ -25,8 +26,11 @@ export class Format {
   }
 
   _formatOpts () {
-    // @ts-expect-error
-    this.formatOpts = { stringify: (o) => fastStringify(o, null, this.opts.spaces) }
+    this.formatOpts = {
+      // @ts-expect-error
+      stringify: (o) => fastStringify(o, null, this.opts.spaces),
+      spaces: this.opts.spaces
+    }
   }
 
   stringify (...args) {

@@ -4,12 +4,13 @@
  * @copyright Copyright (c) 2016-2019 David Mark Clements
  */
 
-function tryStringify (o) {
-  try { return JSON.stringify(o) } catch (e) { return '"[Circular]"' }
+function tryStringify (value, replacer, spaces) {
+  try { return JSON.stringify(value, replacer, spaces) } catch (e) { return '"[Circular]"' }
 }
 
 export function format (f, args, opts, obj = {}) {
-  const ss = (opts && opts.stringify) || tryStringify
+  const stringify = opts?.stringify || tryStringify
+  const spaces = opts?.spaces
   const argLen = args.length
   let a = 0
   let str = ''
@@ -78,7 +79,7 @@ export function format (f, args, opts, obj = {}) {
               i++
               break
             }
-            str += ss(args[a])
+            str += stringify(args[a], null, spaces)
             lastPos = i + 2
             i++
             break

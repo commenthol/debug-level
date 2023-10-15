@@ -2,7 +2,18 @@ import http from 'node:http'
 import assert from 'node:assert'
 import { httpLogs } from '../src/index.js'
 
+const env = { ...process.env }
+
 describe('#httpLogs', function () {
+  let _env
+  before(() => {
+    _env = process.env
+    process.env = env
+  })
+  after(() => {
+    process.env = _env
+  })
+
   it('log request with level=info', function () {
     const app = (req, res) => {
       httpLogs()(req, res, () => {})

@@ -15,7 +15,7 @@ export class LogEcs extends Log {
     serializers: any;
     toJson: typeof toJson;
     _applySerializers(obj: any): {
-        extra: {};
+        extra: any;
     };
 }
 export namespace LogEcs {

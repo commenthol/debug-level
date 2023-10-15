@@ -75,8 +75,8 @@ function toJson (obj, serializers) {
       serializers[key](value, ecsObj)
     } else {
       // add all other unknown fields to extra
-      ecsObj.extra = ecsObj.extra || {}
-      ecsObj.extra[key] = normToString(value)
+      ecsObj.extra = ecsObj.extra || { [name]: {} }
+      ecsObj.extra[name][key] = normToString(value)
     }
   }
 

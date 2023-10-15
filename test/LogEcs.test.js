@@ -37,6 +37,22 @@ describe('LogEcs', function () {
           }
         })
       })
+
+      it('shall serialize an error like object', function () {
+        const ecsFields = {}
+        const err = { name: 'TypeError', message: 'boom' }
+        err.code = 'oneFinger'
+        ecsError(err, ecsFields)
+        assert.equal(ecsFields.error.stack_trace, undefined)
+        ecsFields.error.stack_trace = '#'
+        assert.deepStrictEqual(ecsFields, {
+          error: {
+            type: 'Object',
+            message: 'boom',
+            stack_trace: '#'
+          }
+        })
+      })
     })
 
     describe('ecsReq', function () {
@@ -123,6 +139,39 @@ describe('LogEcs', function () {
           },
           user_agent: {
             original: 'my-ua/1.0.0'
+          }
+        })
+      })
+
+      it('shall serialize a request without headers', function () {
+        const _req = {
+          ...req,
+          originalUrl: '/mount/test/path?test=1',
+          httpVersion: '2.0',
+          headers: null
+        }
+
+        const ecsFields = {}
+        ecsReq(_req, ecsFields)
+        assert.deepStrictEqual(ecsFields, {
+          client: {
+            ip: '127.0.0.1',
+            port: 3333
+          },
+          url: {
+            path: '/mount/test/path',
+            query: 'test=1'
+          },
+          http: {
+            request: {
+              id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
+              method: 'GET',
+              version: '2.0',
+              headers: {}
+            }
+          },
+          user_agent: {
+            original: undefined
           }
         })
       })
@@ -241,7 +290,7 @@ describe('LogEcs', function () {
       const res = log.error({ largeString })
       assert.strictEqual(
         res,
-        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"largeString":"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}}'
+        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"test":{"largeString":"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}}}'
       )
     })
 
@@ -249,7 +298,7 @@ describe('LogEcs', function () {
       const res = log.error({ number: Infinity, fn: () => {} })
       assert.strictEqual(
         res,
-        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"number":"Infinity"}}'
+        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"test":{"number":"Infinity"}}}'
       )
     })
 

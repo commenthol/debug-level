@@ -37,6 +37,22 @@ describe('LogEcs', function () {
           }
         })
       })
+
+      it('shall serialize an error like object', function () {
+        const ecsFields = {}
+        const err = { name: 'TypeError', message: 'boom' }
+        err.code = 'oneFinger'
+        ecsError(err, ecsFields)
+        assert.equal(ecsFields.error.stack_trace, undefined)
+        ecsFields.error.stack_trace = '#'
+        assert.deepStrictEqual(ecsFields, {
+          error: {
+            type: 'Object',
+            message: 'boom',
+            stack_trace: '#'
+          }
+        })
+      })
     })
 
     describe('ecsReq', function () {
@@ -126,6 +142,39 @@ describe('LogEcs', function () {
           }
         })
       })
+
+      it('shall serialize a request without headers', function () {
+        const _req = {
+          ...req,
+          originalUrl: '/mount/test/path?test=1',
+          httpVersion: '2.0',
+          headers: null
+        }
+
+        const ecsFields = {}
+        ecsReq(_req, ecsFields)
+        assert.deepStrictEqual(ecsFields, {
+          client: {
+            ip: '127.0.0.1',
+            port: 3333
+          },
+          url: {
+            path: '/mount/test/path',
+            query: 'test=1'
+          },
+          http: {
+            request: {
+              id: 'f90a5d9e-52e6-482e-a6ab-d1c5da1fe9c6',
+              method: 'GET',
+              version: '2.0',
+              headers: {}
+            }
+          },
+          user_agent: {
+            original: undefined
+          }
+        })
+      })
     })
 
     describe('ecsRes', function () {
@@ -177,89 +226,119 @@ describe('LogEcs', function () {
     })
   })
 
-  describe('json', function () {
-    const f = fixtures.json
-    let log
-    let clock
-    const exp = []
+  describe('formats', function () {
+    describe('debug like', function () {
+      const f = fixtures.debug
+      let log
+      let clock
+      const exp = []
 
-    before(() => {
-      clock = sinon.useFakeTimers()
-      LogEcs.options({
-        level: 'error',
-        namespaces: 'test*',
-        json: true,
-        colors: false,
-        serverinfo: false
+      before(() => {
+        clock = sinon.useFakeTimers()
+        LogEcs.options({ level: 'error', json: false, colors: false, namespaces: 'test*' })
+        log = new LogEcs('test', { timestamp: 'iso' })
       })
-      log = new LogEcs('test', { timestamp: 'epoch' })
-    })
 
-    after(() => {
-      clock.restore()
-      if (WRITE) console.log(inspect(exp))
-    })
-
-    it('should NOT remove object only formatters', function () {
-      const log = new LogEcs('*')
-      const res = log.error('%j ', { a: { b: 'c' } })
-      assert.strictEqual(
-        res,
-        '{"log":{"level":"ERROR","logger":"*","diff_ms":0},"message":"{\\"a\\":{\\"b\\":\\"c\\"}} ","@timestamp":"1970-01-01T00:00:00.000Z"}'
-      )
-    })
-
-    it('should log serverinfo and pid', function () {
-      const log = new LogEcs('*', {
-        level: undefined,
-        serverinfo: true,
-        json: true
+      after(() => {
+        clock.restore()
+        if (WRITE) console.log(inspect(exp))
+        LogEcs.reset()
       })
-      const res = log.error('test')
-      assert(
-        res.indexOf('"hostname":"' + os.hostname()) !== -1,
-        'missing hostname'
-      )
-      assert(res.indexOf('"pid":' + process.pid) !== -1, 'missing pid')
+
+      testcases.forEach(({ name, args }, idx) => {
+        it(name, function () {
+          const res = log.error(...args)
+          clock.tick(1)
+          if (WRITE) exp.push(res)
+          else assert.strictEqual(res, f[idx], res + ' !== ' + f[idx])
+        })
+      })
     })
 
-    it('should not overwrite level', function () {
-      const err = new Error('Baam')
-      err.level = 'TEST_LEVEL'
-      err.name = 'TEST_NAME'
-      err.stack = err.stack.substring(0, 20)
-      const log = new LogEcs('all')
-      const res = log.log(err)
-      assert.strictEqual(
-        res,
-        '{"log":{"level":"LOG","logger":"all","diff_ms":0},"message":"Baam","@timestamp":"1970-01-01T00:00:00.000Z","error":{"type":"Error","message":"Baam","stack_trace":"TEST_NAME: Baam\\n    "}}'
-      )
-    })
+    describe('json', function () {
+      const f = fixtures.json
+      let log
+      let clock
+      const exp = []
 
-    it('should stringify large string', function () {
-      const largeString = new Array(150).fill('1').join('')
-      const res = log.error({ largeString })
-      assert.strictEqual(
-        res,
-        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"largeString":"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}}'
-      )
-    })
+      before(() => {
+        clock = sinon.useFakeTimers()
+        LogEcs.options({
+          level: 'error',
+          namespaces: 'test*',
+          json: true,
+          colors: false,
+          serverinfo: false
+        })
+        log = new LogEcs('test', { timestamp: 'epoch' })
+      })
 
-    it('should remove infinite number and function', function () {
-      const res = log.error({ number: Infinity, fn: () => {} })
-      assert.strictEqual(
-        res,
-        '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"number":"Infinity"}}'
-      )
-    })
+      after(() => {
+        clock.restore()
+        if (WRITE) console.log(inspect(exp))
+      })
 
-    testcases.forEach(({ name, args }, idx) => {
-      it(name, function () {
-        const res = log.error(...args)
-        clock.tick(1)
-        // console.log('%s', JSON.stringify(res))
-        if (WRITE) exp.push(res)
-        else assert.strictEqual(res, f[idx], res + ' !== ' + f[idx])
+      it('should NOT remove object only formatters', function () {
+        const log = new LogEcs('*')
+        const res = log.error('%j ', { a: { b: 'c' } })
+        assert.strictEqual(
+          res,
+          '{"log":{"level":"ERROR","logger":"*","diff_ms":0},"message":"{\\"a\\":{\\"b\\":\\"c\\"}} ","@timestamp":"1970-01-01T00:00:00.000Z"}'
+        )
+      })
+
+      it('should log serverinfo and pid', function () {
+        const log = new LogEcs('*', {
+          level: undefined,
+          serverinfo: true,
+          json: true
+        })
+        const res = log.error('test')
+        assert(
+          res.indexOf('"hostname":"' + os.hostname()) !== -1,
+          'missing hostname'
+        )
+        assert(res.indexOf('"pid":' + process.pid) !== -1, 'missing pid')
+      })
+
+      it('should not overwrite level', function () {
+        const err = new Error('Baam')
+        err.level = 'TEST_LEVEL'
+        err.name = 'TEST_NAME'
+        err.stack = err.stack.substring(0, 20)
+        const log = new LogEcs('all')
+        const res = log.log(err)
+        assert.strictEqual(
+          res,
+          '{"log":{"level":"LOG","logger":"all","diff_ms":0},"message":"Baam","@timestamp":"1970-01-01T00:00:00.000Z","error":{"type":"Error","message":"Baam","stack_trace":"TEST_NAME: Baam\\n    "}}'
+        )
+      })
+
+      it('should stringify large string', function () {
+        const largeString = new Array(150).fill('1').join('')
+        const res = log.error({ largeString })
+        assert.strictEqual(
+          res,
+          '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"test":{"largeString":"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}}}'
+        )
+      })
+
+      it('should log infinite number as null and remove function', function () {
+        const res = log.error({ number: Infinity, fn: () => {} })
+        assert.strictEqual(
+          res,
+          '{"log":{"level":"ERROR","logger":"test","diff_ms":0},"@timestamp":"1970-01-01T00:00:00.000Z","extra":{"test":{"number":null}}}'
+        )
+      })
+
+      testcases.forEach(({ name, args }, idx) => {
+        it(name, function () {
+          const res = log.error(...args)
+          clock.tick(1)
+          // console.log('%s', JSON.stringify(res))
+          if (WRITE) exp.push(res)
+          else assert.strictEqual(res, f[idx], res + ' !== ' + f[idx])
+        })
       })
     })
   })

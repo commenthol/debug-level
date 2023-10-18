@@ -3,7 +3,7 @@ import { startTimeKey } from '../serializers/res.js'
 const isNotObject = (any) => !any || typeof any !== 'object'
 
 const ecsError = (err, ecsObj) => {
-  if (!(err instanceof Error)) {
+  if (!(err?.message)) {
     return
   }
 
@@ -63,7 +63,7 @@ const ecsReq = (req, ecsObj) => {
     authorization,
     'user-agent': userAgent,
     ...headers
-  } = req.headers
+  } = req.headers || {}
 
   ecsObj.http = ecsObj.http || {}
   ecsObj.http.request = {

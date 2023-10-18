@@ -27,6 +27,7 @@ export class LogEcs extends Log {
 
   /* c8 ignore next 18 */
   _applySerializers (obj) {
+    const name = this.name
     const ecsObj = {}
     for (const key in obj) {
       const value = obj[key]
@@ -37,8 +38,9 @@ export class LogEcs extends Log {
         if (this.serializers && this.serializers[key]) {
           this.serializers[key](value, ecsObj)
         } else {
-          ecsObj.extra = ecsObj.extra || {}
-          ecsObj.extra[key] = value
+          // add all other unknown fields to extra
+          ecsObj.extra = ecsObj.extra || { [name]: {} }
+          ecsObj.extra[name][key] = value
         }
       }
     }
@@ -75,27 +77,10 @@ function toJson (obj, serializers) {
       serializers[key](value, ecsObj)
     } else {
       // add all other unknown fields to extra
-      ecsObj.extra = ecsObj.extra || {}
-      ecsObj.extra[key] = normToString(value)
+      ecsObj.extra = ecsObj.extra || { [name]: {} }
+      ecsObj.extra[name][key] = value
     }
   }
 
   return stringify(ecsObj)
-}
-
-/**
- * elastic is picky on indexing types; for this all entries in e.g. extra are
- * set to string to avoid any type collisions
- * @param {any} val
- * @returns {string}
- */
-const normToString = (val) => {
-  switch (typeof val) {
-    case 'string':
-      return val
-    case 'number':
-      return String(val)
-    default:
-      return stringify(val)
-  }
 }

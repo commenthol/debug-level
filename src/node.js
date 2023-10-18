@@ -10,6 +10,7 @@ import { wrapConsole } from './wrapConsole.js'
 import { wrapDebug } from './wrapDebug.js'
 import { Sonic } from './Sonic.js'
 import { errSerializer } from './serializers/err.js'
+import { Format } from './Format.js'
 
 const env = process.env.NODE_ENV || 'development'
 const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as development env
@@ -81,6 +82,8 @@ export class Log extends LogBase {
       : this.opts.stream || process.stderr
 
     if (!this.opts.json) {
+      this.opts.spaces = this.opts.spaces ?? 2
+      this.formatter = new Format(this.opts)
       this._log = this._logDebugLike
     } else if (this.opts.colors) {
       this._log = this._logJsonColor
@@ -231,7 +234,7 @@ export class Log extends LogBase {
       this._color(this.name, this.color, true)
 
     const strOther = Object.keys(other).length
-      ? stringify(this._applySerializers(other), this.opts.splitLine ? 2 : undefined)
+      ? stringify(this._applySerializers(other), this.opts.splitLine ? (this.opts.spaces ?? 2) : undefined)
       : ''
 
     const str = (this.opts.splitLine)

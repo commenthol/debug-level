@@ -67,11 +67,34 @@ export default {
     '  ERROR test 1970-01-01T00:00:00.016Z %d +1ms',
     '  ERROR test 1970-01-01T00:00:00.017Z hello world +1ms',
     '  ERROR test 1970-01-01T00:00:00.018Z digit 42.7 +1ms',
-    '  ERROR test 1970-01-01T00:00:00.019Z json {"object":{"test":1},"msg":"the message"} +1ms',
-    '  ERROR test 1970-01-01T00:00:00.020Z obj {"object":{"test":1},"msg":"the message"} +1ms',
-    '  ERROR test 1970-01-01T00:00:00.021Z obj [1,2,3] +1ms',
-    '  ERROR test 1970-01-01T00:00:00.022Z error {"status":500} +1ms',
-    '  ERROR test 1970-01-01T00:00:00.023Z mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} +1ms',
+    '  ERROR test 1970-01-01T00:00:00.019Z json {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   },\n' +
+    '  ERROR test   "msg": "the message"\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.020Z obj {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   },\n' +
+    '  ERROR test   "msg": "the message"\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.021Z obj [\n' +
+    '  ERROR test   1,\n' +
+    '  ERROR test   2,\n' +
+    '  ERROR test   3\n' +
+    '  ERROR test ] +1ms',
+    '  ERROR test 1970-01-01T00:00:00.022Z error {\n' +
+    '  ERROR test   "status": 500\n' +
+    '  ERROR test } +1ms',
+    '  ERROR test 1970-01-01T00:00:00.023Z mixed % string 1.1 2.2 3.33 {\n' +
+    '  ERROR test   "object": {\n' +
+    '  ERROR test     "test": 1\n' +
+    '  ERROR test   },\n' +
+    '  ERROR test   "msg": "the message"\n' +
+    '  ERROR test } {\n' +
+    '  ERROR test   "status": 500\n' +
+    '  ERROR test } +1ms',
     '  ERROR test 1970-01-01T00:00:00.024Z error message %s %% %d string 1.1 {\n' +
     '  ERROR test   "err": {\n' +
     '  ERROR test     "msg": "error message",\n' +

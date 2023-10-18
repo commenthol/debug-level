@@ -22,12 +22,13 @@ export class LogEcs extends Log {
       timestamp: 'iso'
     })
     this.serializers = { ...ecsSerializers, ...serializers }
-    this.toJson = toJson
+    const [extra] = name.split(':')
+    this._extraName = extra
+    this.toJson = this._toJson
   }
 
   /* c8 ignore next 18 */
   _applySerializers (obj) {
-    const name = this.name
     const ecsObj = {}
     for (const key in obj) {
       const value = obj[key]
@@ -39,48 +40,50 @@ export class LogEcs extends Log {
           this.serializers[key](value, ecsObj)
         } else {
           // add all other unknown fields to extra
-          ecsObj.extra = ecsObj.extra || { [name]: {} }
-          ecsObj.extra[name][key] = value
+          const extra = this._extraName
+          ecsObj.extra = ecsObj.extra || { [extra]: {} }
+          ecsObj.extra[extra][key] = value
         }
       }
     }
     return ecsObj
   }
+
+  _toJson (obj, serializers) {
+    const { level, time, name, msg, pid, hostname, diff, ...other } = obj
+
+    const ecsObj = {
+      log: {
+        level,
+        logger: name,
+        diff_ms: diff
+      },
+      message: msg,
+      '@timestamp': time,
+      process: pid ? { pid } : undefined,
+      host: hostname ? { hostname } : undefined
+    }
+
+    for (const key in other) {
+      const value = other[key]
+      if (
+        value === undefined ||
+        !Object.prototype.hasOwnProperty.call(other, key)
+      ) {
+        continue
+      }
+      if (serializers[key]) {
+        serializers[key](value, ecsObj)
+      } else {
+        // add all other unknown fields to extra
+        const extra = this._extraName
+        ecsObj.extra = ecsObj.extra || { [extra]: {} }
+        ecsObj.extra[extra][key] = value
+      }
+    }
+
+    return stringify(ecsObj)
+  }
 }
 
 LogEcs.serializers = ecsSerializers
-
-function toJson (obj, serializers) {
-  const { level, time, name, msg, pid, hostname, diff, ...other } = obj
-
-  const ecsObj = {
-    log: {
-      level,
-      logger: name,
-      diff_ms: diff
-    },
-    message: msg,
-    '@timestamp': time,
-    process: pid ? { pid } : undefined,
-    host: hostname ? { hostname } : undefined
-  }
-
-  for (const key in other) {
-    const value = other[key]
-    if (
-      value === undefined ||
-      !Object.prototype.hasOwnProperty.call(other, key)
-    ) {
-      continue
-    }
-    if (serializers[key]) {
-      serializers[key](value, ecsObj)
-    } else {
-      // add all other unknown fields to extra
-      ecsObj.extra = ecsObj.extra || { [name]: {} }
-      ecsObj.extra[name][key] = value
-    }
-  }
-
-  return stringify(ecsObj)
-}

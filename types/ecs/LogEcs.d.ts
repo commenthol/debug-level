@@ -13,10 +13,12 @@ export class LogEcs extends Log {
      */
     constructor(name: string, opts: LogOptions);
     serializers: any;
-    toJson: typeof toJson;
+    _extraName: string;
+    toJson: (obj: any, serializers: any) => string;
     _applySerializers(obj: any): {
         extra: any;
     };
+    _toJson(obj: any, serializers: any): string;
 }
 export namespace LogEcs {
     export { ecsSerializers as serializers };
@@ -26,6 +28,4 @@ export type LogOptions = import('../node.js').LogOptions & {
     serializers: Record<string, EcsSerializer>;
 };
 import { Log } from "../node.js";
-declare function toJson(obj: any, serializers: any): string;
 import { ecsSerializers } from "./serializers.js";
-export {};

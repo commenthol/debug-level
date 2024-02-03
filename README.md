@@ -230,11 +230,6 @@ const log = new Log('my:namespace')
 log.debug({ object: 1 }) // ...
 ```
 
-> **NOTE:** Consider using a tool like
-> [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file or
-> use a tool like
-> [@vrbo/pino-rotating-file](https://www.npmjs.com/package/@vrbo/pino-rotating-file)
-> to write to a rotating file stream.
 
 | Option name  | Setting              | env     | Type     | Description                                  |
 | ------------ | -------------------- | ------- | -------- | -------------------------------------------- |
@@ -252,6 +247,36 @@ log.debug({ object: 1 }) // ...
 | toJson       | --                   | node    | Function | custom json serializer                       |
 | serializers  | --                   | _both_  | Object   | serializers by keys                          |
 | url          | DEBUG_URL            | browser | String   |                                              |
+
+### Writing to file
+
+Consider using a tool like [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file.
+
+```sh
+$ node server.js 2> /var/log/server.log 
+```
+
+To rotate the file with logrotate, add the following to `/etc/logrotate.d/server`:
+
+```
+/var/log/server.log {
+  su root
+  daily
+  rotate 7
+  delaycompress
+  compress
+  notifempty
+  missingok
+  copytruncate
+}
+```
+
+Ensure that logrotate is running as a service on startup:
+
+```sh
+$ sudo service enable logrotate
+```
+
 
 ### Serializers
 

@@ -1,6 +1,7 @@
 # 3.1.3-0
 
-- chore: bump dependencies (#5430f5f)
+- fix: types export (#4a6c3fd)
+- chore: bump dependencies (#e180d31)
 - docs: update info on logrotate (#1835487)
 - fix: only use package identifier for extra name (#7edaa34)
 

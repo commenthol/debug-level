@@ -58,7 +58,7 @@
     "coverage": "c8 -r lcov -r text npm test",
     "coveralls": "npm run build && c8 npm test && c8 report --reporter=text-lcov | coveralls",
     "example": "npm run build:example && npm run start:example",
-    "changelog": "conv-changelog -i CHANGELOG.md",
+    "changelog": "conv-changelog -i CHANGELOG.md -o",
     "lint": "eslint --ext .js .",
     "prepublishOnly": "npm run all",
     "readme": "markedpp --github -i README.md -o README.md",

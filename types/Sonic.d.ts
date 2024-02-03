@@ -7,4 +7,4 @@ export class Sonic {
     flush(): void;
     destroy(): void;
 }
-import SonicBoom from "sonic-boom";
+import SonicBoom from 'sonic-boom';

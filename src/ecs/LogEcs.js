@@ -3,7 +3,7 @@ import { ecsSerializers } from './serializers.js'
 
 /**
  * @typedef {(val: any, escFields: object) => void} EcsSerializer
- * @typedef {import('../node.js').LogOptions & {serializers: Record<string, EcsSerializer>}} LogOptions
+ * @typedef {import('../node.js').LogOptions & {serializers: Record<string, EcsSerializer>}} LogOptionsEcs
  */
 
 /**
@@ -13,7 +13,7 @@ import { ecsSerializers } from './serializers.js'
 export class LogEcs extends Log {
   /**
    * @param {string} name logger namespace
-   * @param {LogOptions} opts
+   * @param {LogOptionsEcs} opts
    */
   constructor (name, opts) {
     const { serializers, ..._opts } = opts || {}

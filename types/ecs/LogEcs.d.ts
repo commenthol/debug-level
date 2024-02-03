@@ -1,6 +1,6 @@
 /**
  * @typedef {(val: any, escFields: object) => void} EcsSerializer
- * @typedef {import('../node.js').LogOptions & {serializers: Record<string, EcsSerializer>}} LogOptions
+ * @typedef {import('../node.js').LogOptions & {serializers: Record<string, EcsSerializer>}} LogOptionsEcs
  */
 /**
  * Elastic Common Schema (ECS) compatible logger;
@@ -9,9 +9,9 @@
 export class LogEcs extends Log {
     /**
      * @param {string} name logger namespace
-     * @param {LogOptions} opts
+     * @param {LogOptionsEcs} opts
      */
-    constructor(name: string, opts: LogOptions);
+    constructor(name: string, opts: LogOptionsEcs);
     serializers: any;
     _extraName: string;
     toJson: (obj: any, serializers: any) => string;
@@ -24,8 +24,8 @@ export namespace LogEcs {
     export { ecsSerializers as serializers };
 }
 export type EcsSerializer = (val: any, escFields: object) => void;
-export type LogOptions = import('../node.js').LogOptions & {
+export type LogOptionsEcs = import('../node.js').LogOptions & {
     serializers: Record<string, EcsSerializer>;
 };
-import { Log } from "../node.js";
-import { ecsSerializers } from "./serializers.js";
+import { Log } from '../node.js';
+import { ecsSerializers } from './serializers.js';

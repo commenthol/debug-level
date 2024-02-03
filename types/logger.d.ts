@@ -1,12 +1,9 @@
 /**
- * @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions
+ * @typedef {import('./index.js').LogOptions} LogOptions
  */
 /**
  * @param {string} namespace
  * @param {LogOptions} [opts]
  */
-export function logger(namespace: string, opts?: LogOptions | undefined): any;
-export type LogOptions = import('./node.js').LogOptions & {
-    Log: typeof Log;
-};
-import { Log } from "./node.js";
+export function logger(namespace: string, opts?: import("./index.js").LogOptions | undefined): any;
+export type LogOptions = import('./index.js').LogOptions;

@@ -136,5 +136,5 @@ export type ExtLogOptionsBrowser = {
     url?: string | undefined;
 };
 export type LogOptionsBrowser = LogBaseOptions & ExtLogOptionsBrowser;
-import { LogBase } from "./LogBase.js";
-import { errSerializer } from "./serializers/err.js";
+import { LogBase } from './LogBase.js';
+import { errSerializer } from './serializers/err.js';

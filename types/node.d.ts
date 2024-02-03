@@ -20,35 +20,20 @@ export class Log extends LogBase {
      */
     static reset(): void;
     /**
-     * @typedef {object} ExtLogOptionWrapConsole
-     * @property {Level} [level4log='LOG']
-     *
-     * @typedef {LogOptions & ExtLogOptionWrapConsole} LogOptionWrapConsole
-     */
-    /**
      * wrap console logging functions like
      * console.log, console.info, console.warn, console.error
      * @param {string} [name='console']
      * @param {LogOptionWrapConsole} [opts] options
      * @return {function} unwrap function
      */
-    static wrapConsole(name?: string | undefined, opts?: (import("./Format.js").FormatOption & import("./LogBase.js").ExtLogBaseOptions & ExtLogOptions & {
-        level4log?: import("./utils.js").Level | undefined;
-    }) | undefined): Function;
-    /**
-     * @typedef {object} ExtLogOptionHandleExitEvents
-     * @param {boolean} [code=1] set exit code; code=0 will prevent triggering exit
-     * @param {boolean} [gracefulExit=false] uses process.exitCode to avoid forceful exit with process.exit()
-     *
-     * @typedef {LogOptions & ExtLogOptionHandleExitEvents} LogOptionHandleExitEvents
-     */
+    static wrapConsole(name?: string | undefined, opts?: LogOptionWrapConsole | undefined): Function;
     /**
      * log exit events like 'unhandledRejection', 'uncaughtException'
      * and then let the process die
      * @param {string} [name='exit']
      * @param {LogOptionHandleExitEvents} [opts] options
      */
-    static handleExitEvents(name?: string | undefined, opts?: any): void;
+    static handleExitEvents(name?: string | undefined, opts?: LogOptionHandleExitEvents): void;
     static wrapDebug(): () => void;
     /**
      * creates a new logger
@@ -177,7 +162,13 @@ export type ExtLogOptions = {
     sonicFlushMs?: number | undefined;
 };
 export type LogOptions = LogBaseOptions & ExtLogOptions;
-import { LogBase } from "./LogBase.js";
+export type ExtLogOptionWrapConsole = {
+    level4log?: import("./utils.js").Level | undefined;
+};
+export type LogOptionWrapConsole = LogOptions & ExtLogOptionWrapConsole;
+export type ExtLogOptionHandleExitEvents = object;
+export type LogOptionHandleExitEvents = LogOptions & ExtLogOptionHandleExitEvents;
+import { LogBase } from './LogBase.js';
 /**
  * @param {object} obj
  * @param {object} serializers
@@ -185,6 +176,6 @@ import { LogBase } from "./LogBase.js";
  * @returns {string}
  */
 declare function toJson(obj: object, serializers: object, spaces?: number | undefined): string;
-import { Sonic } from "./Sonic.js";
+import { Sonic } from './Sonic.js';
 declare const isDevEnv: boolean;
 export {};

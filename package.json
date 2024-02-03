@@ -24,6 +24,10 @@
       "browser": "./src/browser.js",
       "types": "./types/index.d.ts"
     },
+    "./browser": {
+      "import": "./src/browser.js",
+      "types": "./types/browser.d.ts"
+    },
     "./serializers": {
       "import": "./src/serializers/index.js",
       "require": "./lib/serializers/index.cjs",

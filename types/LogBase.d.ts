@@ -109,4 +109,4 @@ export type ExtLogBaseOptions = {
 };
 export type FormatOption = import('./Format.js').FormatOption;
 export type LogBaseOptions = FormatOption & ExtLogBaseOptions;
-import { Format } from "./Format.js";
+import { Format } from './Format.js';

@@ -10,7 +10,7 @@ export class Format {
     opts: {
         spaces: number | undefined;
     };
-    set spaces(arg: number | undefined);
+    set spaces(spaces: number | undefined);
     get spaces(): number | undefined;
     _formatOpts(): void;
     formatOpts: {

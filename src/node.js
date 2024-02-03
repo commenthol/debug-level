@@ -4,7 +4,15 @@ import chalk from 'chalk'
 import fastStringify from 'fast-safe-stringify'
 import flatstr from 'flatstr'
 
-import { fromNumLevel, inspectOpts, saveOpts, inspectNamespaces, selectColor, levelColors, INFO } from './utils.js'
+import {
+  fromNumLevel,
+  inspectOpts,
+  saveOpts,
+  inspectNamespaces,
+  selectColor,
+  levelColors,
+  INFO
+} from './utils.js'
 import { LogBase } from './LogBase.js'
 import { wrapConsole } from './wrapConsole.js'
 import { wrapDebug } from './wrapDebug.js'
@@ -17,18 +25,33 @@ const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as d
 
 const EXIT_EVENTS = ['unhandledRejection', 'uncaughtException']
 
+/** @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions */
+/** @typedef {import('./utils').Level} Level */
 /**
- * @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions
- * @typedef {import('./utils').Level} Level
- *
  * @typedef {object} ExtLogOptions
  * @property {boolean} [serverinfo] log serverinfo like hostname and pid
  * @property {NodeJS.WriteStream} [stream=process.stderr] stream writer
  * @property {boolean} [sonic] use sonic (default for production use)
  * @property {number} [sonicLength=4096] buffer length for Sonic
  * @property {number} [sonicFlushMs=1000] min. timeout before flush of Sonic buffer in ms
- *
+ */
+/**
  * @typedef {LogBaseOptions & ExtLogOptions} LogOptions
+ */
+/**
+ * @typedef {object} ExtLogOptionWrapConsole
+ * @property {Level} [level4log='LOG']
+ */
+/**
+ * @typedef {LogOptions & ExtLogOptionWrapConsole} LogOptionWrapConsole
+ */
+/**
+ * @typedef {object} ExtLogOptionHandleExitEvents
+ * @param {boolean} [code=1] set exit code; code=0 will prevent triggering exit
+ * @param {boolean} [gracefulExit=false] uses process.exitCode to avoid forceful exit with process.exit()
+ */
+/**
+ * @typedef {LogOptions & ExtLogOptionHandleExitEvents} LogOptionHandleExitEvents
  */
 
 /**
@@ -59,11 +82,16 @@ export class Log extends LogBase {
    * @param {LogOptions} [opts] - see Log.options
    */
   constructor (name, opts) {
-    Object.assign(options,
+    Object.assign(
+      options,
       inspectOpts(process.env),
       inspectNamespaces(process.env)
     )
-    const serializers = Object.assign({}, options.serializers, opts ? opts.serializers : {})
+    const serializers = Object.assign(
+      {},
+      options.serializers,
+      opts ? opts.serializers : {}
+    )
     const _opts = Object.assign({}, options, opts, { serializers })
     super(name, _opts)
 
@@ -127,12 +155,6 @@ export class Log extends LogBase {
   }
 
   /**
-   * @typedef {object} ExtLogOptionWrapConsole
-   * @property {Level} [level4log='LOG']
-   *
-   * @typedef {LogOptions & ExtLogOptionWrapConsole} LogOptionWrapConsole
-   */
-  /**
    * wrap console logging functions like
    * console.log, console.info, console.warn, console.error
    * @param {string} [name='console']
@@ -145,13 +167,6 @@ export class Log extends LogBase {
   }
 
   /**
-   * @typedef {object} ExtLogOptionHandleExitEvents
-   * @param {boolean} [code=1] set exit code; code=0 will prevent triggering exit
-   * @param {boolean} [gracefulExit=false] uses process.exitCode to avoid forceful exit with process.exit()
-   *
-   * @typedef {LogOptions & ExtLogOptionHandleExitEvents} LogOptionHandleExitEvents
-   */
-  /**
    * log exit events like 'unhandledRejection', 'uncaughtException'
    * and then let the process die
    * @param {string} [name='exit']
@@ -160,7 +175,7 @@ export class Log extends LogBase {
   static handleExitEvents (name = 'exit', opts = {}) {
     const { code = 1, gracefulExit, ..._opts } = opts
     const log = new Log(name, _opts)
-    EXIT_EVENTS.forEach(ev => {
+    EXIT_EVENTS.forEach((ev) => {
       process.on(ev, (err) => {
         log.fatal(err)
         /* c8 ignore next 7 */
@@ -215,8 +230,12 @@ export class Log extends LogBase {
     let str = this.toJson(o, this.serializers)
     /* c8 ignore next 4 */ // can't cover with tests as underlying tty is unknown
     str = str
-      .replace(/"level":\s?"([^"]+)"/, (m, level) => this._color(m, this.levColors[level], true))
-      .replace(/"level":\s?(\d+)/, (m, level) => this._color(m, this.levColors[fromNumLevel(Number(level))], true))
+      .replace(/"level":\s?"([^"]+)"/, (m, level) =>
+        this._color(m, this.levColors[level], true)
+      )
+      .replace(/"level":\s?(\d+)/, (m, level) =>
+        this._color(m, this.levColors[fromNumLevel(Number(level))], true)
+      )
       .replace(/"name":\s?"[^"]+"/, (m) => this._color(m, this.color, true))
     return this.render(str, level)
   }
@@ -229,15 +248,20 @@ export class Log extends LogBase {
     const o = this._formatJson(_level, fmt, args)
     const { level, time, name, msg, pid, hostname, diff, ...other } = o
 
-    const prefix = '  ' +
-      this._color(level, this.levColors[level], true) + ' ' +
+    const prefix =
+      '  ' +
+      this._color(level, this.levColors[level], true) +
+      ' ' +
       this._color(this.name, this.color, true)
 
     const strOther = Object.keys(other).length
-      ? stringify(this._applySerializers(other), this.opts.splitLine ? (this.opts.spaces ?? 2) : undefined)
+      ? stringify(
+        this._applySerializers(other),
+        this.opts.splitLine ? this.opts.spaces ?? 2 : undefined
+      )
       : ''
 
-    const str = (this.opts.splitLine)
+    const str = this.opts.splitLine
       ? [
           prefix,
           time,
@@ -246,7 +270,11 @@ export class Log extends LogBase {
           this._color('+' + ms(diff), this.color),
           hostname,
           pid
-        ].filter(s => s).join(' ').split(/\\n|\n/).join('\n' + prefix + ' ')
+        ]
+          .filter((s) => s)
+          .join(' ')
+          .split(/\\n|\n/)
+          .join('\n' + prefix + ' ')
       : [
           prefix,
           time,
@@ -255,7 +283,9 @@ export class Log extends LogBase {
           this._color('+' + ms(diff), this.color),
           hostname,
           pid
-        ].filter(s => s).join(' ')
+        ]
+          .filter((s) => s)
+          .join(' ')
     return this.render(str, level)
   }
 
@@ -264,11 +294,7 @@ export class Log extends LogBase {
    * @private
    */
   _color (str, color, isBold) {
-    return !this.opts.colors
-      ? str
-      : isBold
-        ? color.bold(str)
-        : color(str)
+    return !this.opts.colors ? str : isBold ? color.bold(str) : color(str)
   }
 }
 

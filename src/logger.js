@@ -3,7 +3,7 @@ import { Log } from './node.js'
 const loggers = {}
 
 /**
- * @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions
+ * @typedef {import('./index.js').LogOptions} LogOptions
  */
 
 /**

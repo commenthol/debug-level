@@ -29,4 +29,4 @@ export type MwLogOption = {
     levelNumbers?: boolean;
     Log?: typeof Log;
 };
-import { Log } from "./node.js";
+import { Log } from './node.js';

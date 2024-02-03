@@ -35,4 +35,4 @@ export type ExtLogOptionsHttpLog = {
 export type LogOptionsHttpLog = LogOptions & ExtLogOptionsHttpLog & {
     Log: typeof Log;
 };
-import { Log } from "./node.js";
+import { Log } from './node.js';

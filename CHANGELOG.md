@@ -1,4 +1,4 @@
-# 3.1.3-0
+# 3.1.3 (2024-02-25)
 
 - fix: types export (#4a6c3fd)
 - chore: bump dependencies (#e180d31)

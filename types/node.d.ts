@@ -87,7 +87,7 @@ export class Log extends LogBase {
         /**
          * stream writer
          */
-        stream?: NodeJS.WriteStream | undefined;
+        stream: NodeJS.WriteStream;
         /**
          * use sonic (default for production use)
          */

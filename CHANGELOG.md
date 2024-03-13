@@ -1,3 +1,8 @@
+# 3.1.4 (2024-03-13)
+
+- fix(#23): reuse same sonic streams (#451e6c0)
+- chore: bump dev dependencies (#2f6d723)
+
 # 3.1.3 (2024-02-25)
 
 - fix: types export (#4a6c3fd)

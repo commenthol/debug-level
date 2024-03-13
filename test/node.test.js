@@ -22,6 +22,7 @@ const reset = () => {
 
 describe('Log node', function () {
   describe('options', function () {
+    before(reset)
     after(reset)
 
     it('should get default options', function () {

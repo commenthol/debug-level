@@ -1,8 +1,30 @@
 import assert from 'assert'
 import fs from 'fs'
+import { Log } from '../src/index.js'
 import { Sonic } from '../src/Sonic.js'
 
+const defaultOpts = Log.options()
+
+const reset = () => {
+  Log.options(defaultOpts)
+  Log.reset()
+}
+
 describe('Sonic', function () {
+  before(reset)
+  after(reset)
+
+  it('issue#23 shall reuse same sonic stream', function () {
+    for (let i = 0; i < 50; i++) {
+      const l = new Log(`log:${i}`, {
+        level: 'INFO',
+        sonic: true,
+        sonicFlushMs: 10
+      })
+      l.info('hello')
+    }
+  })
+
   it('shall throw if no stream is setup', function () {
     assert.throws(() => {
       new Sonic() // eslint-disable-line no-new

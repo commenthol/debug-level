@@ -16,7 +16,7 @@ import {
 import { LogBase } from './LogBase.js'
 import { wrapConsole } from './wrapConsole.js'
 import { wrapDebug } from './wrapDebug.js'
-import { Sonic } from './Sonic.js'
+import { Sonic, sonicStreams } from './Sonic.js'
 import { errSerializer } from './serializers/err.js'
 import { Format } from './Format.js'
 
@@ -99,11 +99,15 @@ export class Log extends LogBase {
     this.color = selectColor(name, colorFn)
     this.levColors = levelColors(colorFn)
     // noop for TS
-    this.opts = { ..._opts, ...this.opts }
+    this.opts = {
+      stream: process.stderr,
+      ..._opts,
+      ...this.opts
+    }
     this.toJson = toJson
 
     this.stream = this.opts.sonic
-      ? new Sonic(this.opts.stream, {
+      ? sonicStreams.use(this.opts.stream, {
         minLength: this.opts.sonicLength,
         timeout: this.opts.sonicFlushMs
       })

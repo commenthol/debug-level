@@ -1,3 +1,9 @@
+# 3.2.0 (2024-07-21)
+
+- docs: update ci badge (#e99f6b2)
+- chore: deprecate node 18 (#f3931fe)
+- chore: bump dependencies (#5b4de1f)
+
 # 3.1.4 (2024-03-13)
 
 - fix(#23): reuse same sonic streams (#451e6c0)

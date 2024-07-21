@@ -45,7 +45,7 @@ export class Log extends LogBase {
         /**
          * log level
          */
-        level: import("./utils.js").Level;
+        level: import("./LogBase.js").Level;
         /**
          * namespaces for logging
          */
@@ -73,7 +73,7 @@ export class Log extends LogBase {
         /**
          * serializers to be applied on object properties
          */
-        serializers: any;
+        serializers: object;
         /**
          * url to report errors
          */
@@ -127,8 +127,8 @@ export namespace Log {
     }
 }
 export default Log;
-export type Level = import('./utils').Level;
-export type LogBaseOptions = import('./LogBase').LogBaseOptions;
+export type Level = import("./utils.js").Level;
+export type LogBaseOptions = import("./LogBase.js").LogBaseOptions;
 export type ExtLogOptionsBrowser = {
     /**
      * url to report errors

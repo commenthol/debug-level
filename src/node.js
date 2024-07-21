@@ -17,7 +17,7 @@ import { LogBase } from './LogBase.js'
 import { wrapConsole } from './wrapConsole.js'
 import { wrapDebug } from './wrapDebug.js'
 import { Sonic, sonicStreams } from './Sonic.js'
-import { errSerializer } from './serializers/err.js'
+import { errSerializer } from './serializers/index.js'
 import { Format } from './Format.js'
 
 const env = process.env.NODE_ENV || 'development'
@@ -25,8 +25,8 @@ const isDevEnv = /^dev/.test(env) // anything which starts with dev is seen as d
 
 const EXIT_EVENTS = ['unhandledRejection', 'uncaughtException']
 
-/** @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions */
-/** @typedef {import('./utils').Level} Level */
+/** @typedef {import('./LogBase.js').LogBaseOptions} LogBaseOptions */
+/** @typedef {import('./utils.js').Level} Level */
 /**
  * @typedef {object} ExtLogOptions
  * @property {boolean} [serverinfo] log serverinfo like hostname and pid
@@ -304,6 +304,9 @@ export class Log extends LogBase {
 
 Log.isDevEnv = isDevEnv
 Log.Sonic = Sonic
+Log.serializers = {
+  err: errSerializer
+}
 
 /**
  * @credits pino/lib/tools.js

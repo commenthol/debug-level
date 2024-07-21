@@ -6,4 +6,4 @@
  * @param {LogOptions} [opts]
  */
 export function logger(namespace: string, opts?: import("./index.js").LogOptions | undefined): any;
-export type LogOptions = import('./index.js').LogOptions;
+export type LogOptions = import("./index.js").LogOptions;

@@ -71,4 +71,4 @@ export function inspectNamespaces(obj: any): {
     namespaces: any;
 } | undefined;
 export function random(len: any): string;
-export type Level = 'LOG' | 'FATAL' | 'ERROR' | 'WARN' | 'INFO' | 'DEBUG' | 'TRACE' | 'OFF';
+export type Level = "LOG" | "FATAL" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "TRACE" | "OFF";

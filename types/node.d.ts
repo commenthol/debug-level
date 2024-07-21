@@ -79,7 +79,7 @@ export class Log extends LogBase {
         /**
          * serializers to be applied on object properties
          */
-        serializers: any;
+        serializers: object;
         /**
          * log serverinfo like hostname and pid
          */
@@ -136,9 +136,12 @@ export class Log extends LogBase {
 export namespace Log {
     export { isDevEnv };
     export { Sonic };
+    export namespace serializers {
+        export { errSerializer as err };
+    }
 }
-export type LogBaseOptions = import('./LogBase').LogBaseOptions;
-export type Level = import('./utils').Level;
+export type LogBaseOptions = import("./LogBase.js").LogBaseOptions;
+export type Level = import("./utils.js").Level;
 export type ExtLogOptions = {
     /**
      * log serverinfo like hostname and pid
@@ -178,4 +181,5 @@ import { LogBase } from './LogBase.js';
 declare function toJson(obj: object, serializers: object, spaces?: number | undefined): string;
 import { Sonic } from './Sonic.js';
 declare const isDevEnv: boolean;
+import { errSerializer } from './serializers/index.js';
 export {};

@@ -3,7 +3,7 @@
 > debug with levels
 
 [![NPM version](https://badge.fury.io/js/debug-level.svg)](https://www.npmjs.com/package/debug-level/)
-[![Build Status](https://github.com/commenthol/debug-level/workflows/CI/badge.svg?branch=main&event=push)](https://github.com/commenthol/debug-level/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI](https://github.com/commenthol/debug-level/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/commenthol/debug-level/actions/workflows/ci.yml)
 
 A universal JavaScript logging/ debugging utility which works in node and
 browsers.  

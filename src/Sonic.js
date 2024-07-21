@@ -30,6 +30,8 @@ export class Sonic {
 
     const { fd, path } = streamDescriptor(stream)
 
+    /** @type {import('sonic-boom').SonicBoom} */
+    // @ts-expect-error
     this.stream = new SonicBoom({ fd, dest: path, minLength, sync: true })
     this.stream.on('error', filterBrokenPipe.bind(null, this.stream))
 
@@ -90,10 +92,13 @@ export class SonicStreams extends Map {
    * @returns {string}
    */
   static hash (opts) {
-    return 'sonic!' + Object.keys(opts || {})
-      .sort()
-      .map((key) => `${key}:${opts[key]}`)
-      .join('!')
+    return (
+      'sonic!' +
+      Object.keys(opts || {})
+        .sort()
+        .map((key) => `${key}:${opts[key]}`)
+        .join('!')
+    )
   }
 
   /**

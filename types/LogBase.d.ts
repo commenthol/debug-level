@@ -1,5 +1,5 @@
 /**
- * @typedef {import('./utils').Level} Level
+ * @typedef {import('./utils.js').Level} Level
  *
  * @typedef {object} ExtLogBaseOptions
  * @property {Level} [level] log level
@@ -67,8 +67,8 @@ export class LogBase {
      */
     protected _log(nlevel: any, fmt: any, args: any): void;
 }
-export type Timestamp = 'epoch' | 'unix' | 'iso';
-export type Level = import('./utils').Level;
+export type Timestamp = "epoch" | "unix" | "iso";
+export type Level = import("./utils.js").Level;
 export type ExtLogBaseOptions = {
     /**
      * log level
@@ -107,6 +107,6 @@ export type ExtLogBaseOptions = {
      */
     serializers?: object;
 };
-export type FormatOption = import('./Format.js').FormatOption;
+export type FormatOption = import("./Format.js").FormatOption;
 export type LogBaseOptions = FormatOption & ExtLogBaseOptions;
 import { Format } from './Format.js';

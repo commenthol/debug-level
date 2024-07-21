@@ -24,7 +24,7 @@ export namespace LogEcs {
     export { ecsSerializers as serializers };
 }
 export type EcsSerializer = (val: any, escFields: object) => void;
-export type LogOptionsEcs = import('../node.js').LogOptions & {
+export type LogOptionsEcs = import("../node.js").LogOptions & {
     serializers: Record<string, EcsSerializer>;
 };
 import { Log } from '../node.js';

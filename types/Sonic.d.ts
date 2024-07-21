@@ -6,7 +6,8 @@ export class Sonic {
     constructor(stream: NodeJS.WriteStream, opts?: SonicOptions);
     _timer: any;
     _timeout: number;
-    stream: SonicBoom;
+    /** @type {import('sonic-boom').SonicBoom} */
+    stream: import("sonic-boom").SonicBoom;
     /**
      * @param {string} data
      * @returns {boolean}
@@ -46,4 +47,3 @@ export type SonicOptions = {
      */
     timeout?: number | undefined;
 };
-import SonicBoom from 'sonic-boom';

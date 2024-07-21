@@ -14,9 +14,13 @@ export class Format {
     get spaces(): number | undefined;
     _formatOpts(): void;
     formatOpts: {
-        stringify: (o: any) => string;
+        stringify: (any: any) => string;
         spaces: number | undefined;
     } | undefined;
+    /**
+     * @param  {...any} args
+     * @returns {string}
+     */
     stringify(...args: any[]): string;
     /**
      * formats arguments like `util.format`

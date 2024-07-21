@@ -13,7 +13,7 @@ const time = {
 }
 
 /**
- * @typedef {import('./utils').Level} Level
+ * @typedef {import('./utils.js').Level} Level
  *
  * @typedef {object} ExtLogBaseOptions
  * @property {Level} [level] log level

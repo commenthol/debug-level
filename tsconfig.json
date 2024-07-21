@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "declaration": true,
     "declarationDir": "types",
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "strict": true,
-    "module": "esnext",
-    "target": "esnext",
     "emitDeclarationOnly": true, 
-    "noEmitOnError": true
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
   },
   "include": [
-    "src/*.js",
-    "src/serializers/*.js",
-    "src/ecs/*.js",
+    "src",
   ],
   "exclude": [
     "node_modules",

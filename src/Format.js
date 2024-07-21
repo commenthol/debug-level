@@ -26,13 +26,22 @@ export class Format {
   }
 
   _formatOpts () {
+    /**
+     * @param {any} any
+     * @returns {string}
+     */
+    // @ts-expect-error
+    const stringify = (any) => fastStringify(any, null, this.opts.spaces)
     this.formatOpts = {
-      // @ts-expect-error
-      stringify: (o) => fastStringify(o, null, this.opts.spaces),
+      stringify,
       spaces: this.opts.spaces
     }
   }
 
+  /**
+   * @param  {...any} args
+   * @returns {string}
+   */
   stringify (...args) {
     // @ts-expect-error
     return fastStringify(...args)

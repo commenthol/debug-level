@@ -16,8 +16,8 @@ import { wrapConsole } from './wrapConsole.js'
 import { errSerializer } from './serializers/err.js'
 
 /**
- * @typedef {import('./utils').Level} Level
- * @typedef {import('./LogBase').LogBaseOptions} LogBaseOptions
+ * @typedef {import('./utils.js').Level} Level
+ * @typedef {import('./LogBase.js').LogBaseOptions} LogBaseOptions
  *
  * @typedef {object} ExtLogOptionsBrowser
  * @property {string} [url] url to report errors

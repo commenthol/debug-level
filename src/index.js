@@ -1,4 +1,4 @@
-/** @typedef {import('./utils').Level} Level */
+/** @typedef {import('./utils.js').Level} Level */
 /** @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions */
 /** @typedef {import('./node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 /** @typedef {import('./node.js').LogOptionHandleExitEvents} LogOptionHandleExitEvents */

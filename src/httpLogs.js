@@ -40,7 +40,6 @@ export function httpLogs (namespace, opts) {
   }
   options.serializers = {
     ...serializers,
-    // @ts-expect-error
     ...(options.Log.serializers || {}),
     ...(options.serializers || {})
   }

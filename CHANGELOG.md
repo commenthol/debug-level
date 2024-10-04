@@ -1,3 +1,8 @@
+# 3.2.1 (2024-10-04)
+
+- chore: bump dependencies (#5e03ed9)
+- fix: remove deprecated res._headers (#93e54ad)
+
 # 3.2.0 (2024-07-21)
 
 - docs: update ci badge (#e99f6b2)

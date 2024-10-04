@@ -90,7 +90,7 @@ const ecsRes = (res, ecsObj) => {
     'content-type': mimeType,
     cookie,
     ...headers
-  } = res._headers || {}
+  } = res.getHeaders() || {}
 
   ecsObj.http = ecsObj.http || {}
   ecsObj.http.response = {

@@ -364,13 +364,13 @@ describe('LogEcs', function () {
 
       const res = {
         statusCode: 500,
-        _headers: {
-          'x-powered-by': 'server'
-        },
         on: (ev, fn) => {
           onFn = fn
         },
-        removeListener: () => {}
+        removeListener: () => {},
+        getHeaders: () => ({
+          'x-powered-by': 'server'
+        })
       }
 
       let onFn

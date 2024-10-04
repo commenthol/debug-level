@@ -17,7 +17,7 @@ export function resSerializer (res) {
     [SET_COOKIE]: _1,
     [PROXY_AUTHENTICATE]: _2,
     ...headers
-  } = res.getHeaders ? res.getHeaders() : res._headers || {}
+  } = res.getHeaders() || {}
 
   const logRes = {
     statusCode: res.statusCode

@@ -34,7 +34,7 @@ export class SonicStreams extends Map<any, any> {
      * @param {SonicOptions} [opts]
      * @returns {Sonic}
      */
-    use(stream: NodeJS.WriteStream, opts?: SonicOptions | undefined): Sonic;
+    use(stream: NodeJS.WriteStream, opts?: SonicOptions): Sonic;
 }
 export const sonicStreams: SonicStreams;
 export type SonicOptions = {

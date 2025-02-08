@@ -5,5 +5,5 @@
  * @param {string} namespace
  * @param {LogOptions} [opts]
  */
-export function logger(namespace: string, opts?: import("./index.js").LogOptions | undefined): any;
+export function logger(namespace: string, opts?: LogOptions): any;
 export type LogOptions = import("./index.js").LogOptions;

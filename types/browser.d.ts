@@ -7,7 +7,7 @@ export class Log extends LogBase {
      * @param {LogOptionsBrowser} [opts] changed options
      * @return {object} global options
      */
-    static options(opts?: LogOptionsBrowser | undefined): object;
+    static options(opts?: LogOptionsBrowser): object;
     /**
      * save options in `localStorage`
      */
@@ -29,9 +29,9 @@ export class Log extends LogBase {
      * @param {LogOptionWrapConsole} [opts]
      * @return {function} unwrap function
      */
-    static wrapConsole(name?: string | undefined, opts?: (import("./Format.js").FormatOption & import("./LogBase.js").ExtLogBaseOptions & ExtLogOptionsBrowser & {
+    static wrapConsole(name?: string, opts?: import("./Format.js").FormatOption & import("./LogBase.js").ExtLogBaseOptions & ExtLogOptionsBrowser & {
         level4log?: import("./utils.js").Level | undefined;
-    }) | undefined): Function;
+    }): Function;
     /**
      * @param {string} name namespace of Logger
      * @param {LogOptionsBrowser} opts
@@ -96,7 +96,7 @@ export class Log extends LogBase {
      * @param {string} [fmt] formatter
      * @param {any[]} [args] log arguments
      */
-    send(level: Level | object, fmt?: string | undefined, args?: any[] | undefined): void;
+    send(level: Level | object, fmt?: string, args?: any[]): void;
     /**
      * format log arguments
      * @protected
@@ -114,7 +114,7 @@ export class Log extends LogBase {
      * @param {string} str
      * @param {Function} [cb]
      */
-    _sendLog(str: string, cb?: Function | undefined): void;
+    _sendLog(str: string, cb?: Function): void;
     /**
      * Add colors, style to string
      * @private

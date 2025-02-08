@@ -6,7 +6,7 @@ export class Format {
     /**
      * @param {FormatOption} [opts]
      */
-    constructor(opts?: FormatOption | undefined);
+    constructor(opts?: FormatOption);
     opts: {
         spaces: number | undefined;
     };

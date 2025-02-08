@@ -16,7 +16,7 @@
  * @param {MwLogOption} [options]
  * @return {function} connect middleware
  */
-export function browserLogs(options?: MwLogOption | undefined): Function;
+export function browserLogs(options?: MwLogOption): Function;
 /**
  * - [maxSize=100] max number of different name loggers
  * - [logAll=false] log everything even strings

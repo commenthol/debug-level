@@ -52,7 +52,7 @@ export class LogBase {
     /**
      * @param {string} [namespaces]
      */
-    enable(namespaces?: string | undefined): void;
+    enable(namespaces?: string): void;
     get enabled(): any;
     diff(): number;
     _prev: number | undefined;

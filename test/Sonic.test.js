@@ -27,7 +27,7 @@ describe('Sonic', function () {
 
   it('shall throw if no stream is setup', function () {
     assert.throws(() => {
-      new Sonic() // eslint-disable-line no-new
+      new Sonic()
     }, /TypeError: Cannot destructure property/)
   })
 
@@ -60,7 +60,8 @@ describe('Sonic', function () {
   })
 
   it('broken pipe', async function () {
-    const sleep = (ms = 1) => new Promise((resolve) => setTimeout(() => resolve(), ms))
+    const sleep = (ms = 1) =>
+      new Promise((resolve) => setTimeout(() => resolve(), ms))
 
     const fsStream = fs.createWriteStream('/dev/null')
     const stream = new Sonic(fsStream)

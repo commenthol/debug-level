@@ -7,9 +7,10 @@ window.localStorage.setItem('DEBUG_LEVEL', 'TRACE')
 const log = new Log('myApp')
 
 const ORD = ['th', 'st', 'nd', 'rd']
-const ordinals = (num) => num + (num > 10 && num < 14 ? 'th' : ORD[num % 10] || ORD[0])
+const ordinals = (num) =>
+  num + (num > 10 && num < 14 ? 'th' : ORD[num % 10] || ORD[0])
 const LEVEL = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL']
-const levels = () => LEVEL[Math.random() * LEVEL.length | 0]
+const levels = () => LEVEL[(Math.random() * LEVEL.length) | 0]
 let count = 1
 
 setInterval(() => {

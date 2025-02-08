@@ -68,13 +68,25 @@ describe('#utils', function () {
 
   describe('numbered levels', function () {
     it('shall convert to numbered levels', function () {
-      const res = LEVELS.TRACE.concat(LOG, '##').map(l => toNumLevel(l))
+      const res = LEVELS.TRACE.concat(LOG, '##').map((l) => toNumLevel(l))
       assert.deepStrictEqual(res, [60, 50, 40, 30, 20, 10, 30, 20])
     })
 
     it('shall convert back to readable levels', function () {
-      const res = [101, 60, 51, 50, 40, 30, 20, 10, 0].map(l => fromNumLevel(l))
-      assert.deepStrictEqual(res, ['FATAL', 'FATAL', 'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE', 'TRACE'])
+      const res = [101, 60, 51, 50, 40, 30, 20, 10, 0].map((l) =>
+        fromNumLevel(l)
+      )
+      assert.deepStrictEqual(res, [
+        'FATAL',
+        'FATAL',
+        'FATAL',
+        'ERROR',
+        'WARN',
+        'INFO',
+        'DEBUG',
+        'TRACE',
+        'TRACE'
+      ])
     })
   })
 })

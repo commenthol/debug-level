@@ -33,7 +33,7 @@ const serializers = {
  * @param {LogOptionsHttpLog} [opts]
  * @returns {(req: IncomingMessageWithId, res: ServerResponse, next: Function) => void} connect middleware
  */
-export function httpLogs (namespace, opts) {
+export function httpLogs(namespace, opts) {
   const options = {
     Log,
     ...opts
@@ -47,7 +47,7 @@ export function httpLogs (namespace, opts) {
   const log = new options.Log(namespace || 'debug-level:http', options)
   const generateId = options.customGenerateRequestId || generateRequestId
 
-  return function _httpLogs (req, res, next) {
+  return function _httpLogs(req, res, next) {
     if (!req.id) {
       req.id = generateId()
     }

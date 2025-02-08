@@ -1,15 +1,12 @@
-import {
-  circular,
-  quotes,
-  custom
-} from './testcases.js'
+import { circular, quotes, custom } from './testcases.js'
 import { ua } from '../helpers/ua.js'
 
 const err = {
   err: {
     name: 'TypeError',
     message: 'error message',
-    stack: 'TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile',
+    stack:
+      'TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile',
     status: 500
   }
 }
@@ -44,11 +41,17 @@ export default {
     ['ERROR test obj {"object":{"test":1},"msg":"the message"} +0ms'],
     ['ERROR test obj [1,2,3] +0ms'],
     ua === 'firefox'
-      ? ['ERROR test error {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} +0ms']
+      ? [
+          'ERROR test error {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} +0ms'
+        ]
       : ['ERROR test error {"status":500} +0ms'],
     ua === 'firefox'
-      ? ['ERROR test mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} +0ms']
-      : ['ERROR test mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} +0ms'],
+      ? [
+          'ERROR test mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} +0ms'
+        ]
+      : [
+          'ERROR test mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} +0ms'
+        ],
     ['ERROR test error message %s %% %d string 1.1 %O +0ms', err],
     ['ERROR test the message %O +0ms', { ...err, ...obj }],
     ['ERROR test the message %O +0ms', { ...err, ...obj }],
@@ -57,39 +60,307 @@ export default {
     ['ERROR test with level +0ms']
   ],
   colors: [
-    ['%cERROR%c %ctest%c string %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c 1 %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c false %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c the message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', obj, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c error message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', err, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c string %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c 1 %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c false %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c the message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', obj, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c the message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', obj, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c  %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', { arr: [1, 2, 3] }, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c error message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', err, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c  %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', circular, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c null %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c undefined %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c %d %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c %d %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c hello world %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c digit 42.7 %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c json {"object":{"test":1},"msg":"the message"} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c obj {"object":{"test":1},"msg":"the message"} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c obj [1,2,3] %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
+    [
+      '%cERROR%c %ctest%c string %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c 1 %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c false %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c the message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      obj,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c error message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      err,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c string %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c 1 %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c false %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c the message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      obj,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c the message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      obj,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c  %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      { arr: [1, 2, 3] },
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c error message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      err,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c  %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      circular,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c null %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c undefined %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c %d %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c %d %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c hello world %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c digit 42.7 %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c json {"object":{"test":1},"msg":"the message"} %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c obj {"object":{"test":1},"msg":"the message"} %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c obj [1,2,3] %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ],
     ua === 'firefox'
-      ? ['%cERROR%c %ctest%c error {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit']
-      : ['%cERROR%c %ctest%c error {"status":500} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
+      ? [
+          '%cERROR%c %ctest%c error {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} %c+0ms%c',
+          'color:#CC0000',
+          'color:inherit',
+          'color:#FF6600;font-weight:bold',
+          'color:inherit',
+          'color:#FF6600',
+          'color:inherit'
+        ]
+      : [
+          '%cERROR%c %ctest%c error {"status":500} %c+0ms%c',
+          'color:#CC0000',
+          'color:inherit',
+          'color:#FF6600;font-weight:bold',
+          'color:inherit',
+          'color:#FF6600',
+          'color:inherit'
+        ],
     ua === 'firefox'
-      ? ['%cERROR%c %ctest%c mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit']
-      : ['%cERROR%c %ctest%c mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c error message %s %% %d string 1.1 %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', err, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c the message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', { ...err, ...obj }, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c the message %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', { ...err, ...obj }, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c  %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', quotes, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c  %O %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', { req: custom }, 'color:#FF6600', 'color:inherit'],
-    ['%cERROR%c %ctest%c with level %c+0ms%c', 'color:#CC0000', 'color:inherit', 'color:#FF6600;font-weight:bold', 'color:inherit', 'color:#FF6600', 'color:inherit']
+      ? [
+          '%cERROR%c %ctest%c mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"stack":"TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile","status":500} %c+0ms%c',
+          'color:#CC0000',
+          'color:inherit',
+          'color:#FF6600;font-weight:bold',
+          'color:inherit',
+          'color:#FF6600',
+          'color:inherit'
+        ]
+      : [
+          '%cERROR%c %ctest%c mixed % string 1.1 2.2 3.33 {"object":{"test":1},"msg":"the message"} {"status":500} %c+0ms%c',
+          'color:#CC0000',
+          'color:inherit',
+          'color:#FF6600;font-weight:bold',
+          'color:inherit',
+          'color:#FF6600',
+          'color:inherit'
+        ],
+    [
+      '%cERROR%c %ctest%c error message %s %% %d string 1.1 %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      err,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c the message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      { ...err, ...obj },
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c the message %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      { ...err, ...obj },
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c  %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      quotes,
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c  %O %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      { req: custom },
+      'color:#FF6600',
+      'color:inherit'
+    ],
+    [
+      '%cERROR%c %ctest%c with level %c+0ms%c',
+      'color:#CC0000',
+      'color:inherit',
+      'color:#FF6600;font-weight:bold',
+      'color:inherit',
+      'color:#FF6600',
+      'color:inherit'
+    ]
   ]
 }

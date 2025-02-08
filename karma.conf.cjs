@@ -2,7 +2,7 @@ const karmaTestMiddleware = require('./test/helpers/karma-test-middleware.cjs')
 const path = require('path')
 
 // Reference: http://karma-runner.github.io/0.13/config/configuration-file.html
-module.exports = function karmaConfig (config) {
+module.exports = function karmaConfig(config) {
   config.set({
     browsers: [
       'Firefox',
@@ -45,10 +45,7 @@ module.exports = function karmaConfig (config) {
 
     // Configure code coverage reporter
     coverageReporter: {
-      reporters: [
-        { type: 'html', dir: 'coverage/' },
-        { type: 'text' }
-      ]
+      reporters: [{ type: 'html', dir: 'coverage/' }, { type: 'text' }]
     },
 
     client: {

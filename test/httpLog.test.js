@@ -19,7 +19,7 @@ describe('#httpLogs', function () {
       httpLogs()(req, res, () => {})
       res.end()
     }
-    return request(app, '/').then(res => {
+    return request(app, '/').then((res) => {
       assert.equal(res.statusCode, 200)
     })
   })
@@ -30,7 +30,7 @@ describe('#httpLogs', function () {
       res.statusCode = 400
       res.end()
     }
-    return request(app, '/400').then(res => {
+    return request(app, '/400').then((res) => {
       assert.equal(res.statusCode, 400)
     })
   })
@@ -41,7 +41,7 @@ describe('#httpLogs', function () {
       res.statusCode = 500
       res.end()
     }
-    return request(app, '/500').then(res => {
+    return request(app, '/500').then((res) => {
       assert.equal(res.statusCode, 500)
     })
   })
@@ -52,7 +52,7 @@ describe('#httpLogs', function () {
       res.writeHead(200)
       res.write(Array(10000).fill('...').join(''))
     }
-    request(app, '/abort').then(res => {
+    request(app, '/abort').then((res) => {
       res.on('data', () => {
         res.destroy()
         done()
@@ -61,7 +61,8 @@ describe('#httpLogs', function () {
   })
 
   it('log with custom req.id', function (done) {
-    const customGenerateRequestId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+    const customGenerateRequestId = () =>
+      Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
     const mw = httpLogs('my-module:http', { customGenerateRequestId })
     const app = (req, res) => {
       mw(req, res, () => {})
@@ -73,19 +74,22 @@ describe('#httpLogs', function () {
   })
 })
 
-function request (app, path) {
+function request(app, path) {
   return new Promise((resolve) => {
     const server = http.createServer(app).listen(() => {
       const { port } = server.address()
-      const req = http.request({
-        method: 'GET',
-        hostname: 'localhost',
-        port,
-        path
-      }, (res) => {
-        resolve(res)
-        server.close()
-      })
+      const req = http.request(
+        {
+          method: 'GET',
+          hostname: 'localhost',
+          port,
+          path
+        },
+        (res) => {
+          resolve(res)
+          server.close()
+        }
+      )
       req.end()
     })
   })

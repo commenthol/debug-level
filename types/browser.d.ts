@@ -86,10 +86,10 @@ export class Log extends LogBase {
      * render arguments to console.log
      * @public
      * @param {any[]} args console.log arguments
-     * @param {Level} level level of log line (might be used for custom Logger which uses different streams per level)
+     * @param {Level} [_level] level of log line (might be used for custom Logger which uses different streams per level)
      * @return {any[]}
      */
-    public render(args: any[], level: Level): any[];
+    public render(args: any[], _level?: Level): any[];
     /**
      * send log to server
      * @param {Level|object} level log level
@@ -105,7 +105,7 @@ export class Log extends LogBase {
     /**
      * format arguments for console.log
      * @private
-     * @param {object} param0
+     * @param {object} options
      * @return {Array} args for console.log
      */
     private _format;

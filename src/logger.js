@@ -10,7 +10,7 @@ const loggers = {}
  * @param {string} namespace
  * @param {LogOptions} [opts]
  */
-export function logger (namespace, opts) {
+export function logger(namespace, opts) {
   const { Log: optsLog, ..._opts } = opts || {}
   const LogCls = optsLog || Log
 

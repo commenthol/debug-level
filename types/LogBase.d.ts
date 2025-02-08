@@ -32,19 +32,19 @@ export class LogBase {
     _timeF: any;
     _time: any;
     /** always logs */
-    log: (...args: any[]) => void;
+    log: (..._args: any[]) => void;
     /** log with level FATAL */
-    fatal: (...args: any[]) => void;
+    fatal: (..._args: any[]) => void;
     /** log with level ERROR */
-    error: (...args: any[]) => void;
+    error: (..._args: any[]) => void;
     /** log with level WARN */
-    warn: (...args: any[]) => void;
+    warn: (..._args: any[]) => void;
     /** log with level INFO */
-    info: (...args: any[]) => void;
+    info: (..._args: any[]) => void;
     /** log with level DEBUG */
-    debug: (...args: any[]) => void;
+    debug: (..._args: any[]) => void;
     /** log with level TRACE */
-    trace: (...args: any[]) => void;
+    trace: (..._args: any[]) => void;
     /** @type {number|undefined} */
     pid: number | undefined;
     /** @type {string|undefined} */
@@ -65,7 +65,7 @@ export class LogBase {
     /**
      * @protected
      */
-    protected _log(nlevel: any, fmt: any, args: any): void;
+    protected _log(_nlevel: any, _fmt: any, _args: any): void;
 }
 export type Timestamp = "epoch" | "unix" | "iso";
 export type Level = import("./utils.js").Level;

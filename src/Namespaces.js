@@ -10,7 +10,7 @@ const LEVELS = [TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF]
 const LEVELS_REGEX = RegExp(`^(${LEVELS.join('|')}):`, 'i')
 
 export class Namespaces {
-  constructor (namespaces) {
+  constructor(namespaces) {
     this.skips = []
     this.names = []
     this.enable(namespaces)
@@ -19,14 +19,13 @@ export class Namespaces {
   /**
    * @param {string} namespaces
    */
-  enable (namespaces) {
+  enable(namespaces) {
     this.skips = []
     this.names = []
 
-    const splited = (typeof namespaces === 'string'
-      ? namespaces
-      : ''
-    ).split(/[\s,]+/)
+    const splited = (typeof namespaces === 'string' ? namespaces : '').split(
+      /[\s,]+/
+    )
 
     for (const _namespace of splited) {
       if (!_namespace) continue // ignore empty strings
@@ -39,18 +38,20 @@ export class Namespaces {
     }
 
     // sort names by levels
-    this.names = this.names.sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level))
+    this.names = this.names.sort(
+      (a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level)
+    )
   }
 
   /* c8 ignore next 3 */
-  disable () {
+  disable() {
     this.enable('')
   }
 
   /**
    * @param {string} name
    */
-  isEnabled (name, level) {
+  isEnabled(name, level) {
     if (name === '*') {
       return level || 'DEBUG'
     }
@@ -74,11 +75,9 @@ export class Namespaces {
    * @param {string} _namespace
    * @private
    */
-  _namespaceNLevel (_namespace) {
+  _namespaceNLevel(_namespace) {
     const level = (LEVELS_REGEX.exec(_namespace) || [])[1]
-    const namespace = _namespace
-      .replace(LEVELS_REGEX, '')
-      .replace(/\*/g, '.*?')
+    const namespace = _namespace.replace(LEVELS_REGEX, '').replace(/\*/g, '.*?')
     return { namespace, level }
   }
 }

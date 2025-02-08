@@ -112,10 +112,10 @@ export class Log extends LogBase {
      * render string to output stream
      * @public
      * @param {String} str string to render
-     * @param {String} level level of log line (might be used for custom Logger which uses different streams per level)
+     * @param {String} [_level] level of log line (might be used for custom Logger which uses different streams per level)
      * @return {String}
      */
-    public render(str: string, level: string): string;
+    public render(str: string, _level?: string): string;
     flush(): void;
     /**
      * format object to json

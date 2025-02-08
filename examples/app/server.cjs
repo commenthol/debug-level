@@ -9,7 +9,7 @@ const log = new Log('server')
 const logMw = browserLogs()
 const port = 3000
 
-function serveStatic (req, res) {
+function serveStatic(req, res) {
   const url = join(__dirname, '.', req.url)
   fs.stat(url, (err) => {
     if (err) {
@@ -20,18 +20,20 @@ function serveStatic (req, res) {
   })
 }
 
-http.createServer((req, res) => {
-  log.info(req.url)
+http
+  .createServer((req, res) => {
+    log.info(req.url)
 
-  if (/^\/debug-level/.test(req.url)) {
-    req.ip = req.ip || req.socket.remoteAddress
-    logMw(req, res)
-  } else {
-    if (req.url === '/') {
-      req.url = '/index.html'
+    if (/^\/debug-level/.test(req.url)) {
+      req.ip = req.ip || req.socket.remoteAddress
+      logMw(req, res)
+    } else {
+      if (req.url === '/') {
+        req.url = '/index.html'
+      }
+      serveStatic(req, res)
     }
-    serveStatic(req, res)
-  }
-}).listen(port, () => {
-  console.log(`\n  browse to http://localhost:${port}\n\n`)
-})
+  })
+  .listen(port, () => {
+    console.log(`\n  browse to http://localhost:${port}\n\n`)
+  })

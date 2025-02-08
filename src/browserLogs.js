@@ -12,21 +12,21 @@ const gif = Buffer.from(
  * @param {string} url
  * @returns {object}
  */
-function parseQuery (url) {
+function parseQuery(url) {
   // eslint-disable-next-line no-unused-vars
   const [path, search] = url.split('?')
   return Object.fromEntries(new URLSearchParams(search))
 }
 
 class Loggers {
-  constructor (opts) {
+  constructor(opts) {
     const { maxSize = 100 } = opts || {}
 
     this.LogCls = opts?.Log || Log
     this.cache = new MapLRU(maxSize)
   }
 
-  get (name) {
+  get(name) {
     let log = this.cache.get(name)
     if (!log) {
       log = new this.LogCls(name)
@@ -40,7 +40,7 @@ class Loggers {
  * @param {string|object} str
  * @returns {object}
  */
-function parseJson (str) {
+function parseJson(str) {
   if (typeof str === 'object') {
     return str
   }
@@ -70,7 +70,7 @@ function parseJson (str) {
  * @param {MwLogOption} [options]
  * @return {function} connect middleware
  */
-export function browserLogs (options) {
+export function browserLogs(options) {
   const opts = {
     maxSize: 100,
     logAll: false,
@@ -82,7 +82,7 @@ export function browserLogs (options) {
   const log = opts.logAll ? new LogCls('debug-level:browser') : undefined
   const loggers = new Loggers(opts)
 
-  return function _browserLogs (req, res) {
+  return function _browserLogs(req, res) {
     const query = req.query ? req.query : parseQuery(req.url)
 
     res.setHeader('Cache-Control', 'no-store, no-cache')

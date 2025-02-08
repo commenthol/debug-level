@@ -5,16 +5,17 @@ const circ = Symbol('circ')
  * @param {object} [err]
  * @returns {object}
  */
-export function errSerializer (err) {
+export function errSerializer(err) {
   if (!(err instanceof Error)) {
     return err
   }
 
   const o = {
     msg: err.message,
-    name: Object.prototype.toString.call(err.constructor) === '[object Function]'
-      ? err.constructor.name
-      : err.name,
+    name:
+      Object.prototype.toString.call(err.constructor) === '[object Function]'
+        ? err.constructor.name
+        : err.name,
     stack: err.stack
   }
   err[circ] = undefined

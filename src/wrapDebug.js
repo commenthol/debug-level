@@ -4,21 +4,21 @@ let wrapped = null
 
 const unwrap = () => {
   if (wrapped) {
-    Object.keys(wrapped).forEach(key => {
+    Object.keys(wrapped).forEach((key) => {
       debug[key] = wrapped[key]
     })
     wrapped = null
   }
 }
 
-export function wrapDebug (Log) {
+export function wrapDebug(Log) {
   if (wrapped) return unwrap
   class Loggers {
-    constructor () {
+    constructor() {
       this.cache = {}
     }
 
-    get (namespace) {
+    get(namespace) {
       let logger = this.cache[namespace]
       if (!logger) {
         logger = this.cache[namespace] = new Log(namespace)

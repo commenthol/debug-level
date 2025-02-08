@@ -23,7 +23,7 @@ export class Sonic {
    * @param {NodeJS.WriteStream} stream
    * @param {SonicOptions} opts
    */
-  constructor (stream, opts = {}) {
+  constructor(stream, opts = {}) {
     const { minLength = 4096, timeout = 1000 } = opts
     this._timer = undefined
     this._timeout = timeout
@@ -44,7 +44,7 @@ export class Sonic {
    * @param {string} data
    * @returns {boolean}
    */
-  write (data) {
+  write(data) {
     const isWritten = this.stream.write(data)
 
     if (!this._timer) {
@@ -57,19 +57,19 @@ export class Sonic {
     return isWritten
   }
 
-  flush () {
+  flush() {
     // @ts-expect-error
     if (!this.stream.destroyed) {
       this.stream.flushSync()
     }
   }
 
-  destroy () {
+  destroy() {
     this.stream.destroy()
   }
 }
 
-function filterBrokenPipe (stream, err) {
+function filterBrokenPipe(stream, err) {
   if (err.code === 'EPIPE') {
     // If we get EPIPE, we should stop logging here
     // however we have no control to the consumer of
@@ -91,7 +91,7 @@ export class SonicStreams extends Map {
    * @param {Record<string,any>} opts
    * @returns {string}
    */
-  static hash (opts) {
+  static hash(opts) {
     return (
       'sonic!' +
       Object.keys(opts || {})
@@ -106,7 +106,7 @@ export class SonicStreams extends Map {
    * @param {SonicOptions} [opts]
    * @returns {Sonic}
    */
-  use (stream, opts = {}) {
+  use(stream, opts = {}) {
     const streamHash = SonicStreams.hash(streamDescriptor(stream))
     const optsHash = SonicStreams.hash(opts)
     let streamRecord = this.get(streamHash)

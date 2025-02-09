@@ -4,12 +4,12 @@
 `log.debug('hello world')`
 
 ```
-benchDebug*10000: 18.546ms
-benchBunyan*10000: 22.96ms
-benchPino*10000: 9.484ms
-benchDebugLevel*10000: 16.34ms
-benchPinoAsync*10000: 6.189ms
-benchDebugLevelAsync*10000: 9.902ms
+benchDebug*10000: 17.8ms
+benchBunyan*10000: 17.515ms
+benchPino*10000: 8.17ms
+benchDebugLevel*10000: 12.267ms
+benchPinoAsync*10000: 5.024ms
+benchDebugLevelAsync*10000: 8.451ms
 
 ```
 
@@ -18,12 +18,12 @@ benchDebugLevelAsync*10000: 9.902ms
 `log.debug('...2000chars...')`
 
 ```
-benchDebug*10000: 57.241ms
-benchBunyan*10000: 75.729ms
-benchPino*10000: 65.504ms
-benchDebugLevel*10000: 67.711ms
-benchPinoAsync*10000: 56.107ms
-benchDebugLevelAsync*10000: 59.471ms
+benchDebug*10000: 45.957ms
+benchBunyan*10000: 97.647ms
+benchPino*10000: 51.415ms
+benchDebugLevel*10000: 54.878ms
+benchPinoAsync*10000: 48.239ms
+benchDebugLevelAsync*10000: 51.354ms
 
 ```
 
@@ -32,12 +32,12 @@ benchDebugLevelAsync*10000: 59.471ms
 `log.debug('hello %s', 'world')`
 
 ```
-benchDebug*10000: 20.458ms
-benchBunyan*10000: 24.222ms
-benchPino*10000: 10.218ms
-benchDebugLevel*10000: 17.011ms
-benchPinoAsync*10000: 5.769ms
-benchDebugLevelAsync*10000: 10.59ms
+benchDebug*10000: 18.493ms
+benchBunyan*10000: 17.792ms
+benchPino*10000: 8.904ms
+benchDebugLevel*10000: 11.936ms
+benchPinoAsync*10000: 5.433ms
+benchDebugLevelAsync*10000: 8.517ms
 
 ```
 
@@ -46,12 +46,12 @@ benchDebugLevelAsync*10000: 10.59ms
 `log.debug('hello %s %j %d', 'world', { obj: true }, 4, { another: 'obj' })`
 
 ```
-benchDebug*10000: 23.713ms
-benchBunyan*10000: 38.137ms
-benchPino*10000: 13.356ms
-benchDebugLevel*10000: 25.32ms
-benchPinoAsync*10000: 10.579ms
-benchDebugLevelAsync*10000: 18.082ms
+benchDebug*10000: 21.025ms
+benchBunyan*10000: 28.253ms
+benchPino*10000: 12.756ms
+benchDebugLevel*10000: 17.192ms
+benchPinoAsync*10000: 8.299ms
+benchDebugLevelAsync*10000: 14.229ms
 
 ```
 
@@ -60,12 +60,12 @@ benchDebugLevelAsync*10000: 18.082ms
 `log.debug({ msg: 'the message',string: 'string',number: 42,bool: true })`
 
 ```
-benchDebug*10000: 38.19ms
-benchBunyan*10000: 25.403ms
-benchPino*10000: 15.406ms
-benchDebugLevel*10000: 17.856ms
-benchPinoAsync*10000: 8.526ms
-benchDebugLevelAsync*10000: 14.703ms
+benchDebug*10000: 32.102ms
+benchBunyan*10000: 20.549ms
+benchPino*10000: 12.794ms
+benchDebugLevel*10000: 14.221ms
+benchPinoAsync*10000: 7.362ms
+benchDebugLevelAsync*10000: 11.94ms
 
 ```
 
@@ -74,12 +74,12 @@ benchDebugLevelAsync*10000: 14.703ms
 `log.debug(deep)`
 
 ```
-benchDebug*10000: 1.046s
-benchBunyan*10000: 269.327ms
-benchPino*10000: 263.777ms
-benchDebugLevel*10000: 278.875ms
-benchPinoAsync*10000: 231.434ms
-benchDebugLevelAsync*10000: 242.807ms
+benchDebug*10000: 789.847ms
+benchBunyan*10000: 189.849ms
+benchPino*10000: 175.877ms
+benchDebugLevel*10000: 186.95ms
+benchPinoAsync*10000: 167.965ms
+benchDebugLevelAsync*10000: 178.79ms
 
 ```
 
@@ -88,11 +88,11 @@ benchDebugLevelAsync*10000: 242.807ms
 `log.debug('deep %j', deep)`
 
 ```
-benchDebug*10000: 20.346ms
-benchBunyan*10000: 535.546ms
-benchPino*10000: 526.309ms
-benchDebugLevel*10000: 585.732ms
-benchPinoAsync*10000: 492.425ms
-benchDebugLevelAsync*10000: 555.237ms
+benchDebug*10000: 19.26ms
+benchBunyan*10000: 666.29ms
+benchPino*10000: 422.59ms
+benchDebugLevel*10000: 469.566ms
+benchPinoAsync*10000: 407.956ms
+benchDebugLevelAsync*10000: 458.122ms
 
 ```

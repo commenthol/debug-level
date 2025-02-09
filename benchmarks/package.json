@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "bunyan": "^1.8.15",
-    "debug": "^4.3.4",
+    "debug": "^4.4.0",
     "fastbench": "^1.0.1",
-    "pino": "^8.16.0"
+    "pino": "^9.6.0"
   },
   "devDependencies": {}
 }

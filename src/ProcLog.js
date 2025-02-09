@@ -11,7 +11,7 @@ import { inspectOpts, inspectNamespaces, INFO } from './utils.js'
  * @property {string} [namespaces] namespaces for logging
  */
 
-export const EVENT_NAME = 'log-level'
+export const EVENT_PROC_LOG = 'log-level'
 
 const defaultOptions = {
   level: INFO,
@@ -71,7 +71,7 @@ export class ProcLog extends LogBase {
 
   _log(level, fmt, args) {
     // @ts-expect-error
-    process.emit(EVENT_NAME, level, this.name, fmt, args)
+    process.emit(EVENT_PROC_LOG, level, this.name, fmt, args)
   }
 }
 
@@ -86,9 +86,9 @@ export function initProcLog(options) {
     logger[namespace] || (logger[namespace] = new LogCls(namespace, options))
 
   // prevent multiple log-lines from adding more than one listener
-  process.removeAllListeners(EVENT_NAME)
+  process.removeAllListeners(EVENT_PROC_LOG)
   // listen on event
-  process.on(EVENT_NAME, (level, namespace, fmt, args) => {
+  process.on(EVENT_PROC_LOG, (level, namespace, fmt, args) => {
     const log = getLogger(namespace)
     log[level.toLowerCase()]?.(fmt, ...args)
   })

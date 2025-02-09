@@ -11,7 +11,7 @@ export function initProcLog(options?: LogOptionsWithCustomLog): void;
  * @property {Level} [level] log level
  * @property {string} [namespaces] namespaces for logging
  */
-export const EVENT_NAME: "log-level";
+export const EVENT_PROC_LOG: "log-level";
 /**
  * Decouple logging via process event 'log'. This allows to use a different
  * logger framework than 'debug-level'. In such cases you'd need to adapt your

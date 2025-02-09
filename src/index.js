@@ -13,7 +13,7 @@ import { LogEcs } from './ecs/LogEcs.js'
 import { logger } from './logger.js'
 import { browserLogs } from './browserLogs.js'
 import { httpLogs } from './httpLogs.js'
-import { ProcLog, initProcLog, EVENT_NAME } from './ProcLog.js'
+import { ProcLog, initProcLog, EVENT_PROC_LOG } from './ProcLog.js'
 
 export default Log
 
@@ -23,7 +23,7 @@ export {
   logger,
   ProcLog,
   initProcLog,
-  EVENT_NAME,
+  EVENT_PROC_LOG,
   browserLogs,
   httpLogs
 }

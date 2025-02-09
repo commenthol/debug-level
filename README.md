@@ -35,6 +35,7 @@ Fully typed with JSDocs and Typescript.
 * [Settings](#settings)
   * [Environment Variables](#environment-variables)
   * [Options](#options)
+  * [Writing to file](#writing-to-file)
   * [Serializers](#serializers)
 * [Levels](#levels)
 * [Namespaces](#namespaces)
@@ -46,6 +47,7 @@ Fully typed with JSDocs and Typescript.
 * [Wrap console logs](#wrap-console-logs)
 * [Wrap debug output](#wrap-debug-output)
 * [Handle node exit events](#handle-node-exit-events)
+* [Emit Log events with ProcLog](#emit-log-events-with-proclog)
 * [Logging HTTP requests](#logging-http-requests)
 * [Logging Browser messages](#logging-browser-messages)
 * [Logging in Elastic Common Schema (ECS)](#logging-in-elastic-common-schema-ecs)
@@ -253,7 +255,7 @@ log.debug({ object: 1 }) // ...
 Consider using a tool like [logrotate](https://github.com/logrotate/logrotate) to rotate the log-file.
 
 ```sh
-$ node server.js 2> /var/log/server.log 
+$ node server.js 2> /var/log/server.log
 ```
 
 To rotate the file with logrotate, add the following to `/etc/logrotate.d/server`:
@@ -533,6 +535,43 @@ Log.handleExitEvents()
 
 // with custom namespace
 Log.handleExitEvents('process-exit')
+```
+
+## Emit Log events with ProcLog
+
+Decouple logging via process event 'log'. This allows to use a different
+logger framework than 'debug-level'. In such cases you'd need to adapt your
+framework of choice for logging. Check `initProcLog()` for inspiration.
+
+Emits the following process event:
+
+```
+process.emit('log', level, name, fmt, args)
+```
+
+where
+- `level` is TRACE, DEBUG, INFO, WARN, ERROR, FATAL, LOG
+- `name` is the namespace of the logger
+- `fmt` is optional formatter, e.g. `%s`
+- `args` is an array of arguments passed to the logger
+
+Only enabled namespaces emit log events.
+
+```js
+import { ProcLog, initProcLog } from 'debug-level'
+
+// Initialize process event logging with 'debug-level'
+// define here serializer, stream options, etc.
+// If using a different logger you'd need to provide a custom initializer which 
+// connects to the framework of choice.
+initProcLog({ serializers: {...}, Log: LogEcs })
+
+// Add a logger with a namespace.
+// Use options only for defining the log-level (or leave undefined to control
+// via env-vars)
+const log = new ProcLog('app:namespace')
+// add some logging
+log.info('show some logging')
 ```
 
 ## Logging HTTP requests

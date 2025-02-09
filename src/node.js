@@ -194,6 +194,9 @@ export class Log extends LogBase {
     })
   }
 
+  /**
+   * @returns {() => void} unwrap functions
+   */
   static wrapDebug() {
     return wrapDebug(Log)
   }
@@ -362,7 +365,7 @@ function toJson(obj, serializers, spaces) {
     let value = obj[key]
     if (Object.prototype.hasOwnProperty.call(obj, key) && value !== undefined) {
       if (serializers && serializers[key]) {
-        value = serializers[key](value)
+        value = serializers[key](value, obj)
       }
       switch (typeof value) {
         case 'function':

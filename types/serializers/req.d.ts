@@ -1,16 +1,3 @@
-/**
- * request serializer
- *
- * removes cookie values and authorization headers
- * @param {object} [req]
- * @returns {object}
- */
-export function reqSerializer(req?: object): object;
-/**
- * request serializer
- *
- * masks cookie values and authorization headers
- * @param {object} [req]
- * @returns {object}
- */
-export function reqMaskSerializer(req?: object): object;
+export function reqSerializer(val: any, logObj?: object): any;
+export function reqMaskSerializer(val: any, logObj?: object): any;
+export type Serializer = import("./err.js").Serializer;

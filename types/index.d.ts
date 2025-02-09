@@ -10,6 +10,7 @@ export type LogOptionsEcs = import("./ecs/LogEcs.js").LogOptionsEcs;
 export type MwLogOption = import("./browserLogs.js").MwLogOption;
 export type LogOptionsHttpLog = import("./httpLogs.js").LogOptionsHttpLog;
 export type IncomingMessageWithId = import("./httpLogs.js").IncomingMessageWithId;
+export type Serializer = import("./serializers/index.js").Serializer;
 import { Log } from './node.js';
 import { LogEcs } from './ecs/LogEcs.js';
 import { logger } from './logger.js';

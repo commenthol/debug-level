@@ -1,7 +1,17 @@
+/**
+ * @typedef {import('../serializers/index.js').Serializer} Serializer
+ */
+
 import { startTimeKey } from '../serializers/res.js'
 
 const isNotObject = (any) => !any || typeof any !== 'object'
 
+/**
+ * @type {Serializer}
+ * @param {object|Error|undefined} err
+ * @param {object} ecsObj
+ * @returns {object}
+ */
 const ecsError = (err, ecsObj) => {
   if (!err?.message) {
     return
@@ -19,6 +29,11 @@ const ecsError = (err, ecsObj) => {
   }
 }
 
+/**
+ * @type {Serializer}
+ * @param {object} req Request object
+ * @param {object} ecsObj
+ */
 const ecsClient = (req, ecsObj) => {
   const ip = req.ip ? req.ip : req.socket?.remoteAddress
   const port = req.socket?.remotePort
@@ -30,6 +45,11 @@ const ecsClient = (req, ecsObj) => {
   }
 }
 
+/**
+ * @type {Serializer}
+ * @param {object} req Request object
+ * @param {object} ecsObj
+ */
 const ecsUrl = (req, ecsObj) => {
   const { originalUrl, url, headers } = req
   const _url = originalUrl || url
@@ -47,6 +67,11 @@ const ecsUrl = (req, ecsObj) => {
   }
 }
 
+/**
+ * @type {Serializer}
+ * @param {object} req Request object
+ * @param {object} ecsObj
+ */
 const ecsReq = (req, ecsObj) => {
   if (isNotObject(req)) {
     return
@@ -79,6 +104,11 @@ const ecsReq = (req, ecsObj) => {
   }
 }
 
+/**
+ * @type {Serializer}
+ * @param {object} res Response object
+ * @param {object} ecsObj
+ */
 const ecsRes = (res, ecsObj) => {
   if (isNotObject(res)) {
     return

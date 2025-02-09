@@ -3,7 +3,24 @@ export namespace ecsSerializers {
     export { ecsReq as req };
     export { ecsRes as res };
 }
-declare function ecsError(err: any, ecsObj: any): void;
-declare function ecsReq(req: any, ecsObj: any): void;
-declare function ecsRes(res: any, ecsObj: any): void;
+export type Serializer = import("../serializers/index.js").Serializer;
+/**
+ * @type {Serializer}
+ * @param {object|Error|undefined} err
+ * @param {object} ecsObj
+ * @returns {object}
+ */
+declare const ecsError: Serializer;
+/**
+ * @type {Serializer}
+ * @param {object} req Request object
+ * @param {object} ecsObj
+ */
+declare const ecsReq: Serializer;
+/**
+ * @type {Serializer}
+ * @param {object} res Response object
+ * @param {object} ecsObj
+ */
+declare const ecsRes: Serializer;
 export {};

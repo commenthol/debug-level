@@ -1,8 +1,13 @@
 /**
+ * @typedef {import('./err.js').Serializer} Serializer
+ */
+
+/**
  * request serializer
  *
  * removes cookie values and authorization headers
- * @param {object} [req]
+ * @type {Serializer}
+ * @param {object} [req] Request object
  * @returns {object}
  */
 export function reqSerializer(req) {
@@ -29,6 +34,7 @@ export function reqSerializer(req) {
  * request serializer
  *
  * masks cookie values and authorization headers
+ * @type {Serializer}
  * @param {object} [req]
  * @returns {object}
  */

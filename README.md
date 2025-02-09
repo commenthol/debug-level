@@ -51,6 +51,7 @@ Fully typed with JSDocs and Typescript.
 * [Logging HTTP requests](#logging-http-requests)
 * [Logging Browser messages](#logging-browser-messages)
 * [Logging in Elastic Common Schema (ECS)](#logging-in-elastic-common-schema-ecs)
+  * [ECS-Serializers](#ecs-serializers)
 * [License](#license)
 * [Benchmarks](#benchmarks)
 * [References](#references)
@@ -691,6 +692,38 @@ import { LogEcs, logger } from 'debug-level'
 const log = logger('my-pkg:topic', { Log: LogEcs })
 
 log.error(new Error('baam'))
+```
+
+### ECS-Serializers
+
+To serialize top-level object keys you may use standard or custom functions. For
+LogEcs a serializer for key `err` (error), `req` (http-request) and `res`
+(http-response) is provided in node.
+
+The signature is a bit different to [Log-serializers](#serializers) due to the
+JSON nature of ecs logging.
+
+We recommend to adhere to [ECS field reference](https://www.elastic.co/guide/en/ecs/current/ecs-field-reference.html).
+
+```js
+/**
+ * custom serialize function for key `my`
+ * @see https://www.elastic.co/guide/en/ecs/current/ecs-custom-fields-in-ecs.html#_capitalization
+ * @param {object} val
+ * @param {object} ecsFields
+ */
+const myEcsSerializer = function (val, ecsFields) {
+  if (typeof val !== 'object' || !val) return
+  const { foo } = val
+  ecsFields.My = foo // using capitalized custom field
+}
+
+const log = new LogEcs('foobar', { serializers: { my: myEcsSerializer }})
+
+const my = { foo: 'bar', sense: 42 }
+log.info({ my })
+//> {"log":{"level":"INFO","logger":"foobar","diff_ms":0},"@timestamp":"2025-02-09T08:09:02.719Z",⏎
+//   "process":{"pid":33921},"host":{"hostname":"einstein"},"My":"bar"}
 ```
 
 

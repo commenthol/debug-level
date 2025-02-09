@@ -1,17 +1,23 @@
 /**
- * @typedef {(val: any, escFields: object) => void} EcsSerializer
- * @typedef {import('../node.js').LogOptions & {serializers: Record<string, EcsSerializer>}} LogOptionsEcs
+ * @typedef {import('../serializers/index.js').Serializer} Serializer
+ */
+/**
+ * @typedef {import('../node.js').LogOptions & {serializers: Record<string, Serializer>}} LogOptionsEcs
+ * @typedef {import('../node.js').LogOptionWrapConsole} LogOptionWrapConsole
  */
 /**
  * Elastic Common Schema (ECS) compatible logger;
  * See [field reference](https://www.elastic.co/guide/en/ecs/current/ecs-field-reference.html)
+ *
+ * Default serializers apply to `err` (error), `req` (request) and `res`
+ * (response) keys in objects
  */
 export class LogEcs extends Log {
     /**
      * @param {string} name logger namespace
-     * @param {LogOptionsEcs} opts
+     * @param {LogOptionsEcs} [opts]
      */
-    constructor(name: string, opts: LogOptionsEcs);
+    constructor(name: string, opts?: LogOptionsEcs);
     serializers: any;
     _extraName: string;
     toJson: (obj: any, serializers: any) => string;
@@ -23,9 +29,10 @@ export class LogEcs extends Log {
 export namespace LogEcs {
     export { ecsSerializers as serializers };
 }
-export type EcsSerializer = (val: any, escFields: object) => void;
+export type Serializer = import("../serializers/index.js").Serializer;
 export type LogOptionsEcs = import("../node.js").LogOptions & {
-    serializers: Record<string, EcsSerializer>;
+    serializers: Record<string, Serializer>;
 };
+export type LogOptionWrapConsole = import("../node.js").LogOptionWrapConsole;
 import { Log } from '../node.js';
 import { ecsSerializers } from './serializers.js';

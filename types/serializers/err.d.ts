@@ -1,6 +1,2 @@
-/**
- * serializer for errors
- * @param {object} [err]
- * @returns {object}
- */
-export function errSerializer(err?: object): object;
+export function errSerializer(val: any, logObj?: object): any;
+export type Serializer = (val: any, logObj?: object) => any;

@@ -1,9 +1,12 @@
+/**
+ * @typedef {(val: any, logObj?: object) => any} Serializer
+ */
+
 const circ = Symbol('circ')
 
 /**
  * serializer for errors
- * @param {object} [err]
- * @returns {object}
+ * @type {Serializer}
  */
 export function errSerializer(err) {
   if (!(err instanceof Error)) {

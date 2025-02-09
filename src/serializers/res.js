@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('./err.js').Serializer} Serializer
+ */
+
 export const startTimeKey = Symbol('startTime')
 
 const SET_COOKIE = 'set-cookie'
@@ -7,7 +11,8 @@ const PROXY_AUTHENTICATE = 'proxy-authenticate'
  * response serializer
  *
  * removes set-cookie and proxy-authenticate headers
- * @param {object} [res]
+ * @type {Serializer}
+ * @param {object} [res] Response object
  * @returns {object}
  */
 export function resSerializer(res) {
@@ -38,7 +43,8 @@ export function resSerializer(res) {
  * response serializer
  *
  * masks set-cookie and proxy-authenticate response headers
- * @param {object} [res]
+ * @type {Serializer}
+ * @param {object} [res] Response object
  * @returns {object}
  */
 export function resMaskSerializer(res) {

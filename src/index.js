@@ -7,6 +7,7 @@
 /** @typedef {import('./browserLogs.js').MwLogOption} MwLogOption */
 /** @typedef {import('./httpLogs.js').LogOptionsHttpLog} LogOptionsHttpLog */
 /** @typedef {import('./httpLogs.js').IncomingMessageWithId} IncomingMessageWithId */
+/** @typedef {import('./serializers/index.js').Serializer} Serializer */
 
 import { Log } from './node.js'
 import { LogEcs } from './ecs/LogEcs.js'

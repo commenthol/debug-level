@@ -46,7 +46,12 @@ bdescribe('#Log', function () {
     })
 
     it('should set options', function () {
-      Log.options({ level: 'error', colors: false, url: 'http://localhost:3000/log', namespaces: 'foo*,bar' })
+      Log.options({
+        level: 'error',
+        colors: false,
+        url: 'http://localhost:3000/log',
+        namespaces: 'foo*,bar'
+      })
       const res = Log.options()
       assert.deepStrictEqual(res, {
         level: 'error',
@@ -57,7 +62,12 @@ bdescribe('#Log', function () {
     })
 
     it('should save options', function () {
-      Log.options({ level: 'ERROR', url: undefined, colors: true, namespaces: 'foo*,bar' })
+      Log.options({
+        level: 'ERROR',
+        url: undefined,
+        colors: true,
+        namespaces: 'foo*,bar'
+      })
       Log.save()
       const store = window.localStorage
       const res = Object.keys(store)
@@ -80,12 +90,12 @@ bdescribe('#Log', function () {
 
     const tests = [
       [undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-      ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-      ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
-      ['WARN',    { fatal: 1, error: 1, warn: 1 }],
-      ['ERROR',   { fatal: 1, error: 1 }],
-      ['FATAL',   { fatal: 1 }],
-      ['OFF',     {}]
+      ['DEBUG', { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      ['INFO', { fatal: 1, error: 1, warn: 1, info: 1 }],
+      ['WARN', { fatal: 1, error: 1, warn: 1 }],
+      ['ERROR', { fatal: 1, error: 1 }],
+      ['FATAL', { fatal: 1 }],
+      ['OFF', {}]
     ]
     tests.forEach(([level, expects]) => {
       it('shall display logs for level ' + level, function () {
@@ -116,12 +126,12 @@ bdescribe('#Log', function () {
 
       const tests = [
         [undefined, {}],
-        ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-        ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
-        ['WARN',    { fatal: 1, error: 1, warn: 1 }],
-        ['ERROR',   { fatal: 1, error: 1 }],
-        ['FATAL',   { fatal: 1 }],
-        ['OFF',     {}]
+        ['DEBUG', { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+        ['INFO', { fatal: 1, error: 1, warn: 1, info: 1 }],
+        ['WARN', { fatal: 1, error: 1, warn: 1 }],
+        ['ERROR', { fatal: 1, error: 1 }],
+        ['FATAL', { fatal: 1 }],
+        ['OFF', {}]
       ]
       tests.forEach(([level, expects]) => {
         it('shall display logs for level ' + level, function () {
@@ -152,20 +162,24 @@ bdescribe('#Log', function () {
 
     const tests = [
       // level,   nsLevel,   expects
-      [undefined, undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-      [undefined, 'DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-      [undefined, 'INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
-      [undefined, 'WARN',    { fatal: 1, error: 1, warn: 1 }],
-      [undefined, 'ERROR',   { fatal: 1, error: 1 }],
-      [undefined, 'FATAL',   { fatal: 1 }],
-      [undefined, 'OFF',     {}],
-      ['ERROR',   undefined, { fatal: 1, error: 1 }],
-      ['ERROR',   'DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-      ['ERROR',   'INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
-      ['ERROR',   'WARN',    { fatal: 1, error: 1, warn: 1 }],
-      ['ERROR',   'ERROR',   { fatal: 1, error: 1 }],
-      ['FATAL',   'FATAL',   { fatal: 1 }],
-      ['ERROR',   'OFF',     {}]
+      [
+        undefined,
+        undefined,
+        { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }
+      ],
+      [undefined, 'DEBUG', { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      [undefined, 'INFO', { fatal: 1, error: 1, warn: 1, info: 1 }],
+      [undefined, 'WARN', { fatal: 1, error: 1, warn: 1 }],
+      [undefined, 'ERROR', { fatal: 1, error: 1 }],
+      [undefined, 'FATAL', { fatal: 1 }],
+      [undefined, 'OFF', {}],
+      ['ERROR', undefined, { fatal: 1, error: 1 }],
+      ['ERROR', 'DEBUG', { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+      ['ERROR', 'INFO', { fatal: 1, error: 1, warn: 1, info: 1 }],
+      ['ERROR', 'WARN', { fatal: 1, error: 1, warn: 1 }],
+      ['ERROR', 'ERROR', { fatal: 1, error: 1 }],
+      ['FATAL', 'FATAL', { fatal: 1 }],
+      ['ERROR', 'OFF', {}]
     ]
     tests.forEach(([level, nsLevel, expects]) => {
       it(`shall display logs for level ${level} using namespaced-level ${nsLevel}`, function () {
@@ -197,12 +211,30 @@ bdescribe('#Log', function () {
     after(reset)
 
     const tests = [
-      ['DEBUG', { fatal: true,  error: true,  warn: true,  info: true,  debug: true }],
-      ['INFO',  { fatal: true,  error: true,  warn: true,  info: true,  debug: false }],
-      ['WARN',  { fatal: true,  error: true,  warn: true,  info: false, debug: false }],
-      ['ERROR', { fatal: true,  error: true,  warn: false, info: false, debug: false }],
-      ['FATAL', { fatal: true,  error: false, warn: false, info: false, debug: false }],
-      ['OFF',   { fatal: false, error: false, warn: false, info: false, debug: false }]
+      [
+        'DEBUG',
+        { fatal: true, error: true, warn: true, info: true, debug: true }
+      ],
+      [
+        'INFO',
+        { fatal: true, error: true, warn: true, info: true, debug: false }
+      ],
+      [
+        'WARN',
+        { fatal: true, error: true, warn: true, info: false, debug: false }
+      ],
+      [
+        'ERROR',
+        { fatal: true, error: true, warn: false, info: false, debug: false }
+      ],
+      [
+        'FATAL',
+        { fatal: true, error: false, warn: false, info: false, debug: false }
+      ],
+      [
+        'OFF',
+        { fatal: false, error: false, warn: false, info: false, debug: false }
+      ]
     ]
     tests.forEach(([level, exp]) => {
       it('shall check if enabled for level ' + level, function () {
@@ -223,12 +255,13 @@ bdescribe('#Log', function () {
   describe('formats', function () {
     after(reset)
 
-    const fixErr = (args) => args.map(v => {
-      if (typeof v === 'object' && v.err) {
-        v.err = { name: 'Error' }
-      }
-      return v
-    })
+    const fixErr = (args) =>
+      args.map((v) => {
+        if (typeof v === 'object' && v.err) {
+          v.err = { name: 'Error' }
+        }
+        return v
+      })
 
     describe('debug like', function () {
       const f = fixtures.browser
@@ -252,14 +285,20 @@ bdescribe('#Log', function () {
       after(() => {
         clock.restore()
         if (WRITE) inspect(exp)
-        Object.keys(window.localStorage).forEach((i) => window.localStorage.removeItem(i))
+        Object.keys(window.localStorage).forEach((i) =>
+          window.localStorage.removeItem(i)
+        )
       })
 
       testcases.forEach(({ name, args }, idx) => {
         it(name, function () {
           const res = log.error(...args)
           if (WRITE) exp.push(res)
-          assert.deepStrictEqual(fixErr(res), fixErr(f[idx]), '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(
+            fixErr(res),
+            fixErr(f[idx]),
+            '[' + idx + '] ' + res + ' !== ' + f[idx]
+          )
         })
       })
     })
@@ -285,7 +324,11 @@ bdescribe('#Log', function () {
         it(name, function () {
           const res = log.error(...args)
           if (WRITE) exp.push(res)
-          assert.deepStrictEqual(fixErr(res), fixErr(f[idx]), '[' + idx + '] ' + res + ' !== ' + f[idx])
+          assert.deepStrictEqual(
+            fixErr(res),
+            fixErr(f[idx]),
+            '[' + idx + '] ' + res + ' !== ' + f[idx]
+          )
         })
       })
     })
@@ -325,12 +368,12 @@ bdescribe('#Log', function () {
     describe('namespace *', function () {
       const tests = [
         [undefined, { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-        ['DEBUG',   { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
-        ['INFO',    { fatal: 1, error: 1, warn: 1, info: 1 }],
-        ['WARN',    { fatal: 1, error: 1, warn: 1 }],
-        ['ERROR',   { fatal: 1, error: 1 }],
-        ['FATAL',   { fatal: 1 }],
-        ['OFF',     {}]
+        ['DEBUG', { fatal: 1, error: 1, warn: 1, info: 1, debug: 1 }],
+        ['INFO', { fatal: 1, error: 1, warn: 1, info: 1 }],
+        ['WARN', { fatal: 1, error: 1, warn: 1 }],
+        ['ERROR', { fatal: 1, error: 1 }],
+        ['FATAL', { fatal: 1 }],
+        ['OFF', {}]
       ]
       tests.forEach(([level, expects]) => {
         it(`shall ${level === 'OFF' ? 'never' : 'always'} log for level ${level}`, function () {

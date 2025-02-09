@@ -2,13 +2,13 @@ import { Format } from './Format.js'
 import { toNumLevel, adjustLevel, LEVELS, LOG, INFO, FATAL } from './utils.js'
 import { Namespaces } from './Namespaces.js'
 
-const noop = (...args) => {}
+const noop = (..._args) => {}
 
 /** @typedef {'epoch'|'unix'|'iso'} Timestamp */
 
 const time = {
   epoch: () => Date.now(),
-  unix: () => Date.now() / 1000 | 0,
+  unix: () => (Date.now() / 1000) | 0,
   iso: () => new Date().toISOString()
 }
 
@@ -35,21 +35,23 @@ export class LogBase {
    * @param {string} name
    * @param {LogBaseOptions} opts
    */
-  constructor (name, opts = {}) {
+  constructor(name, opts = {}) {
     this.name = name
     this.opts = opts
     this._enabled = {}
     this.formatter = new Format(opts)
 
     /** @type {{ [x: string]: (arg0: any) => any; } | null} */
-    this.serializers = Object.entries(this.opts.serializers || {})
-      .reduce((/** @type {object} */ curr, [key, val]) => {
+    this.serializers = Object.entries(this.opts.serializers || {}).reduce(
+      (/** @type {object} */ curr, [key, val]) => {
         if (typeof val === 'function') {
           curr = curr || {}
           curr[key] = val
         }
         return curr
-      }, null)
+      },
+      null
+    )
 
     this._timeF = time[opts.timestamp]
     this._time = this._timeF ? this._timeF : noop
@@ -82,26 +84,25 @@ export class LogBase {
   /**
    * @param {string} [namespaces]
    */
-  enable (namespaces = this.opts.namespaces) {
+  enable(namespaces = this.opts.namespaces) {
     const namespace = new Namespaces(namespaces)
     this._enabled = {} // reset
     const level = namespace.isEnabled(this.name, this.opts.level)
-    const active = level
-      ? LEVELS[adjustLevel(level, INFO)]
-      : []
-    LEVELS.TRACE.forEach(level => {
+    const active = level ? LEVELS[adjustLevel(level, INFO)] : []
+    LEVELS.TRACE.forEach((level) => {
       const nlevel = this.opts.levelNumbers ? toNumLevel(level) : level
       const llevel = level.toLowerCase()
       if (active.includes(level)) {
         this._enabled[level] = true
-        this[llevel] = level === FATAL
-          ? (fmt, ...args) => {
-              const str = this._log(nlevel, fmt, args)
-              // @ts-expect-error
-              this.flush && this.flush()
-              return str
-            }
-          : (fmt, ...args) => this._log(nlevel, fmt, args)
+        this[llevel] =
+          level === FATAL
+            ? (fmt, ...args) => {
+                const str = this._log(nlevel, fmt, args)
+                // @ts-expect-error
+                this.flush && this.flush()
+                return str
+              }
+            : (fmt, ...args) => this._log(nlevel, fmt, args)
       } else {
         this[llevel] = noop
       }
@@ -110,16 +111,17 @@ export class LogBase {
     this.log = (fmt, ...args) => this._log(nLOG, fmt, args)
   }
 
-  get enabled () {
-    return this._enabled._cache || (
-      this._enabled._cache = LEVELS.TRACE.reduce((o, level) => {
+  get enabled() {
+    return (
+      this._enabled._cache ||
+      (this._enabled._cache = LEVELS.TRACE.reduce((o, level) => {
         o[level] = o[level.toLowerCase()] = !!this._enabled[level]
         return o
-      }, {})
+      }, {}))
     )
   }
 
-  diff () {
+  diff() {
     const curr = Date.now()
     const prev = this._prev || curr
     this._prev = curr
@@ -129,7 +131,7 @@ export class LogBase {
   /**
    * @return {object} json object
    */
-  _formatJson (level, fmt, args = []) {
+  _formatJson(level, fmt, args = []) {
     const other = {}
     const msg = this.formatter.format(fmt, args, other) || undefined
 
@@ -147,11 +149,14 @@ export class LogBase {
     return o
   }
 
-  _applySerializers (obj) {
+  _applySerializers(obj) {
     const o = {}
     for (const key in obj) {
       const value = obj[key]
-      if (Object.prototype.hasOwnProperty.call(obj, key) && value !== undefined) {
+      if (
+        Object.prototype.hasOwnProperty.call(obj, key) &&
+        value !== undefined
+      ) {
         if (this.serializers && this.serializers[key]) {
           o[key] = this.serializers[key](value)
         } else {
@@ -163,13 +168,13 @@ export class LogBase {
   }
 
   /* c8 ignore next */
-  _serverinfo () { }
+  _serverinfo() {}
 
   /**
    * @protected
    */
   /* c8 ignore next 3 */
-  _log (nlevel, fmt, args) {
+  _log(_nlevel, _fmt, _args) {
     throw new Error('needs implementation')
   }
 }

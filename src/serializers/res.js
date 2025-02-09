@@ -10,14 +10,16 @@ const PROXY_AUTHENTICATE = 'proxy-authenticate'
  * @param {object} [res]
  * @returns {object}
  */
-export function resSerializer (res) {
+export function resSerializer(res) {
   if (typeof res !== 'object' || !res) return
 
+  /* eslint-disable no-unused-vars */
   const {
     [SET_COOKIE]: _1,
     [PROXY_AUTHENTICATE]: _2,
     ...headers
   } = res.getHeaders() || {}
+  /* eslint-enable no-unused-vars */
 
   const logRes = {
     statusCode: res.statusCode
@@ -39,7 +41,7 @@ export function resSerializer (res) {
  * @param {object} [res]
  * @returns {object}
  */
-export function resMaskSerializer (res) {
+export function resMaskSerializer(res) {
   const logRes = resSerializer(res)
 
   if (!logRes) return
@@ -67,7 +69,7 @@ export function resMaskSerializer (res) {
  * @param {string} cookie
  * @returns {string}
  */
-function maskCookieVal (cookie) {
+function maskCookieVal(cookie) {
   let masked = ''
   const len = cookie.length
   let mask = false

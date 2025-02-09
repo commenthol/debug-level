@@ -3,7 +3,7 @@
  * @param {number} [spaces]
  * @returns {string}
  */
-export function stringify(any: any, spaces?: number | undefined): string;
+export function stringify(any: any, spaces?: number): string;
 export class Log extends LogBase {
     /**
      * Apply (and get) global options
@@ -26,21 +26,21 @@ export class Log extends LogBase {
      * @param {LogOptionWrapConsole} [opts] options
      * @return {function} unwrap function
      */
-    static wrapConsole(name?: string | undefined, opts?: LogOptionWrapConsole | undefined): Function;
+    static wrapConsole(name?: string, opts?: LogOptionWrapConsole): Function;
     /**
      * log exit events like 'unhandledRejection', 'uncaughtException'
      * and then let the process die
      * @param {string} [name='exit']
      * @param {LogOptionHandleExitEvents} [opts] options
      */
-    static handleExitEvents(name?: string | undefined, opts?: LogOptionHandleExitEvents): void;
+    static handleExitEvents(name?: string, opts?: LogOptionHandleExitEvents): void;
     static wrapDebug(): () => void;
     /**
      * creates a new logger
      * @param {String} name - namespace of Logger
      * @param {LogOptions} [opts] - see Log.options
      */
-    constructor(name: string, opts?: LogOptions | undefined);
+    constructor(name: string, opts?: LogOptions);
     color: any;
     levColors: {};
     opts: {
@@ -112,10 +112,10 @@ export class Log extends LogBase {
      * render string to output stream
      * @public
      * @param {String} str string to render
-     * @param {String} level level of log line (might be used for custom Logger which uses different streams per level)
+     * @param {String} [_level] level of log line (might be used for custom Logger which uses different streams per level)
      * @return {String}
      */
-    public render(str: string, level: string): string;
+    public render(str: string, _level?: string): string;
     flush(): void;
     /**
      * format object to json
@@ -178,7 +178,7 @@ import { LogBase } from './LogBase.js';
  * @param {number} [spaces]
  * @returns {string}
  */
-declare function toJson(obj: object, serializers: object, spaces?: number | undefined): string;
+declare function toJson(obj: object, serializers: object, spaces?: number): string;
 import { Sonic } from './Sonic.js';
 declare const isDevEnv: boolean;
 import { errSerializer } from './serializers/index.js';

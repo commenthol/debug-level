@@ -110,6 +110,7 @@ describe('LogEcs', function () {
       })
 
       it('shall serialize a request with originalUrl', function () {
+        // eslint-disable-next-line no-unused-vars
         const { host, ...headers } = req.headers
         const _req = {
           ...req,
@@ -235,7 +236,12 @@ describe('LogEcs', function () {
 
       before(() => {
         clock = sinon.useFakeTimers()
-        LogEcs.options({ level: 'error', json: false, colors: false, namespaces: 'test*' })
+        LogEcs.options({
+          level: 'error',
+          json: false,
+          colors: false,
+          namespaces: 'test*'
+        })
         log = new LogEcs('test', { timestamp: 'iso' })
       })
 

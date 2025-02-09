@@ -57,7 +57,10 @@ describe('quick-format', function () {
     assert.strictEqual(format('%s', [undefined]), 'undefined')
     assert.strictEqual(format('%s', ['foo']), 'foo')
     assert.strictEqual(format('%s', ['"quoted"']), '"quoted"')
-    assert.strictEqual(format('%j', [{ s: '"quoted"' }]), '{"s":"\\"quoted\\""}')
+    assert.strictEqual(
+      format('%j', [{ s: '"quoted"' }]),
+      '{"s":"\\"quoted\\""}'
+    )
     assert.strictEqual(format('%s:%s', []), '%s:%s')
     assert.strictEqual(format('%s:%s', [undefined]), 'undefined:%s')
     assert.strictEqual(format('%s:%s', ['foo']), 'foo:%s')
@@ -74,13 +77,23 @@ describe('quick-format', function () {
     assert.strictEqual(format('foo %o', [{ foo: 'foo' }]), 'foo {"foo":"foo"}')
     assert.strictEqual(format('foo %O', [{ foo: 'foo' }]), 'foo {"foo":"foo"}')
     assert.strictEqual(format('foo %j', [{ foo: 'foo' }]), 'foo {"foo":"foo"}')
-    assert.strictEqual(format('foo %j %j', [{ foo: 'foo' }]), 'foo {"foo":"foo"} %j')
-    assert.strictEqual(format('foo %j', ['foo']), 'foo \'foo\'') // TODO: isn't this wrong?
-    assert.strictEqual(format('foo %j', [function foo () {}]), 'foo foo()')
-    assert.strictEqual(format('foo %j', [function () {}]), 'foo <anonymous>()')
-    assert.strictEqual(format('foo %j', [{ foo: 'foo' }, 'not-printed']), 'foo {"foo":"foo"} not-printed')
     assert.strictEqual(
-      format('foo %j', [{ foo: 'foo' }], { stringify () { return 'REPLACED' } }),
+      format('foo %j %j', [{ foo: 'foo' }]),
+      'foo {"foo":"foo"} %j'
+    )
+    assert.strictEqual(format('foo %j', ['foo']), "foo 'foo'") // TODO: isn't this wrong?
+    assert.strictEqual(format('foo %j', [function foo() {}]), 'foo foo()')
+    assert.strictEqual(format('foo %j', [function () {}]), 'foo <anonymous>()')
+    assert.strictEqual(
+      format('foo %j', [{ foo: 'foo' }, 'not-printed']),
+      'foo {"foo":"foo"} not-printed'
+    )
+    assert.strictEqual(
+      format('foo %j', [{ foo: 'foo' }], {
+        stringify() {
+          return 'REPLACED'
+        }
+      }),
       'foo REPLACED'
     )
     const circularObject = {}
@@ -95,24 +108,38 @@ describe('quick-format', function () {
     assert.strictEqual(format('%%%s%%%%', ['hi']), '%hi%%')
   })
   it('functions', function () {
-    function test () {}
+    function test() {}
 
     assert.strictEqual(format(test, []), 'test()')
-    assert.strictEqual(format('%s', [test]), 'function test () {}')
+    assert.strictEqual(format('%s', [test]), 'function test() {}')
     assert.strictEqual(format('%s', ['hi', test]), 'hi test()')
 
-    assert.strictEqual(format(() => {}, []), '<anonymous>()')
+    assert.strictEqual(
+      format(() => {}, []),
+      '<anonymous>()'
+    )
     assert.strictEqual(format('%s', [() => {}]), '() => {}')
     assert.strictEqual(format('%s', ['hi', () => {}]), 'hi <anonymous>()')
   })
   it('object assignment', function () {
     const obj = {}
-    assert.strictEqual(format('%s%%%s', ['foo', 'bar', { hello: 'object' }, { test: 1 }], {}, obj), 'foo%bar')
+    assert.strictEqual(
+      format(
+        '%s%%%s',
+        ['foo', 'bar', { hello: 'object' }, { test: 1 }],
+        {},
+        obj
+      ),
+      'foo%bar'
+    )
     assert.deepStrictEqual(obj, { hello: 'object', test: 1 })
   })
   it('no formatter', function () {
     const obj = {}
-    assert.strictEqual(format({ hello: 'object' }, ['foo', 'bar', { test: 1 }], {}, obj), ' foo bar')
+    assert.strictEqual(
+      format({ hello: 'object' }, ['foo', 'bar', { test: 1 }], {}, obj),
+      ' foo bar'
+    )
     assert.deepStrictEqual(obj, { hello: 'object', test: 1 })
   })
   it('error', function () {

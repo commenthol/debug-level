@@ -3,7 +3,7 @@ import { startTimeKey } from '../serializers/res.js'
 const isNotObject = (any) => !any || typeof any !== 'object'
 
 const ecsError = (err, ecsObj) => {
-  if (!(err?.message)) {
+  if (!err?.message) {
     return
   }
 
@@ -58,12 +58,14 @@ const ecsReq = (req, ecsObj) => {
   const { method, httpVersion } = req
   if (!method) return
 
+  /* eslint-disable no-unused-vars */
   const {
     cookie,
     authorization,
     'user-agent': userAgent,
     ...headers
   } = req.headers || {}
+  /* eslint-enable no-unused-vars */
 
   ecsObj.http = ecsObj.http || {}
   ecsObj.http.request = {
@@ -84,6 +86,7 @@ const ecsRes = (res, ecsObj) => {
   const { statusCode } = res
   if (!statusCode) return
 
+  /* eslint-disable no-unused-vars */
   const {
     'proxy-authenticate': _1,
     'set-cookie': _2,
@@ -91,6 +94,7 @@ const ecsRes = (res, ecsObj) => {
     cookie,
     ...headers
   } = res.getHeaders() || {}
+  /* eslint-enable no-unused-vars */
 
   ecsObj.http = ecsObj.http || {}
   ecsObj.http.response = {

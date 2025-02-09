@@ -5,7 +5,13 @@ const log = new Log('package')
 
 // ----
 // use formatters (NOT RECOMMENDED for objects, errors)
-log.debug('a %s, a number %d, an %o and %j', 'string', 1.2, { object: 1 }, { NOT: 'RECOMMENDED' })
+log.debug(
+  'a %s, a number %d, an %o and %j',
+  'string',
+  1.2,
+  { object: 1 },
+  { NOT: 'RECOMMENDED' }
+)
 /* > {
   "level": "DEBUG",
   "name": "package",
@@ -77,13 +83,14 @@ log.info('formatter %s', 'message1', 'message2', 'message3')
 
 // ----
 // using toJSON custom serializers
-function reqToJSON () {
+function reqToJSON() {
   const { ip, method, url, headers } = this
   const userAgent = headers ? headers['user-agent'] : undefined
   return { ip, method, url, userAgent }
 }
 
-const req = { // a client request
+const req = {
+  // a client request
   method: 'GET',
   url: '/path',
   ip: '10.10.10.10',
@@ -92,12 +99,13 @@ const req = { // a client request
 }
 req.toJSON = reqToJSON
 
-function resToJSON () {
+function resToJSON() {
   const { statusCode } = this
   return { statusCode }
 }
 
-const res = { // a server response
+const res = {
+  // a server response
   statusCode: 403,
   socket: {} // ....
 }

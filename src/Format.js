@@ -10,22 +10,22 @@ export class Format {
   /**
    * @param {FormatOption} [opts]
    */
-  constructor (opts) {
+  constructor(opts) {
     const { spaces } = opts || {}
     this.opts = { spaces }
     this._formatOpts()
   }
 
-  get spaces () {
+  get spaces() {
     return this.opts.spaces
   }
 
-  set spaces (spaces) {
+  set spaces(spaces) {
     this.opts.spaces = spaces
     this._formatOpts()
   }
 
-  _formatOpts () {
+  _formatOpts() {
     /**
      * @param {any} any
      * @returns {string}
@@ -42,7 +42,7 @@ export class Format {
    * @param  {...any} args
    * @returns {string}
    */
-  stringify (...args) {
+  stringify(...args) {
     // @ts-expect-error
     return fastStringify(...args)
   }
@@ -54,7 +54,7 @@ export class Format {
    * @param {any} obj
    * @return {Array} first is formatted message, other args may follow
    */
-  format (fmt, args, obj) {
+  format(fmt, args, obj) {
     return quickFormat(fmt, args, this.formatOpts, obj)
   }
 }

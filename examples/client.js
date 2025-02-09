@@ -4,9 +4,10 @@ import { logger } from '../src/index.js'
 const logA = logger('client:A')
 const logB = logger('client:B')
 
-function client (log, path) {
-  function request () {
-    http.get({ host: 'localhost', port: '3000', path })
+function client(log, path) {
+  function request() {
+    http
+      .get({ host: 'localhost', port: '3000', path })
       .on('response', (res) => {
         const status = res.statusCode
         res.on('data', (chunk) => {

@@ -1,5 +1,6 @@
 const err = new TypeError('error message')
-err.stack = 'TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile' // shortened stack
+err.stack =
+  'TypeError: error message at Object.<anonymous> (./test/node.test.js:9:13) at Module._compile' // shortened stack
 err.status = 500
 
 export default {

@@ -4,11 +4,15 @@
  * @copyright Copyright (c) 2016-2019 David Mark Clements
  */
 
-function tryStringify (value, replacer, spaces) {
-  try { return JSON.stringify(value, replacer, spaces) } catch (e) { return '"[Circular]"' }
+function tryStringify(value, replacer, spaces) {
+  try {
+    return JSON.stringify(value, replacer, spaces)
+  } catch (e) {
+    return '"[Circular]"'
+  }
 }
 
-export function format (f, args, opts, obj = {}) {
+export function format(f, args, opts, obj = {}) {
   const stringify = opts?.stringify || tryStringify
   const spaces = opts?.spaces
   const argLen = args.length
@@ -20,10 +24,11 @@ export function format (f, args, opts, obj = {}) {
     if (Array.isArray(val)) {
       Object.assign(obj, { arr: val })
     } else if (val instanceof Error) {
-    // } else if (val.stack && val.message && val.name) {
+      // } else if (val.stack && val.message && val.name) {
       if (!str) str = val.message
       Object.assign(obj, { err: val })
     } else {
+      // eslint-disable-next-line no-unused-vars
       const { name, level, ...other } = val
       Object.assign(obj, other)
     }
@@ -41,34 +46,47 @@ export function format (f, args, opts, obj = {}) {
 
     let lastPos = -1
     const flen = (f && f.length) || 0
-    for (let i = 0; i < flen;) {
+    for (let i = 0; i < flen; ) {
       if (f.charCodeAt(i) === 37 && i + 1 < flen) {
         lastPos = lastPos > -1 ? lastPos : 0
         switch (f.charCodeAt(i + 1)) {
           case 100: // 'd'
           case 102: // 'f'
-            if (a >= argLen) { break }
-            if (lastPos < i) { str += f.slice(lastPos, i) }
+            if (a >= argLen) {
+              break
+            }
+            if (lastPos < i) {
+              str += f.slice(lastPos, i)
+            }
             if (args[a] == null) break
             str += Number(args[a])
             lastPos = i = i + 2
             break
           case 105: // 'i'
-            if (a >= argLen) { break }
-            if (lastPos < i) { str += f.slice(lastPos, i) }
+            if (a >= argLen) {
+              break
+            }
+            if (lastPos < i) {
+              str += f.slice(lastPos, i)
+            }
             if (args[a] == null) break
             str += Math.floor(Number(args[a]))
             lastPos = i = i + 2
             break
           case 79: // 'O'
           case 111: // 'o'
-          case 106: { // 'j'
-            if (a >= argLen) { break }
-            if (lastPos < i) { str += f.slice(lastPos, i) }
+          case 106: {
+            // 'j'
+            if (a >= argLen) {
+              break
+            }
+            if (lastPos < i) {
+              str += f.slice(lastPos, i)
+            }
             if (args[a] === undefined) break
             const type = typeof args[a]
             if (type === 'string') {
-              str += '\'' + args[a] + '\''
+              str += "'" + args[a] + "'"
               lastPos = i + 2
               i++
               break
@@ -85,14 +103,20 @@ export function format (f, args, opts, obj = {}) {
             break
           }
           case 115: // 's'
-            if (a >= argLen) { break }
-            if (lastPos < i) { str += f.slice(lastPos, i) }
+            if (a >= argLen) {
+              break
+            }
+            if (lastPos < i) {
+              str += f.slice(lastPos, i)
+            }
             str += String(args[a])
             lastPos = i + 2
             i++
             break
           case 37: // '%'
-            if (lastPos < i) { str += f.slice(lastPos, i) }
+            if (lastPos < i) {
+              str += f.slice(lastPos, i)
+            }
             str += '%'
             lastPos = i + 2
             i++

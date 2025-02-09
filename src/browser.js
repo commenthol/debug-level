@@ -44,9 +44,11 @@ const options = {
 const storage = () => {
   try {
     // @ts-expect-error
-    return typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined'
+    return typeof chrome !== 'undefined' &&
       // @ts-expect-error
-      ? chrome.storage.local
+      typeof chrome.storage !== 'undefined'
+      ? // @ts-expect-error
+        chrome.storage.local
       : window.localStorage
   } catch (err) {
     // istanbul ignore next
@@ -66,18 +68,25 @@ const supportsColors = () => {
   // NB: In an Electron preload script, document will be defined but not fully
   // initialized. Since we know we're in Chrome, we'll just detect this case
   // explicitly
-  const isElectron = typeof window !== 'undefined' &&
+  const isElectron =
+    typeof window !== 'undefined' &&
+    (tmp = window.process) &&
     // @ts-expect-error
-    (tmp = window.process) && (tmp.type === 'renderer')
+    tmp.type === 'renderer'
   // is webkit? http://stackoverflow.com/a/16459606/376773
   // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  const isReactNative = typeof document !== 'undefined' &&
+  const isReactNative =
+    typeof document !== 'undefined' &&
+    (tmp = document.documentElement) &&
+    (tmp = tmp.style) &&
     // @ts-expect-error
-    (tmp = document.documentElement) && (tmp = tmp.style) && tmp.WebkitAppearance
+    tmp.WebkitAppearance
   // is firebug? http://stackoverflow.com/a/398120/376773
-  const isFireBug = typeof window !== 'undefined' &&
+  const isFireBug =
+    typeof window !== 'undefined' &&
+    (tmp = window.console) &&
     // @ts-expect-error
-    (tmp = window.console) && (tmp.firebug || (tmp.exception && tmp.table))
+    (tmp.firebug || (tmp.exception && tmp.table))
 
   if (isElectron) {
     // istanbul ignore next
@@ -90,12 +99,14 @@ const supportsColors = () => {
     return false
   }
 
-  return !!(isReactNative || isFireBug ||
+  return !!(
+    isReactNative ||
+    isFireBug ||
     // is firefox >= v31?
     // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
     (/firefox\/(\d+)/i.exec(userAgent) && parseInt(RegExp.$1, 10) >= 31) ||
     // double check webkit in userAgent just in case we are in a worker
-    (/applewebkit\/(\d+)/i.exec(userAgent))
+    /applewebkit\/(\d+)/i.exec(userAgent)
   )
 }
 
@@ -107,17 +118,18 @@ export class Log extends LogBase {
    * @param {string} name namespace of Logger
    * @param {LogOptionsBrowser} opts
    */
-  constructor (name, opts) {
+  constructor(name, opts) {
     const _storage = storage()
 
-    Object.assign(options,
-      inspectOpts(_storage),
-      inspectNamespaces(_storage)
-    )
+    Object.assign(options, inspectOpts(_storage), inspectNamespaces(_storage))
 
     options.colors = options.colors === false ? false : supportsColors()
 
-    const serializers = Object.assign({}, options.serializers, opts?.serializers)
+    const serializers = Object.assign(
+      {},
+      options.serializers,
+      opts?.serializers
+    )
 
     const _opts = Object.assign({}, options, opts, { serializers })
     super(name, _opts)
@@ -135,8 +147,10 @@ export class Log extends LogBase {
    * @param {LogOptionsBrowser} [opts] changed options
    * @return {object} global options
    */
-  static options (opts) {
-    if (!opts) { return Object.assign({}, options) }
+  static options(opts) {
+    if (!opts) {
+      return Object.assign({}, options)
+    }
     Object.assign(options, opts, {
       colors: opts.colors === false ? false : supportsColors()
     })
@@ -146,7 +160,7 @@ export class Log extends LogBase {
   /**
    * save options in `localStorage`
    */
-  static save () {
+  static save() {
     const _storage = storage()
     Log.reset()
     saveOpts(_storage, options)
@@ -155,7 +169,7 @@ export class Log extends LogBase {
   /**
    * reset saved options
    */
-  static reset () {
+  static reset() {
     const _storage = storage()
 
     Object.keys(_storage).forEach((key) => {
@@ -178,7 +192,7 @@ export class Log extends LogBase {
    * @param {LogOptionWrapConsole} [opts]
    * @return {function} unwrap function
    */
-  static wrapConsole (name = 'console', opts = {}) {
+  static wrapConsole(name = 'console', opts = {}) {
     const log = new Log(name, opts)
     return wrapConsole(log, opts)
   }
@@ -187,11 +201,11 @@ export class Log extends LogBase {
    * render arguments to console.log
    * @public
    * @param {any[]} args console.log arguments
-   * @param {Level} level level of log line (might be used for custom Logger which uses different streams per level)
+   * @param {Level} [_level] level of log line (might be used for custom Logger which uses different streams per level)
    * @return {any[]}
    */
-  render (args, level) {
-    console.log(...args) // eslint-disable-line no-console
+  render(args, _level) {
+    console.log(...args)
     return args
   }
 
@@ -201,7 +215,7 @@ export class Log extends LogBase {
    * @param {string} [fmt] formatter
    * @param {any[]} [args] log arguments
    */
-  send (level, fmt, args) {
+  send(level, fmt, args) {
     let obj
     if (typeof level === 'object') {
       obj = level
@@ -218,7 +232,7 @@ export class Log extends LogBase {
    * format log arguments
    * @protected
    */
-  _log (level, fmt, args) {
+  _log(level, fmt, args) {
     const uns = this._formatJson(level, fmt, args)
     const obj = this._applySerializers(uns)
     const _args = this._format(obj)
@@ -234,10 +248,12 @@ export class Log extends LogBase {
   /**
    * format arguments for console.log
    * @private
-   * @param {object} param0
+   * @param {object} options
    * @return {Array} args for console.log
    */
-  _format ({ level, name, time, msg = '', diff, ...other }) {
+  _format(options) {
+    // eslint-disable-next-line no-unused-vars
+    const { level, name, time, msg = '', diff, ...other } = options
     const color = this.color
     const args = []
     const hasOther = Object.keys(other).length
@@ -248,7 +264,9 @@ export class Log extends LogBase {
       msg,
       hasOther ? '%O' : undefined,
       this._color('+' + ms(diff))
-    ].filter(s => s !== undefined).join(' ')
+    ]
+      .filter((s) => s !== undefined)
+      .join(' ')
     if (hasOther) args.push(other)
 
     if (this.opts.colors) {
@@ -277,23 +295,24 @@ export class Log extends LogBase {
    * @param {string} str
    * @param {Function} [cb]
    */
-  _sendLog (str, cb) {
+  _sendLog(str, cb) {
     const img = new Image()
-    const done = () => { cb && cb() }
+    const done = () => {
+      cb && cb()
+    }
     img.onload = done
     img.onerror = done
     img.onabort = done
-    img.src = this.opts.url + '?id=' + random(6) + '&log=' + encodeURIComponent(str)
+    img.src =
+      this.opts.url + '?id=' + random(6) + '&log=' + encodeURIComponent(str)
   }
 
   /**
    * Add colors, style to string
    * @private
    */
-  _color (str) {
-    return this.opts.colors
-      ? `%c${str}%c`
-      : str
+  _color(str) {
+    return this.opts.colors ? `%c${str}%c` : str
   }
 }
 

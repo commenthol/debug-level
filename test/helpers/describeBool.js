@@ -4,10 +4,10 @@
 
 const noop = () => {}
 
-export const describeBool = (trueish) => trueish ? describe : describe.skip
-describeBool.only = (trueish) => trueish ? describe.only : noop
-describeBool.skip = (trueish) => describe.skip
+export const describeBool = (trueish) => (trueish ? describe : describe.skip)
+describeBool.only = (trueish) => (trueish ? describe.only : noop)
+describeBool.skip = (_trueish) => describe.skip
 
-export const itBool = (trueish) => trueish ? it : it.skip
-itBool.only = (trueish) => trueish ? it.only : noop
-itBool.skip = (trueish) => it.skip
+export const itBool = (trueish) => (trueish ? it : it.skip)
+itBool.only = (trueish) => (trueish ? it.only : noop)
+itBool.skip = (_trueish) => it.skip

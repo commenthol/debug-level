@@ -18,28 +18,31 @@ const {
 // obj.deep = clean(obj)
 
 const obj = { string: 'lala', foo: 42, is: true }
-const f = () => (['hello %j', obj])
+const f = () => ['hello %j', obj]
 // const f = () => ([obj])
 
-const run = bench([
-  function benchPino (done) {
-    // debugger
-    pino.debug(...f())
-    process.nextTick(done)
-  },
-  function benchDebugLevel (done) {
-    // debugger
-    debugLevel.debug(...f())
-    process.nextTick(done)
-  }
-  // function benchPinoAsync (done) {
-  //   pinoAsync.debug(deep)
-  //   process.nextTick(done)
-  // },
-  // function benchDebugLevelAsync (done) {
-  //   debugLevelAsync.debug(deep)
-  //   process.nextTick(done)
-  // }
-], max)
+const run = bench(
+  [
+    function benchPino(done) {
+      // debugger
+      pino.debug(...f())
+      process.nextTick(done)
+    },
+    function benchDebugLevel(done) {
+      // debugger
+      debugLevel.debug(...f())
+      process.nextTick(done)
+    }
+    // function benchPinoAsync (done) {
+    //   pinoAsync.debug(deep)
+    //   process.nextTick(done)
+    // },
+    // function benchDebugLevelAsync (done) {
+    //   debugLevelAsync.debug(deep)
+    //   process.nextTick(done)
+    // }
+  ],
+  max
+)
 
 run(run)

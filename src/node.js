@@ -81,7 +81,7 @@ export class Log extends LogBase {
    * @param {String} name - namespace of Logger
    * @param {LogOptions} [opts] - see Log.options
    */
-  constructor (name, opts) {
+  constructor(name, opts) {
     Object.assign(
       options,
       inspectOpts(process.env),
@@ -108,9 +108,9 @@ export class Log extends LogBase {
 
     this.stream = this.opts.sonic
       ? sonicStreams.use(this.opts.stream, {
-        minLength: this.opts.sonicLength,
-        timeout: this.opts.sonicFlushMs
-      })
+          minLength: this.opts.sonicLength,
+          timeout: this.opts.sonicFlushMs
+        })
       : this.opts.stream || process.stderr
 
     if (!this.opts.json) {
@@ -132,7 +132,7 @@ export class Log extends LogBase {
    * @param {object} [opts] changed options
    * @return {object} global options
    */
-  static options (opts) {
+  static options(opts) {
     if (!opts) {
       return { ...options }
     }
@@ -142,7 +142,7 @@ export class Log extends LogBase {
   /**
    * save options in `process.env`
    */
-  static save () {
+  static save() {
     Log.reset()
     saveOpts(process.env, options)
   }
@@ -150,7 +150,7 @@ export class Log extends LogBase {
   /**
    * reset saved options
    */
-  static reset () {
+  static reset() {
     Object.keys(process.env).forEach((key) => {
       if (/^(DEBUG|DEBUG_.*)$/.test(key)) {
         delete process.env[key]
@@ -165,7 +165,7 @@ export class Log extends LogBase {
    * @param {LogOptionWrapConsole} [opts] options
    * @return {function} unwrap function
    */
-  static wrapConsole (name = 'console', opts) {
+  static wrapConsole(name = 'console', opts) {
     const log = new Log(name, opts)
     return wrapConsole(log, opts)
   }
@@ -176,7 +176,7 @@ export class Log extends LogBase {
    * @param {string} [name='exit']
    * @param {LogOptionHandleExitEvents} [opts] options
    */
-  static handleExitEvents (name = 'exit', opts = {}) {
+  static handleExitEvents(name = 'exit', opts = {}) {
     const { code = 1, gracefulExit, ..._opts } = opts
     const log = new Log(name, _opts)
     EXIT_EVENTS.forEach((ev) => {
@@ -194,7 +194,7 @@ export class Log extends LogBase {
     })
   }
 
-  static wrapDebug () {
+  static wrapDebug() {
     return wrapDebug(Log)
   }
 
@@ -202,15 +202,15 @@ export class Log extends LogBase {
    * render string to output stream
    * @public
    * @param {String} str string to render
-   * @param {String} level level of log line (might be used for custom Logger which uses different streams per level)
+   * @param {String} [_level] level of log line (might be used for custom Logger which uses different streams per level)
    * @return {String}
    */
-  render (str, level) {
+  render(str, _level) {
     this.stream.write(flatstr(str + '\n'))
     return str
   }
 
-  flush () {
+  flush() {
     // @ts-expect-error
     this.stream.flush && this.stream.flush()
   }
@@ -219,7 +219,7 @@ export class Log extends LogBase {
    * format object to json
    * @protected
    */
-  _log (level, fmt, args) {
+  _log(level, fmt, args) {
     const o = this._formatJson(level, fmt, args)
     const str = this.toJson(o, this.serializers)
     return this.render(str, level)
@@ -229,7 +229,7 @@ export class Log extends LogBase {
    * format object to json
    * @private
    */
-  _logJsonColor (level, fmt, args) {
+  _logJsonColor(level, fmt, args) {
     const o = this._formatJson(level, fmt, args)
     let str = this.toJson(o, this.serializers)
     /* c8 ignore next 4 */ // can't cover with tests as underlying tty is unknown
@@ -248,9 +248,11 @@ export class Log extends LogBase {
    * debug like output if `this.opts.json === false`
    * @private
    */
-  _logDebugLike (_level, fmt, args) {
+  _logDebugLike(_level, fmt, args) {
     const o = this._formatJson(_level, fmt, args)
+    /* eslint-disable no-unused-vars */
     const { level, time, name, msg, pid, hostname, diff, ...other } = o
+    /* eslint-enable no-unused-vars */
 
     const prefix =
       '  ' +
@@ -260,9 +262,9 @@ export class Log extends LogBase {
 
     const strOther = Object.keys(other).length
       ? stringify(
-        this._applySerializers(other),
-        this.opts.splitLine ? this.opts.spaces ?? 2 : undefined
-      )
+          this._applySerializers(other),
+          this.opts.splitLine ? (this.opts.spaces ?? 2) : undefined
+        )
       : ''
 
     const str = this.opts.splitLine
@@ -297,7 +299,7 @@ export class Log extends LogBase {
    * Add colors, style to string
    * @private
    */
-  _color (str, color, isBold) {
+  _color(str, color, isBold) {
     return !this.opts.colors ? str : isBold ? color.bold(str) : color(str)
   }
 }
@@ -318,7 +320,7 @@ Log.serializers = {
  * @param {string} str
  * @returns {string}
  */
-function asString (str) {
+function asString(str) {
   let result = ''
   let last = 0
   let found = false
@@ -349,7 +351,7 @@ function asString (str) {
  * @param {number} [spaces]
  * @returns {string}
  */
-function toJson (obj, serializers, spaces) {
+function toJson(obj, serializers, spaces) {
   let s = '{'
   let comma = ''
   for (const key in obj) {
@@ -387,7 +389,7 @@ function toJson (obj, serializers, spaces) {
  * @param {number} [spaces]
  * @returns {string}
  */
-export function stringify (any, spaces) {
+export function stringify(any, spaces) {
   try {
     return JSON.stringify(any, null, spaces)
   } catch (e) {
@@ -400,6 +402,6 @@ export function stringify (any, spaces) {
  * @param {string} str
  * @returns {string}
  */
-function replaceLf (str = '') {
+function replaceLf(str = '') {
   return str.replace(/[\r\n]/g, '\\n')
 }

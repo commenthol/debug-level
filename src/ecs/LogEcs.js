@@ -15,7 +15,7 @@ export class LogEcs extends Log {
    * @param {string} name logger namespace
    * @param {LogOptionsEcs} opts
    */
-  constructor (name, opts) {
+  constructor(name, opts) {
     const { serializers, ..._opts } = opts || {}
     super(name, {
       ..._opts,
@@ -28,7 +28,7 @@ export class LogEcs extends Log {
   }
 
   /* c8 ignore next 18 */
-  _applySerializers (obj) {
+  _applySerializers(obj) {
     const ecsObj = {}
     for (const key in obj) {
       const value = obj[key]
@@ -49,7 +49,7 @@ export class LogEcs extends Log {
     return ecsObj
   }
 
-  _toJson (obj, serializers) {
+  _toJson(obj, serializers) {
     const { level, time, name, msg, pid, hostname, diff, ...other } = obj
 
     const ecsObj = {

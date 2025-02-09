@@ -6,7 +6,7 @@ let wrapped = null
 
 const unwrap = () => {
   if (wrapped) {
-    LEVELS.forEach(level => {
+    LEVELS.forEach((level) => {
       console[level] = wrapped[level]
     })
     wrapped = null
@@ -18,21 +18,21 @@ const unwrap = () => {
  * console.log, console.info, console.warn, console.error
  * @return unwrap function
  */
-export function wrapConsole (log, { level4log = 'LOG' } = {}) {
+export function wrapConsole(log, { level4log = 'LOG' } = {}) {
   if (wrapped) return unwrap
   wrapped = {}
 
   const _level4log = adjustLevel(level4log, 'LOG').toLowerCase()
 
-  const render = level => (...args) => {
-    log[level](...args)
-  }
+  const render =
+    (level) =>
+    (...args) => {
+      log[level](...args)
+    }
 
-  LEVELS.map(l => l.toLowerCase()).forEach(level => {
+  LEVELS.map((l) => l.toLowerCase()).forEach((level) => {
     wrapped[level] = console[level]
-    const renderLevel = level === 'log'
-      ? _level4log
-      : level
+    const renderLevel = level === 'log' ? _level4log : level
     console[level] = render(renderLevel)
   })
 

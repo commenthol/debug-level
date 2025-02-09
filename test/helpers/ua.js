@@ -1,9 +1,7 @@
 export const ua = (() => {
   if (typeof globalThis.navigator !== 'undefined') {
     const ua = navigator.userAgent
-    return /firefox/i.test(ua)
-      ? 'firefox'
-      : 'chrome'
+    return /firefox/i.test(ua) ? 'firefox' : 'chrome'
   }
 })()
 

@@ -1,7 +1,7 @@
 const { Log } = require('..')
 const log = new Log('req', { json: false })
 
-function reqToJSON () {
+function reqToJSON() {
   const { ip, method, url } = this
   return { ip, method, url }
 }

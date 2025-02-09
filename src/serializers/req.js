@@ -5,9 +5,10 @@
  * @param {object} [req]
  * @returns {object}
  */
-export function reqSerializer (req) {
+export function reqSerializer(req) {
   if (typeof req !== 'object' || !req) return
 
+  // eslint-disable-next-line no-unused-vars
   const { authorization, cookie, ...headers } = req.headers || {}
 
   const logReq = {
@@ -31,7 +32,7 @@ export function reqSerializer (req) {
  * @param {object} [req]
  * @returns {object}
  */
-export function reqMaskSerializer (req) {
+export function reqMaskSerializer(req) {
   const logReq = reqSerializer(req)
 
   if (!logReq) return
@@ -57,7 +58,7 @@ export function reqMaskSerializer (req) {
  * @param {string} cookie
  * @returns {string}
  */
-function maskCookieVal (cookie) {
+function maskCookieVal(cookie) {
   let masked = ''
   const len = cookie.length
   let mask = false

@@ -300,7 +300,11 @@ export class Log extends LogBase {
    * @private
    */
   _color(str, color, isBold) {
-    return !this.opts.colors ? str : isBold ? color.bold(str) : color(str)
+    return !color || !this.opts?.colors
+      ? str
+      : isBold
+        ? color.bold(str)
+        : color(str)
   }
 }
 

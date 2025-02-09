@@ -1,13 +1,11 @@
 import { Log, stringify } from '../node.js'
 import { ecsSerializers } from './serializers.js'
+import { wrapConsole } from '../wrapConsole.js'
+import { wrapDebug } from '../wrapDebug.js'
 
-/**
- * @typedef {import('../serializers/index.js').Serializer} Serializer
- */
-/**
- * @typedef {import('../node.js').LogOptions & {serializers: Record<string, Serializer>}} LogOptionsEcs
- * @typedef {import('../node.js').LogOptionWrapConsole} LogOptionWrapConsole
- */
+/** @typedef {import('../serializers/index.js').Serializer} Serializer */
+/** @typedef {import('../node.js').LogOptions & {serializers: Record<string, Serializer>}} LogOptionsEcs */
+/** @typedef {import('../node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 
 /**
  * Elastic Common Schema (ECS) compatible logger;
@@ -31,6 +29,24 @@ export class LogEcs extends Log {
     const [extra] = name.split(':')
     this._extraName = extra
     this.toJson = this._toJson
+  }
+
+  /**
+   * @param {string} [name]
+   * @param {LogOptionsEcs & LogOptionWrapConsole} [opts]
+   * @returns {() => void} unwrap function
+   */
+  static wrapConsole(name = 'console', opts) {
+    const log = new LogEcs(name, opts)
+    return wrapConsole(log, opts)
+  }
+
+  /**
+   * @param {LogOptionsEcs} [opts]
+   * @returns {() => void} unwrap function
+   */
+  static wrapDebug(opts) {
+    return wrapDebug(LogEcs, opts)
   }
 
   /* c8 ignore next 18 */

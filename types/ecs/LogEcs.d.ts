@@ -1,10 +1,6 @@
-/**
- * @typedef {import('../serializers/index.js').Serializer} Serializer
- */
-/**
- * @typedef {import('../node.js').LogOptions & {serializers: Record<string, Serializer>}} LogOptionsEcs
- * @typedef {import('../node.js').LogOptionWrapConsole} LogOptionWrapConsole
- */
+/** @typedef {import('../serializers/index.js').Serializer} Serializer */
+/** @typedef {import('../node.js').LogOptions & {serializers: Record<string, Serializer>}} LogOptionsEcs */
+/** @typedef {import('../node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 /**
  * Elastic Common Schema (ECS) compatible logger;
  * See [field reference](https://www.elastic.co/guide/en/ecs/current/ecs-field-reference.html)
@@ -13,6 +9,17 @@
  * (response) keys in objects
  */
 export class LogEcs extends Log {
+    /**
+     * @param {string} [name]
+     * @param {LogOptionsEcs & LogOptionWrapConsole} [opts]
+     * @returns {() => void} unwrap function
+     */
+    static wrapConsole(name?: string, opts?: LogOptionsEcs & LogOptionWrapConsole): () => void;
+    /**
+     * @param {LogOptionsEcs} [opts]
+     * @returns {() => void} unwrap function
+     */
+    static wrapDebug(opts?: LogOptionsEcs): () => void;
     /**
      * @param {string} name logger namespace
      * @param {LogOptionsEcs} [opts]

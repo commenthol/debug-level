@@ -1,3 +1,10 @@
+# 4.0.0 (2025-02-09)
+
+- fix: linting with eslint prettier (#e309f0e)
+- BREAKING CHANGE: min supported node@18 (#0375148)
+- chore: bump dependencies (#8af1300)
+- chore(ci): add node@22 (#2c097a4)
+
 # 3.2.1 (2024-10-04)
 
 - chore: bump dependencies (#5e03ed9)
@@ -5,8 +12,8 @@
 
 # 3.2.0 (2024-07-21)
 
-- docs: update ci badge (#e99f6b2)
 - chore: deprecate node 18 (#f3931fe)
+- docs: update ci badge (#e99f6b2)
 - chore: bump dependencies (#5b4de1f)
 
 # 3.1.4 (2024-03-13)
@@ -148,4 +155,5 @@
 
 - first version (#41890c0)
 - Initial commit (#d298779)
+
 

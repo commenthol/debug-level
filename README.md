@@ -539,7 +539,7 @@ Log.handleExitEvents('process-exit')
 
 ## Emit Log events with ProcLog
 
-Decouple logging via process event 'log'. This allows to use a different
+Decouple logging via process event 'log-level'. This allows to use a different
 logger framework than 'debug-level'. In such cases you'd need to adapt your
 framework of choice for logging. Check `initProcLog()` for inspiration.
 
@@ -565,11 +565,13 @@ import { ProcLog, initProcLog } from 'debug-level'
 // If using a different logger you'd need to provide a custom initializer which 
 // connects to the framework of choice.
 initProcLog({ serializers: {...}, Log: LogEcs })
+// or default
+initProcLog()
 
 // Add a logger with a namespace.
 // Use options only for defining the log-level (or leave undefined to control
 // via env-vars)
-const log = new ProcLog('app:namespace')
+const log = new ProcLog('my-webapp:namespace')
 // add some logging
 log.info('show some logging')
 ```
@@ -640,9 +642,9 @@ In your single page application use:
 import { Log } from 'debug-level'
 
 localStorage.setItem('DEBUG_URL', '/debug-level')
-localStorage.setItem('DEBUG', 'myApp*')
+localStorage.setItem('DEBUG', 'my-app*')
 // ...
-const log = new Log('myApp')
+const log = new Log('my-app')
 
 log.debug('my first %s', 'logline')
 ```

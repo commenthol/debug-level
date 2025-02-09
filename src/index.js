@@ -2,6 +2,7 @@
 /** @typedef {import('./node.js').LogOptions & {Log: typeof Log}} LogOptions */
 /** @typedef {import('./node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 /** @typedef {import('./node.js').LogOptionHandleExitEvents} LogOptionHandleExitEvents */
+/** @typedef {import('./ProcLog.js').ProcLogOptions} ProcLogOptions */
 /** @typedef {import('./ecs/LogEcs.js').LogOptionsEcs} LogOptionsEcs */
 /** @typedef {import('./browserLogs.js').MwLogOption} MwLogOption */
 /** @typedef {import('./httpLogs.js').LogOptionsHttpLog} LogOptionsHttpLog */

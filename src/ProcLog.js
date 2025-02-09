@@ -2,11 +2,13 @@ import { LogBase } from './LogBase.js'
 import { Log } from './node.js'
 import { inspectOpts, inspectNamespaces, INFO } from './utils.js'
 
+/** @typedef {import('./utils.js').Level} Level */
+/** @typedef {import('./node.js').LogOptions} LogOptions */
+/** @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog */
 /**
- * @typedef {import('./node.js').LogOptions} LogOptions
- */
-/**
- * @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog
+ * @typedef {object} ProcLogOptions
+ * @property {Level} [level] log level
+ * @property {string} [namespaces] namespaces for logging
  */
 
 export const EVENT_NAME = 'log-level'
@@ -50,8 +52,8 @@ const defaultOptions = {
 export class ProcLog extends LogBase {
   /**
    * creates a new logger
-   * @param {String} name - namespace of Logger
-   * @param {LogOptions} [opts] - see Log.options
+   * @param {string} name - namespace of Logger
+   * @param {ProcLogOptions} [opts] - see Log.options
    */
   constructor(name, opts) {
     const _opts = {

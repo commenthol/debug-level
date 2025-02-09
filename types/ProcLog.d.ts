@@ -3,11 +3,13 @@
  * @param {LogOptionsWithCustomLog} [options]
  */
 export function initProcLog(options?: LogOptionsWithCustomLog): void;
+/** @typedef {import('./utils.js').Level} Level */
+/** @typedef {import('./node.js').LogOptions} LogOptions */
+/** @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog */
 /**
- * @typedef {import('./node.js').LogOptions} LogOptions
- */
-/**
- * @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog
+ * @typedef {object} ProcLogOptions
+ * @property {Level} [level] log level
+ * @property {string} [namespaces] namespaces for logging
  */
 export const EVENT_NAME: "log-level";
 /**
@@ -44,14 +46,25 @@ export const EVENT_NAME: "log-level";
 export class ProcLog extends LogBase {
     /**
      * creates a new logger
-     * @param {String} name - namespace of Logger
-     * @param {LogOptions} [opts] - see Log.options
+     * @param {string} name - namespace of Logger
+     * @param {ProcLogOptions} [opts] - see Log.options
      */
-    constructor(name: string, opts?: LogOptions);
+    constructor(name: string, opts?: ProcLogOptions);
 }
+export type Level = import("./utils.js").Level;
 export type LogOptions = import("./node.js").LogOptions;
 export type LogOptionsWithCustomLog = LogOptions & {
     Log: typeof Log;
+};
+export type ProcLogOptions = {
+    /**
+     * log level
+     */
+    level?: import("./utils.js").Level | undefined;
+    /**
+     * namespaces for logging
+     */
+    namespaces?: string | undefined;
 };
 import { LogBase } from './LogBase.js';
 import { Log } from './node.js';

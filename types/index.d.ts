@@ -5,6 +5,7 @@ export type LogOptions = import("./node.js").LogOptions & {
 };
 export type LogOptionWrapConsole = import("./node.js").LogOptionWrapConsole;
 export type LogOptionHandleExitEvents = import("./node.js").LogOptionHandleExitEvents;
+export type ProcLogOptions = import("./ProcLog.js").ProcLogOptions;
 export type LogOptionsEcs = import("./ecs/LogEcs.js").LogOptionsEcs;
 export type MwLogOption = import("./browserLogs.js").MwLogOption;
 export type LogOptionsHttpLog = import("./httpLogs.js").LogOptionsHttpLog;

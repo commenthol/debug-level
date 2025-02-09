@@ -1,6 +1,7 @@
 /**
  * @typedef {import('./utils.js').Level} Level
- *
+ */
+/**
  * @typedef {object} ExtLogBaseOptions
  * @property {Level} [level] log level
  * @property {string} [namespaces] namespaces for logging
@@ -11,7 +12,8 @@
  * @property {number} [spaces] number of spaces for pretty print JSON
  * @property {boolean} [splitLine] split lines for pretty "debug" like output (not recommended for prod use)
  * @property {object} [serializers] serializers to be applied on object properties
- *
+ */
+/**
  * @typedef {import('./Format.js').FormatOption} FormatOption
  * @typedef {FormatOption & ExtLogBaseOptions} LogBaseOptions
  */

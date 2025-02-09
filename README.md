@@ -546,7 +546,7 @@ framework of choice for logging. Check `initProcLog()` for inspiration.
 Emits the following process event:
 
 ```
-process.emit('log', level, name, fmt, args)
+process.emit('log-level', level, name, fmt, args)
 ```
 
 where

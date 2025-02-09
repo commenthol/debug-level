@@ -4,6 +4,13 @@
  */
 export function initProcLog(options?: LogOptionsWithCustomLog): void;
 /**
+ * @typedef {import('./node.js').LogOptions} LogOptions
+ */
+/**
+ * @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog
+ */
+export const EVENT_NAME: "log-level";
+/**
  * Decouple logging via process event 'log'. This allows to use a different
  * logger framework than 'debug-level'. In such cases you'd need to adapt your
  * framework of choice for logging. Check `initProcLog()` for inspiration.

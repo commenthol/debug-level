@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { LogEcs } from '../src/index.js'
-import { ProcLog, initProcLog } from '../src/ProcLog.js'
+import { ProcLog, initProcLog, EVENT_NAME } from '../src/ProcLog.js'
 
 describe('ProcLog', function () {
   beforeEach(function () {
@@ -98,7 +98,7 @@ const myInitProcLog = () => {
   const reset = () => {
     lines = []
   }
-  process.on('log', (...args) => {
+  process.on(EVENT_NAME, (...args) => {
     lines.push(...args)
   })
   return { lines, reset }

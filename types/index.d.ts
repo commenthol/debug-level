@@ -14,6 +14,7 @@ import { LogEcs } from './ecs/LogEcs.js';
 import { logger } from './logger.js';
 import { ProcLog } from './ProcLog.js';
 import { initProcLog } from './ProcLog.js';
+import { EVENT_NAME } from './ProcLog.js';
 import { browserLogs } from './browserLogs.js';
 import { httpLogs } from './httpLogs.js';
-export { Log, LogEcs, logger, ProcLog, initProcLog, browserLogs, httpLogs };
+export { Log, LogEcs, logger, ProcLog, initProcLog, EVENT_NAME, browserLogs, httpLogs };

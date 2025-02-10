@@ -640,7 +640,7 @@ app.use('./debug-level', browserLogs({ maxSize: 100 }))
 In your single page application use:
 
 ```js
-import { Log } from 'debug-level'
+import { Log } from 'debug-level/browser'
 
 localStorage.setItem('DEBUG_URL', '/debug-level')
 localStorage.setItem('DEBUG', 'my-app*')

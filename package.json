@@ -20,24 +20,24 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "require": "./lib/index.cjs",
       "browser": "./src/browser.js",
-      "types": "./types/index.d.ts"
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js",
+      "require": "./lib/index.cjs"
     },
     "./browser": {
-      "import": "./src/browser.js",
-      "types": "./types/browser.d.ts"
+      "types": "./types/browser.d.ts",
+      "import": "./src/browser.js"
     },
     "./serializers": {
+      "types": "./types/serializers/index.d.ts",
       "import": "./src/serializers/index.js",
-      "require": "./lib/serializers/index.cjs",
-      "types": "./types/serializers/index.d.ts"
+      "require": "./lib/serializers/index.cjs"
     },
     "./ecs": {
+      "types": "./types/ecs/index.d.ts",
       "import": "./src/ecs/index.js",
-      "require": "./lib/ecs/index.cjs",
-      "types": "./types/ecs/index.d.ts"
+      "require": "./lib/ecs/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -65,7 +65,8 @@
     "start:example": "DEBUG=* node examples/app/server.cjs",
     "test": "mocha",
     "test:karma": "DEBUG_LEVEL=DEBUG karma start karma.conf.cjs",
-    "types": "tsc"
+    "types": "tsc",
+    "dev:vite": "vite --open examples/vite/"
   },
   "babel": {
     "presets": [
@@ -82,18 +83,18 @@
     "sonic-boom": "^4.2.0"
   },
   "devDependencies": {
-    "@types/node": "^22.13.1",
     "@babel/cli": "^7.26.4",
     "@babel/core": "^7.26.8",
     "@babel/preset-env": "^7.26.8",
+    "@types/node": "^22.13.1",
     "assert": "^2.1.0",
     "babel-loader": "^9.2.1",
     "c8": "^10.1.3",
     "conv-changelog": "^1.0.0",
-    "globals": "^15.14.0",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^15.14.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
@@ -108,6 +109,7 @@
     "rollup": "^4.34.6",
     "sinon": "^19.0.2",
     "typescript": "^5.7.3",
+    "vite": "^6.1.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
   },

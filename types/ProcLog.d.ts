@@ -5,6 +5,7 @@
 export function initProcLog(options?: LogOptionsWithCustomLog): void;
 /** @typedef {import('./utils.js').Level} Level */
 /** @typedef {import('./node.js').LogOptions} LogOptions */
+/** @typedef {import('./node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 /** @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog */
 /**
  * @typedef {object} ProcLogOptions
@@ -45,6 +46,17 @@ export const EVENT_PROC_LOG: "log-level";
  */
 export class ProcLog extends LogBase {
     /**
+     * @param {string} [name]
+     * @param {ProcLogOptions & LogOptionWrapConsole} [opts]
+     * @returns {() => void} unwrap functions
+     */
+    static wrapConsole(name?: string, opts?: ProcLogOptions & LogOptionWrapConsole): () => void;
+    /**
+     * @param {ProcLogOptions} [opts]
+     * @returns {() => void} unwrap functions
+     */
+    static wrapDebug(opts?: ProcLogOptions): () => void;
+    /**
      * creates a new logger
      * @param {string} name - namespace of Logger
      * @param {ProcLogOptions} [opts] - see Log.options
@@ -53,6 +65,7 @@ export class ProcLog extends LogBase {
 }
 export type Level = import("./utils.js").Level;
 export type LogOptions = import("./node.js").LogOptions;
+export type LogOptionWrapConsole = import("./node.js").LogOptionWrapConsole;
 export type LogOptionsWithCustomLog = LogOptions & {
     Log: typeof Log;
 };

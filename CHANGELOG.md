@@ -1,3 +1,17 @@
+# 4.1.0 (2025-02-10)
+
+- feat(ProcLog): static methods wrapConsole, wrapDebug on ProcLog (#4f032a8)
+- fix(node): wrapDebug with options (#1dee762)
+- feat(LogEcs): static methods wrapConsole, wrapDebug on LogEcs (#572d1fb)
+- fix(typescript): serializer types (#a46d4f5)
+- fix(node,ProcLog): change EVENT_NAME to EVENT_PROC_LOG (#f50dcbe)
+- fix(node): ProcLog types (#40c39e6)
+- docs: fix proc-log event-name (#b909cf8)
+- fix(node): rename proc-log event-name (#66a6730)
+- feat(node): ProcLog (#91db610)
+- fix(node): prevent crash if color is undefined (#2899014)
+- docs: update benchmarks (#177b0ce)
+
 # 4.0.0 (2025-02-09)
 
 - fix: linting with eslint prettier (#e309f0e)

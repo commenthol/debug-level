@@ -1,10 +1,14 @@
 import { LogBase } from './LogBase.js'
 import { Log } from './node.js'
 import { inspectOpts, inspectNamespaces, INFO } from './utils.js'
+import { wrapConsole } from './wrapConsole.js'
+import { wrapDebug } from './wrapDebug.js'
 
 /** @typedef {import('./utils.js').Level} Level */
 /** @typedef {import('./node.js').LogOptions} LogOptions */
+/** @typedef {import('./node.js').LogOptionWrapConsole} LogOptionWrapConsole */
 /** @typedef {LogOptions & {Log: typeof Log}} LogOptionsWithCustomLog */
+
 /**
  * @typedef {object} ProcLogOptions
  * @property {Level} [level] log level
@@ -13,7 +17,7 @@ import { inspectOpts, inspectNamespaces, INFO } from './utils.js'
 
 export const EVENT_PROC_LOG = 'log-level'
 
-const defaultOptions = {
+const options = {
   level: INFO,
   namespaces: undefined
 }
@@ -57,7 +61,7 @@ export class ProcLog extends LogBase {
    */
   constructor(name, opts) {
     const _opts = {
-      ...defaultOptions,
+      ...options,
       ...inspectOpts(process.env),
       ...inspectNamespaces(process.env),
       ...opts,
@@ -72,6 +76,24 @@ export class ProcLog extends LogBase {
   _log(level, fmt, args) {
     // @ts-expect-error
     process.emit(EVENT_PROC_LOG, level, this.name, fmt, args)
+  }
+
+  /**
+   * @param {string} [name]
+   * @param {ProcLogOptions & LogOptionWrapConsole} [opts]
+   * @returns {() => void} unwrap functions
+   */
+  static wrapConsole(name = 'console', opts) {
+    const log = new ProcLog(name, opts)
+    return wrapConsole(log, opts)
+  }
+
+  /**
+   * @param {ProcLogOptions} [opts]
+   * @returns {() => void} unwrap functions
+   */
+  static wrapDebug(opts) {
+    return wrapDebug(ProcLog, opts)
   }
 }
 

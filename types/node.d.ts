@@ -35,9 +35,10 @@ export class Log extends LogBase {
      */
     static handleExitEvents(name?: string, opts?: LogOptionHandleExitEvents): void;
     /**
-     * @returns {() => void} unwrap functions
+     * @param {LogOptions} [opts] - see Log.options
+     * @returns {() => void} unwrap function
      */
-    static wrapDebug(): () => void;
+    static wrapDebug(opts?: LogOptions): () => void;
     /**
      * creates a new logger
      * @param {String} name - namespace of Logger

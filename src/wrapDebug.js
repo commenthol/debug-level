@@ -11,7 +11,7 @@ const unwrap = () => {
   }
 }
 
-export function wrapDebug(Log) {
+export function wrapDebug(Log, opts) {
   if (wrapped) return unwrap
   class Loggers {
     constructor() {
@@ -21,7 +21,7 @@ export function wrapDebug(Log) {
     get(namespace) {
       let logger = this.cache[namespace]
       if (!logger) {
-        logger = this.cache[namespace] = new Log(namespace)
+        logger = this.cache[namespace] = new Log(namespace, opts)
       }
       return logger
     }

@@ -1,1 +1,1 @@
-export function wrapDebug(Log: any): () => void;
+export function wrapDebug(Log: any, opts: any): () => void;

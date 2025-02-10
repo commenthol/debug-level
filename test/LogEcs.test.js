@@ -1,6 +1,7 @@
 import assert from 'assert'
 import os from 'os'
 import sinon from 'sinon'
+import debug from 'debug'
 import { startTimeKey } from '../src/serializers/res.js'
 import { LogEcs, ecsSerializers } from '../src/ecs/index.js'
 import { httpLogs, logger } from '../src/index.js'
@@ -411,6 +412,52 @@ describe('LogEcs', function () {
         out,
         '{"log":{"level":"LOG","logger":"logger","diff_ms":0},"message":"a test","@timestamp":"1970-01-01T00:00:00.000Z"}'
       )
+    })
+  })
+
+  describe('wrap console', function () {
+    let unwrap
+    before(function () {
+      unwrap = LogEcs.wrapConsole('test', {
+        level: 'trace',
+        namespaces: 'test'
+      })
+    })
+    after(function () {
+      unwrap()
+    })
+
+    it('shall wrap console.log', function () {
+      console.log('log %s', 'log')
+      console.trace('trace')
+      console.debug({ debug: true })
+      console.info('log %j', { info: 1 })
+      console.warn('warn')
+      console.error(new Error('Baam'))
+    })
+
+    it('shall not wrap console twice', function () {
+      const unwrap1 = LogEcs.wrapConsole('test1')
+      const unwrap2 = LogEcs.wrapConsole('test2')
+      assert.strictEqual(unwrap1, unwrap)
+      assert.strictEqual(unwrap2, unwrap)
+    })
+  })
+
+  describe('wrap debug', function () {
+    let unwrap
+    before(function () {
+      const options = { level: 'debug', namespaces: '*' }
+      unwrap = LogEcs.wrapDebug(options)
+    })
+    after(function () {
+      unwrap()
+    })
+
+    it('shall wrap debug', function () {
+      const log = debug('namespace')
+      log.enabled = '*'
+      log('hello %s', 'log')
     })
   })
 })

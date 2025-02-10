@@ -92,7 +92,7 @@ export class Log extends LogBase {
       options.serializers,
       opts ? opts.serializers : {}
     )
-    const _opts = Object.assign({}, options, opts, { serializers })
+    const _opts = { ...options, ...opts, serializers }
     super(name, _opts)
 
     const colorFn = (n) => chalk.hex(n)
@@ -195,10 +195,11 @@ export class Log extends LogBase {
   }
 
   /**
-   * @returns {() => void} unwrap functions
+   * @param {LogOptions} [opts] - see Log.options
+   * @returns {() => void} unwrap function
    */
-  static wrapDebug() {
-    return wrapDebug(Log)
+  static wrapDebug(opts) {
+    return wrapDebug(Log, opts)
   }
 
   /**

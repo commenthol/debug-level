@@ -1,3 +1,8 @@
+# 4.1.1 (2025-02-10)
+
+- docs: fix browser message logging (#88b97ba)
+- chore: fix exports order (#8adfd99)
+
 # 4.1.0 (2025-02-10)
 
 - feat(ProcLog): static methods wrapConsole, wrapDebug on ProcLog (#4f032a8)
